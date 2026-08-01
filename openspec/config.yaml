@@ -1,0 +1,90 @@
+schema: spec-driven
+
+context: |
+  PROJECT
+  Bilingual (English + Traditional Chinese) static marketing website for In Utero Inc.,
+  built from a finished Figma design. Marketing site — no auth, no database, no user accounts.
+
+  TECH STACK
+  Next.js 16 canary (App Router) + React 19 + Tailwind CSS v4 (CSS-first, no tailwind.config).
+  TypeScript strict. Deployed on Vercel. npm/npx only — never yarn or pnpm.
+  Next.js 16 has breaking changes vs. older versions; consult node_modules/next/dist/docs/
+  rather than relying on memory. Use PageProps<'/route'> / LayoutProps<'/route'> global helpers.
+
+  HARD CONSTRAINTS
+  - All routes live under app/[locale]/. Locales are `en` (default) and `zh`, both with
+    explicit URL prefixes. Bare / redirects to /en. No route may exist outside [locale]/.
+  - Only two breakpoints are designed: 393px (mobile) and 1440px (desktop). Tablet behavior
+    is derived, never "from the design".
+  - Long-form content (portfolio projects, news articles) is MDX in content/{portfolio,news}/{en,zh}/.
+    Everything else is colocated in components. No CMS, no runtime fetching.
+  - Design values come from Figma MCP at implementation time. Never hardcode a value from memory.
+  - The Figma file key is zSq5F5v3UrVAdIjuSipe3H (the copy in "Test Team", Pro + Full seat,
+    200 MCP calls/day). Never use the original 7uC2EQp61AsMp8ebZQcI7w — that team grants only
+    a View seat, capped at 6 calls/month. Node IDs are identical between the two.
+  - All 124 design tokens are already extracted into openspec/reference/design-tokens.md.
+    Build @theme from that file; never eyedrop or hardcode a value. Never use
+    get_variable_defs to build a token set — it returns only what a node consumes, resolved
+    per-consumer mode, and silently mislabels values. Use use_figma (Plugin API) to re-extract.
+  - Text Styles has 4 modes (Mobile/Desktop x English/Chinese) and Spacing has 2
+    (Desktop/Mobile). Chinese is a different type scale, not a translation.
+
+  DELIVERY PROCESS
+  The site is built in ~16 numbered phases. One phase = one OpenSpec change = one session,
+  ending at a human approval gate where the user reviews in a browser. A phase must never
+  begin the next phase's work. Every phase output must be a runnable site, verified at both
+  breakpoints and in both locales.
+
+  SOURCES OF TRUTH — read before planning or implementing, do not re-derive
+  - openspec/reference/routes.md — canonical routes, locale strategy, resolved naming drift
+  - openspec/reference/design-inventory.md — Figma canvas map, node IDs, do-not-implement list
+  - openspec/DECISIONS.md — decisions the design does not make for us
+  - app/_components/INVENTORY.md — existing components; read before building any component
+  - CLAUDE.md — full conventions
+
+rules:
+  proposal:
+    - Scope to exactly one phase. Never fold the next phase in, even if it looks trivial.
+    - State which Figma node IDs the phase covers, sourced from openspec/reference/design-inventory.md.
+    - Name what the user will click or look at to verify the phase in a browser.
+    - Most phases are UI implementation against a finished design and introduce no new
+      spec-level behavior — prefer skip_specs:true over inventing a requirement to pass validation.
+  design:
+    - Only write design.md when the phase makes a non-obvious architectural or visual choice.
+      Skip it for phases that are straightforward implementation of an existing design.
+    - Record decisions the Figma file does not make for us — especially tablet behavior between
+      393px and 1440px — and mirror them into openspec/DECISIONS.md.
+    - Never restate visual values (hex, px, font sizes). Those belong in code, fetched from Figma.
+  specs:
+    - Behavioral requirements only — routing, locale resolution, content loading, form
+      submission, build-time failures. Visual appearance is not a spec; the Figma file is
+      its source of truth.
+  tasks:
+    - Order tasks so the site stays runnable. Never leave the build broken between task groups.
+    - Every phase includes these three — update app/_components/INVENTORY.md for new shared
+      components, append any new decisions to openspec/DECISIONS.md, and run npm run lint
+      plus npx tsc --noEmit.
+    - Every UI phase includes an explicit verification task covering 393px and 1440px in both
+      /en and /zh.
+    - Keep tasks at ~1-2 hours. If a page frame exceeds ~5000px tall, split it across phases.
+
+operations:
+  apply:
+    guidance:
+      - Invoke /figma-design-to-code before get_design_context. It is a mandatory prerequisite.
+      - Fetch all four frames for a section — desktop EN, desktop TC, mobile EN, mobile TC.
+        Traditional Chinese is not English with swapped strings; layouts genuinely differ.
+      - Do not implement nodes on the do-not-implement list in design-inventory.md
+        (the desktop `archived` section, the mobile `ref` and `photo` sections).
+      - Apply the fidelity tiers in CLAUDE.md. Do not burn a session closing a 3px gap on a
+        Close-tier section.
+      - When tablet behavior is not a trivial interpolation between the two designed widths,
+        stop and ask rather than inventing it silently.
+      - When all tasks are done, stop and hand off. Do not start the next phase.
+      - Report skipped, blocked, or partial work plainly. A phase reported complete will not
+        be re-checked.
+  archive:
+    guidance:
+      - Only archive after the user has confirmed the phase in a browser themselves.
+      - Confirm openspec/DECISIONS.md and app/_components/INVENTORY.md were updated before archiving.
+      - Note any task left unchecked and why, so the next phase inherits it explicitly.
