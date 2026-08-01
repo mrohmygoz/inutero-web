@@ -1,26 +1,405 @@
 @import "tailwindcss";
 
+/*
+ * Design tokens transcribed from openspec/reference/design-tokens.md — the
+ * complete Plugin API export of all 124 Figma variables. Do not eyedrop or
+ * re-derive a value; update this file only by re-reading that document.
+ *
+ * Cascade layers (see design.md → "Token layering in CSS"):
+ *   :root                              -> Mobile English + Mobile spacing
+ *   html[lang="zh"]                     -> Mobile Chinese overrides
+ *   @media (width >= 1024px) :root      -> Desktop English + Desktop spacing
+ *   @media (width >= 1024px) html[lang="zh"] -> Desktop Chinese overrides
+ *
+ * html[lang="zh"] (0,1,1) outranks a bare :root (0,1,0) regardless of source
+ * order, so every desktop-Chinese value that differs from its mobile-Chinese
+ * counterpart MUST be re-declared inside the last block below (D009 risk).
+ * A value that is correct at both breakpoints for zh is deliberately left
+ * undeclared there — the mobile override already wins by specificity.
+ */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Primitives — raw values, never referenced outside the Color Schemes layer below */
+  --primitive-white: #ffffff;
+  --primitive-neutral-lightest: #dee3e7;
+  --primitive-neutral-lighter: #cccccc;
+  --primitive-neutral-light: #aaaaaa;
+  --primitive-neutral: #666666;
+  --primitive-neutral-dark: #444444;
+  --primitive-neutral-darker: #222222;
+  --primitive-neutral-darkest: #131417;
+
+  --opacity-white-5: #ffffff0d;
+  --opacity-white-10: #ffffff1a;
+  --opacity-white-15: #ffffff26;
+  --opacity-white-20: #ffffff33;
+  --opacity-white-30: #ffffff4d;
+  --opacity-white-40: #ffffff66;
+  --opacity-white-50: #ffffff80;
+  --opacity-white-60: #ffffff99;
+  --opacity-neutral-darkest-5: #0000000d;
+  --opacity-neutral-darkest-10: #0000001a;
+  --opacity-neutral-darkest-15: #00000026;
+  --opacity-neutral-darkest-20: #00000033;
+  --opacity-neutral-darkest-30: #0000004d;
+  --opacity-neutral-darkest-40: #00000066;
+  --opacity-neutral-darkest-50: #00000080;
+  --opacity-neutral-darkest-60: #00000099;
+
+  /* Color Schemes — the only color layer components may reference */
+  --color-basic-background: var(--primitive-white);
+  --color-basic-foreground: var(--primitive-white);
+  --color-basic-text-primary: var(--primitive-neutral-darkest);
+  --color-basic-text-secondary: var(--primitive-neutral-dark);
+  --color-basic-border: var(--primitive-neutral-darkest);
+  --color-basic-accent: var(--primitive-neutral-darkest);
+  --color-brand-primary-green: #08c454;
+  --color-brand-accent-neon: #38ff88;
+  --color-brand-accent-orange: #ff5e0e;
+  --color-brand-accent-yellow: #bdff43;
+
+  /* Spacing & Sizing — Mobile mode (D009: switches to Desktop at 1024px) */
+  --spacing-page-padding: 20px;
+  --spacing-section-large: 64px;
+  --spacing-section-medium: 48px;
+  --spacing-section-small: 32px;
+
+  /* Containers & max-widths are identical in both modes — declared once */
+  --container-large: 1280px;
+  --container-medium: 1024px;
+  --container-small: 768px;
+  --max-width-xxlarge: 1280px;
+  --max-width-xlarge: 1024px;
+  --max-width-large: 768px;
+  --max-width-medium: 560px;
+  --max-width-small: 480px;
+  --max-width-xsmall: 400px;
+  --max-width-xxsmall: 320px;
+
+  /* Font families — swap by locale via html[lang], not by breakpoint */
+  --font-display: var(--font-display-latin);
+  --font-accent: var(--font-accent-latin);
+  /* D008: explicit CJK fallback so Chinese body copy is deterministic across
+     platforms rather than resolving to whatever the OS supplies. */
+  --font-body-stack: var(--font-body), "Noto Sans TC", system-ui, sans-serif;
+
+  /* Text Styles — Mobile English */
+  --text-display-jumbo: 166px;
+  --text-display-jumbo--line-height: 107.9px;
+  --text-display-jumbo--letter-spacing: -1.66px;
+  --text-display-jumbo--font-weight: 700;
+
+  --text-display-h1: 113px;
+  --text-display-h1--line-height: 79.1px;
+  --text-display-h1--letter-spacing: -1.13px;
+  --text-display-h1--font-weight: 700;
+
+  --text-display-h2: 87px;
+  --text-display-h2--line-height: 60.9px;
+  --text-display-h2--letter-spacing: -0.87px;
+  --text-display-h2--font-weight: 700;
+
+  --text-display-h3: 78px;
+  --text-display-h3--line-height: 54.6px;
+  --text-display-h3--letter-spacing: -0.78px;
+  --text-display-h3--font-weight: 700;
+
+  --text-display-h4: 55px;
+  --text-display-h4--line-height: 41.25px;
+  --text-display-h4--letter-spacing: -0.55px;
+  --text-display-h4--font-weight: 700;
+
+  --text-display-h5: 41px;
+  --text-display-h5--line-height: 32.8px;
+  --text-display-h5--letter-spacing: -0.41px;
+  --text-display-h5--font-weight: 700;
+
+  --text-display-h6: 27px;
+  --text-display-h6--line-height: 21.6px;
+  --text-display-h6--letter-spacing: -0.27px;
+  --text-display-h6--font-weight: 700;
+
+  --text-display-h7: 22px;
+  --text-display-h7--line-height: 17.6px;
+  --text-display-h7--letter-spacing: -0.22px;
+  --text-display-h7--font-weight: 700;
+
+  /* Body sizes are identical across all four modes — declared once, never overridden */
+  --text-body-l: 16px;
+  --text-body-l--line-height: 24px;
+  --text-body-l--letter-spacing: -0.16px;
+  --text-body-m: 14px;
+  --text-body-m--line-height: 21px;
+  --text-body-m--letter-spacing: -0.14px;
+  --text-body-s: 13px;
+  --text-body-s--line-height: 19.5px;
+  --text-body-s--letter-spacing: -0.13px;
+  --text-body-xs: 12px;
+  --text-body-xs--line-height: 18px;
+  --text-body-xs--letter-spacing: 0px;
+
+  --text-label-m: 11px;
+  --text-label-m--line-height: 11px;
+  --text-label-m--letter-spacing: 0.55px;
+  /* Label/S is identical across all four modes — declared once */
+  --text-label-s: 11px;
+  --text-label-s--line-height: 11px;
+  --text-label-s--letter-spacing: 0.55px;
+
+  --text-accent-display: 37px;
+  --text-accent-display--letter-spacing: 0.37px;
+  --text-accent-display--font-weight: 700;
+  /* Accent leading depends only on locale, not breakpoint — no desktop override needed */
+  --text-accent-display--line-height: 37px;
+  --text-accent-display--font-style: italic;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* :is() keeps this at the same specificity as html[lang="zh"] alone (0,1,1)
+   regardless of which branch matches, so /styleguide's simulated `[data-locale="zh"]`
+   preview sections get the identical override guarantees as the real html[lang="zh"]
+   root the [locale] layout sets — see D016 in openspec/DECISIONS.md. */
+:is(html[lang="zh"], [data-locale="zh"]) {
+  --font-display: var(--font-display-cjk);
+  --font-accent: var(--font-accent-cjk);
+
+  /* Text Styles — Mobile Chinese overrides */
+  --text-display-h1: 62px;
+  --text-display-h1--line-height: 74.4px;
+  --text-display-h1--letter-spacing: -1.24px;
+  --text-display-h1--font-weight: 400;
+
+  --text-display-h2: 43px;
+  --text-display-h2--line-height: 51.6px;
+  --text-display-h2--letter-spacing: -0.43px;
+  --text-display-h2--font-weight: 400;
+
+  --text-display-h3: 38px;
+  --text-display-h3--line-height: 45.6px;
+  --text-display-h3--letter-spacing: -0.76px;
+  --text-display-h3--font-weight: 400;
+
+  --text-display-h4: 34px;
+  --text-display-h4--line-height: 40.8px;
+  --text-display-h4--letter-spacing: -0.34px;
+  /* H4 stays Bold (700) in both Chinese modes — no weight override */
+
+  --text-display-h5: 28px;
+  --text-display-h5--line-height: 33.6px;
+  --text-display-h5--letter-spacing: -0.28px;
+  --text-display-h5--font-weight: 400;
+
+  --text-display-h6: 18px;
+  --text-display-h6--line-height: 21.6px;
+  --text-display-h6--letter-spacing: -0.18px;
+  --text-display-h6--font-weight: 400;
+
+  --text-display-h7: 16px;
+  --text-display-h7--line-height: 19.2px;
+  --text-display-h7--letter-spacing: -0.16px;
+  --text-display-h7--font-weight: 400;
+
+  /* Jumbo is identical in size across all four modes and stays Bold — no override */
+
+  --text-label-m: 14px;
+  --text-label-m--line-height: 14px;
+
+  --text-accent-display--line-height: 48.1px;
+  --text-accent-display--font-style: normal;
 }
 
-@media (prefers-color-scheme: dark) {
+@media (width >= 1024px) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    /* Spacing & Sizing — Desktop mode */
+    --spacing-page-padding: 64px;
+    --spacing-section-large: 112px;
+    --spacing-section-medium: 80px;
+    --spacing-section-small: 48px;
+
+    /* Text Styles — Desktop English */
+    --text-display-jumbo: 246px;
+    --text-display-jumbo--line-height: 159.9px;
+    --text-display-jumbo--letter-spacing: -2.46px;
+
+    --text-display-h1: 220px;
+    --text-display-h1--line-height: 158px;
+    --text-display-h1--letter-spacing: -2.8px;
+
+    --text-display-h2: 180px;
+    --text-display-h2--line-height: 118px;
+    --text-display-h2--letter-spacing: -1.2px;
+
+    --text-display-h3: 120px;
+    --text-display-h3--line-height: 84px;
+    --text-display-h3--letter-spacing: -1.2px;
+
+    --text-display-h4: 78px;
+    --text-display-h4--line-height: 58px;
+    --text-display-h4--letter-spacing: -0.55px;
+
+    /* H5/H6 are identical in size between Mobile and Desktop English — no override */
+    --text-display-h5--letter-spacing: -0.78px;
+
+    --text-display-h7: 32px;
+    --text-display-h7--line-height: 25.6px;
+    --text-display-h7--letter-spacing: -0.32px;
+  }
+
+  :is(html[lang="zh"], [data-locale="zh"]) {
+    /* Text Styles — Desktop Chinese overrides (must be re-declared here: this
+       selector's specificity beats the media-less :root above, so desktop
+       English values would otherwise leak into /zh at this breakpoint) */
+    --text-display-jumbo: 166px;
+    --text-display-jumbo--line-height: 107.9px;
+    --text-display-jumbo--letter-spacing: -1.66px;
+
+    --text-display-h1: 150px;
+    --text-display-h1--line-height: 170px;
+    --text-display-h1--letter-spacing: -2.7px;
+    /* H1 stays Regular (400) at desktop too — set on the mobile-zh rule above,
+       which already wins over the desktop :root rule on specificity */
+
+    --text-display-h2: 130px;
+    --text-display-h2--line-height: 140px;
+    --text-display-h2--letter-spacing: -0.87px;
+    --text-display-h2--font-weight: 700;
+
+    --text-display-h3: 78px;
+    --text-display-h3--line-height: 90px;
+    --text-display-h3--letter-spacing: -0.78px;
+    --text-display-h3--font-weight: 700;
+
+    --text-display-h4: 55px;
+    --text-display-h4--line-height: 60px;
+    --text-display-h4--letter-spacing: -0.55px;
+
+    --text-display-h5: 28px;
+    --text-display-h5--line-height: 33.6px;
+    --text-display-h5--letter-spacing: -0.28px;
+    --text-display-h5--font-weight: 700;
+
+    --text-display-h6: 18px;
+    --text-display-h6--line-height: 21.6px;
+    --text-display-h6--letter-spacing: -0.27px;
+    --text-display-h6--font-weight: 700;
+
+    --text-display-h7: 22px;
+    --text-display-h7--line-height: 28px;
+    --text-display-h7--letter-spacing: -0.22px;
+    --text-display-h7--font-weight: 700;
+
+    /* Label/M reverts to the English 11px size at desktop */
+    --text-label-m: 11px;
+    --text-label-m--line-height: 11px;
+
+    --text-accent-display--font-style: italic;
   }
 }
 
+@theme inline {
+  --color-background: var(--color-basic-background);
+  --color-foreground: var(--color-basic-foreground);
+  --color-basic-background: var(--color-basic-background);
+  --color-basic-foreground: var(--color-basic-foreground);
+  --color-basic-text-primary: var(--color-basic-text-primary);
+  --color-basic-text-secondary: var(--color-basic-text-secondary);
+  --color-basic-border: var(--color-basic-border);
+  --color-basic-accent: var(--color-basic-accent);
+  --color-brand-primary-green: var(--color-brand-primary-green);
+  --color-brand-accent-neon: var(--color-brand-accent-neon);
+  --color-brand-accent-orange: var(--color-brand-accent-orange);
+  --color-brand-accent-yellow: var(--color-brand-accent-yellow);
+
+  --font-display: var(--font-display);
+  --font-accent: var(--font-accent);
+  --font-body: var(--font-body-stack);
+
+  --spacing-page-padding: var(--spacing-page-padding);
+  --spacing-section-large: var(--spacing-section-large);
+  --spacing-section-medium: var(--spacing-section-medium);
+  --spacing-section-small: var(--spacing-section-small);
+  --container-large: var(--container-large);
+  --container-medium: var(--container-medium);
+  --container-small: var(--container-small);
+  --container-xxlarge: var(--max-width-xxlarge);
+  --container-xlarge: var(--max-width-xlarge);
+  --container-xsmall: var(--max-width-xsmall);
+  --container-xxsmall: var(--max-width-xxsmall);
+
+  --text-display-jumbo: var(--text-display-jumbo);
+  --text-display-jumbo--line-height: var(--text-display-jumbo--line-height);
+  --text-display-jumbo--letter-spacing: var(--text-display-jumbo--letter-spacing);
+  --text-display-jumbo--font-weight: var(--text-display-jumbo--font-weight);
+
+  --text-display-h1: var(--text-display-h1);
+  --text-display-h1--line-height: var(--text-display-h1--line-height);
+  --text-display-h1--letter-spacing: var(--text-display-h1--letter-spacing);
+  --text-display-h1--font-weight: var(--text-display-h1--font-weight);
+
+  --text-display-h2: var(--text-display-h2);
+  --text-display-h2--line-height: var(--text-display-h2--line-height);
+  --text-display-h2--letter-spacing: var(--text-display-h2--letter-spacing);
+  --text-display-h2--font-weight: var(--text-display-h2--font-weight);
+
+  --text-display-h3: var(--text-display-h3);
+  --text-display-h3--line-height: var(--text-display-h3--line-height);
+  --text-display-h3--letter-spacing: var(--text-display-h3--letter-spacing);
+  --text-display-h3--font-weight: var(--text-display-h3--font-weight);
+
+  --text-display-h4: var(--text-display-h4);
+  --text-display-h4--line-height: var(--text-display-h4--line-height);
+  --text-display-h4--letter-spacing: var(--text-display-h4--letter-spacing);
+  --text-display-h4--font-weight: var(--text-display-h4--font-weight);
+
+  --text-display-h5: var(--text-display-h5);
+  --text-display-h5--line-height: var(--text-display-h5--line-height);
+  --text-display-h5--letter-spacing: var(--text-display-h5--letter-spacing);
+  --text-display-h5--font-weight: var(--text-display-h5--font-weight);
+
+  --text-display-h6: var(--text-display-h6);
+  --text-display-h6--line-height: var(--text-display-h6--line-height);
+  --text-display-h6--letter-spacing: var(--text-display-h6--letter-spacing);
+  --text-display-h6--font-weight: var(--text-display-h6--font-weight);
+
+  --text-display-h7: var(--text-display-h7);
+  --text-display-h7--line-height: var(--text-display-h7--line-height);
+  --text-display-h7--letter-spacing: var(--text-display-h7--letter-spacing);
+  --text-display-h7--font-weight: var(--text-display-h7--font-weight);
+
+  --text-body-l: var(--text-body-l);
+  --text-body-l--line-height: var(--text-body-l--line-height);
+  --text-body-l--letter-spacing: var(--text-body-l--letter-spacing);
+  --text-body-m: var(--text-body-m);
+  --text-body-m--line-height: var(--text-body-m--line-height);
+  --text-body-m--letter-spacing: var(--text-body-m--letter-spacing);
+  --text-body-s: var(--text-body-s);
+  --text-body-s--line-height: var(--text-body-s--line-height);
+  --text-body-s--letter-spacing: var(--text-body-s--letter-spacing);
+  --text-body-xs: var(--text-body-xs);
+  --text-body-xs--line-height: var(--text-body-xs--line-height);
+  --text-body-xs--letter-spacing: var(--text-body-xs--letter-spacing);
+
+  --text-label-m: var(--text-label-m);
+  --text-label-m--line-height: var(--text-label-m--line-height);
+  --text-label-m--letter-spacing: var(--text-label-m--letter-spacing);
+  --text-label-s: var(--text-label-s);
+  --text-label-s--line-height: var(--text-label-s--line-height);
+  --text-label-s--letter-spacing: var(--text-label-s--letter-spacing);
+
+  --text-accent-display: var(--text-accent-display);
+  --text-accent-display--line-height: var(--text-accent-display--line-height);
+  --text-accent-display--letter-spacing: var(--text-accent-display--letter-spacing);
+  --text-accent-display--font-weight: var(--text-accent-display--font-weight);
+}
+
+/* font-style isn't part of Tailwind's --text-* pairing mechanism — applied via
+   utility classes instead. Accent/Display always needs italic in three of the
+   four modes; expose it as a one-off utility so it tracks the same cascade. */
+.font-style-accent-display {
+  font-style: var(--text-accent-display--font-style);
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-basic-background);
+  color: var(--color-basic-text-primary);
+  font-family: var(--font-body-stack);
 }

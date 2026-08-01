@@ -17,6 +17,14 @@ Do **not** record things readable from the code or the design itself.
 - [D006 — Mobile and desktop of a section ship together](#d006--mobile-and-desktop-of-a-section-ship-together)
 - [D007 — No dark/light theme system](#d007--no-darklight-theme-system)
 - [D008 — Fonts are implemented exactly as the variables declare](#d008--fonts-are-implemented-exactly-as-the-variables-declare)
+- [D009 — Mobile→Desktop token switch at 1024px](#d009--mobiledesktop-token-switch-at-1024px)
+- [D010 — i18n via hand-rolled typed dictionaries](#d010--i18n-via-hand-rolled-typed-dictionaries)
+- [D011 — Root redirect via next.config.ts, not a root page](#d011--root-redirect-via-nextconfigts-not-a-root-page)
+- [D012 — Desktop primitives are drawn locally, not instanced](#d012--desktop-primitives-are-drawn-locally-not-instanced)
+- [D013 — Cta and SecondaryCta carry a background-adaptive `tone` prop](#d013--cta-and-secondaryCta-carry-a-background-adaptive-tone-prop)
+- [D014 — Interaction states for primitives are derived, not designed](#d014--interaction-states-for-primitives-are-derived-not-designed)
+- [D015 — Fill→hug width switch for buttons at 1024px](#d015--fillhug-width-switch-for-buttons-at-1024px)
+- [D016 — Styleguide Chinese specimens need `data-locale="zh"`, not just `lang="zh"`](#d016--styleguide-chinese-specimens-need-data-localezh-not-just-langzh)
 
 ## D001 — Locale strategy
 
@@ -135,3 +143,149 @@ accept platform defaults, drop `"Noto Sans TC"` from the stack; nothing else cha
 **Consequence to accept:** Chinese body copy is not set in a designed typeface. This is a
 known, deliberate gap, not an implementation bug — do not "fix" it in a later phase without
 revisiting this decision.
+
+## D009 — Mobile→Desktop token switch at 1024px
+
+**Decision:** The Text Styles and Spacing & Sizing modes switch from Mobile to Desktop at
+`@media (width >= 1024px)` — Tailwind's `lg` breakpoint.
+
+**Why:** design-tokens.md flags this width as undefined in the Figma variables. 1024px matches
+`Container/container-medium` and is a compromise between 768px (`container-small` — desktop
+display type would overflow badly at that width) and 1280px (`container-large` — safest for
+type, but leaves the 768–1279px range rendering the mobile layout, an implausibly wide band of
+phone-looking pages on laptops). User decision, Phase 1.
+
+**How to apply:** Desktop display type is tight between 1024px and 1280px; the max-width
+tokens absorb most of it. The residue is tablet behavior and falls under D005 — derived, not
+a bug to fix without a real tablet design.
+
+## D010 — i18n via hand-rolled typed dictionaries
+
+**Decision:** `app/_lib/i18n/` holds a `locales` tuple, a `Locale` type, an `isLocale` type
+guard, and per-locale dictionary modules (`en.ts`, `zh.ts`) where `zh` is typed as `typeof en`.
+No i18n library.
+
+**Why:** D002 requires a missing translation to fail the build loudly. A shared TS type makes
+a missing key a `tsc --noEmit` compile error naming that key — stronger than any library's
+runtime warning — with zero added dependencies. The site is nine static pages with no plurals
+and no runtime locale switching, so `next-intl`'s message catalogs, formatters, and middleware
+would all sit unused. User decision, Phase 1.
+
+**How to apply:** Every new page's copy is added to both `en.ts` and `zh.ts` in the same
+change. Do not add a key to one locale and defer the other — the type error is the intended
+failure mode, not a bug to suppress.
+
+## D011 — Root redirect via next.config.ts, not a root page
+
+**Decision:** Bare `/` redirects to `/en` via `redirects()` in `next.config.ts`
+(`permanent: false`), not a root `app/page.tsx` calling `redirect()`.
+
+**Why:** A root `app/page.tsx` would be a route outside `app/[locale]/`, which D001 forbids.
+Config-level redirects also resolve before any rendering, so nothing is generated for `/`.
+`permanent: false` (307, not 308) because a permanent redirect is cached indefinitely by
+browsers and would make changing the default locale later effectively irreversible for
+returning visitors. `/styleguide` remains the one sanctioned exception to "no route outside
+`[locale]/`" — it predates this decision and is not part of the public site.
+
+**How to apply:** Since Phase 1 also removed the top-level `app/layout.tsx` (see design.md —
+"multiple root layouts" is the supported pattern for a route tree with two independent
+top-level branches, `[locale]` and `styleguide`), there is no root `app/page.tsx` either;
+each branch owns its own `<html>`/`<body>` shell.
+
+## D012 — Desktop primitives are drawn locally, not instanced
+
+**Decision:** Treat every desktop appearance of a primitive (CTA, Secondary CTA, Tag, Title
+Group, Tagline Wrapper, Project card) as hand-drawn per occurrence, not a symbol instance, and
+derive it by surveying at least two occurrences rather than trusting a single one.
+
+**Why:** Phase 2's metadata sweep found the desktop `COMP` section (`12612:8830`) contains no
+primitives at all — only composed blocks (NAV, Footer, UniversalCTA, NewsletterSignup,
+Article, cards). A spot check of the desktop `UniversalCTA` button (`12573:9014`) confirmed it
+is a locally-drawn `Button` frame, not an instance of the mobile `CTA` symbol (`12368:4718`):
+different width behavior (hug vs. fill) and, as the fuller survey found, inconsistent fill
+color across occurrences (see D013). Nothing in the file structure flags this — a later phase
+assuming desktop instances agree with each other, or with mobile, will ship a mismatch.
+
+**How to apply:** Before shipping any desktop-only appearance of a shared primitive, fetch at
+least two occurrences from different page frames. Full survey method is D-A in
+`openspec/changes/phase-02-primitives/design.md`.
+
+## D013 — Cta and SecondaryCta carry a background-adaptive `tone` prop
+
+**Decision:** `Cta` takes `tone: 'dark' | 'green'` (default `'dark'`). `SecondaryCta` takes
+`tone: 'dark' | 'light'` (default `'dark'`). Both default to the treatment used on light
+backgrounds, matching the mobile symbol definitions.
+
+**Why:** The Phase 2 occurrence survey found the desktop CTA button uses two different
+fill/text color pairs depending on the section it sits in — dark bg/white text on the Hero and
+UniversalCTA, green bg/dark text on Home's "Featured Projects" preview (all three otherwise
+pixel-identical: same padding, height, and type). The same background-adaptation pattern
+turned up for SecondaryCta once the survey covered `ServiceCard`'s nested instance (white
+outline/text on ServiceCard's dark panel, vs. dark outline/text everywhere else). User decision
+2026-08-01: expose it as a caller-set prop now rather than shipping one variant and forcing a
+later page phase to extend the component again.
+
+**How to apply:** Any page phase using `Cta` or `SecondaryCta` against a dark or photo-heavy
+background must pass the matching tone explicitly — the default assumes a light background.
+
+## D014 — Interaction states for primitives are derived, not designed
+
+**Decision:** No primitive shipped in Phase 2 has a designed hover, focus, or pressed state
+(the design defines only `Tag`'s caller-set `Active`, which is not an interaction). Every
+interactive primitive gets one uniform, deliberately plain treatment: an instant `hover:opacity-80`
+shift and a `focus-visible` outline in `--color-brand-primary-green`, with no pressed state and
+no CSS transition. Implemented once in `app/_components/_buttonStyles.ts`, shared by `Cta` and
+`SecondaryCta`; `ArtistCard`'s social links apply the same focus treatment directly.
+
+**Why:** The Figma file gives no hover/focus/motion reference for any primitive. Inventing a
+distinct visual language per component risks it calcifying into "the design" once later phases
+copy the pattern. A single dull, uniform treatment is cheap to replace in one place if a later
+phase (or Phase F polish) gets a real reference.
+
+**How to apply:** Do not treat this hover/focus treatment as matching the Figma file — it does
+not, because no file reference exists. If a later phase finds real hover/focus specs, update
+`_buttonStyles.ts` once rather than patching each component that uses it.
+
+## D015 — Fill→hug width switch for buttons at 1024px
+
+**Decision:** `Cta` and `SecondaryCta` are fill-width (`w-full`) below 1024px and hug-width
+(`w-auto`) at and above 1024px, via Tailwind's `lg:` breakpoint.
+
+**Why:** Mobile buttons are fill-width (363px, matching their container) in every mobile
+occurrence surveyed; every desktop occurrence is hug-width (sized to its label, padding
+otherwise identical). Something has to decide where that switch happens, and the Figma file
+does not — the same open question D009 already resolved for the token-mode switch. Reusing
+1024px keeps a button from ever rendering desktop type at mobile (fill) proportions or vice
+versa.
+
+**How to apply:** Falls under D005 (tablet is derived) — the switch is a button implementation
+detail, not a new derivation, since D009 already set the precedent this reuses.
+
+## D016 — Styleguide Chinese specimens need `data-locale="zh"`, not just `lang="zh"`
+
+**Decision:** Every Chinese type-scale override in `globals.css` is now keyed to
+`:is(html[lang="zh"], [data-locale="zh"])` instead of bare `html[lang="zh"]`. Any element on
+`/styleguide` simulating a Chinese context must carry both `lang="zh"` (real semantics/glyph
+correctness) and `data-locale="zh"` (the token-cascade hook).
+
+**Why:** Found during Phase 2 visual verification. `/styleguide`'s own `<html>` is hardcoded
+`lang="en"` (it sits outside `[locale]`, per D001/D011), so the Chinese type-scale CSS —
+written to key off `html[lang="zh"]`, correct for the real `/zh` route where `[locale]/layout.tsx`
+sets that attribute on `<html>` — never matched the nested `<section lang="zh">` wrappers used
+to preview Chinese specimens. Every Chinese specimen on `/styleguide`, including Phase 1's
+original text-style specimens, was silently rendering at the **English** type scale. This went
+unnoticed in Phase 1 because body-text size deltas between the two languages are subtle: a 14px
+vs 13px difference doesn't visibly break anything. It became obvious in Phase 2 because a
+120px English desktop `Display/H3` rendering where a 78px Chinese one belonged forced "藝人管理"
+into an ugly 3-character-then-1 wrap.
+
+`:is()` was chosen specifically because it preserves the exact specificity (0,1,1) of the
+original `html[lang="zh"]` compound selector for *both* branches — this matters because the
+desktop Chinese block must keep outranking the media-less `:root` (see the specificity note on
+that block, D009's original concern); simply adding a second lower-specificity selector would
+have reintroduced that bug for the new branch.
+
+**How to apply:** Any future styleguide specimen that needs to preview Chinese-locale rendering
+must add `data-locale="zh"` to its wrapping element, not rely on `lang="zh"` alone. This does
+not affect the real site — `[locale]/layout.tsx` continues to set `lang` directly on `<html>`,
+which the `html[lang="zh"]` branch still matches exactly as before.

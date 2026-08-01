@@ -176,8 +176,8 @@ graph LR
 Spacing & Sizing has only Desktop/Mobile, so it keys off the media query alone.
 
 **The Desktop/Mobile switch width is not defined in the variables.** The designs are 393px
-and 1440px; `Container/container-small` is 768. Phase 1 must pick the breakpoint and record
-it in `DECISIONS.md` — it is a derived decision, not a design value.
+and 1440px; `Container/container-small` is 768. **Resolved by D009 in `openspec/DECISIONS.md`
+— 1024px**, matching `Container/container-medium`.
 
 ## Known Problems
 
