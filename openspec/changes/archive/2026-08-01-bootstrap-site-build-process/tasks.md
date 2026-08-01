@@ -33,7 +33,7 @@
       non-blocking questions carried into their phases: NAV light/dark trigger (Phase 3),
       localized slugs (Phase 3), contact form target (Phase 15), Desktop/Mobile breakpoint
       width (Phase 1)
-- [ ] 4.3 Commit, archive this change, then `/clear` and open Phase 1
+- [x] 4.3 Committed (`8409f49` scaffold, `f94e476` Phase 0) and archived 2026-08-01
 
 ## 5. Figma MCP quota — RESOLVED 2026-08-01
 
