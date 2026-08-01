@@ -1,13 +1,66 @@
 import Image from "next/image";
-import TaglineWrapper from "./TaglineWrapper";
 import SecondaryCta from "./SecondaryCta";
 
-// Source: desktop symbol 12600:7460 (1440×647 — a full-bleed band, not a card; D-C
-// scope boundary). Mobile occurrence "Service" 12220:2696 has the same content model
-// (numbered tagline + title over an image, description, feature list, Secondary CTA)
-// but stacks instead of splitting side-by-side — ordinary responsive reflow of one
-// shell, not two designs (design.md Derived Sources). Shell only: no Services page
-// grid, no accordion open/close behavior, no section-level padding (D-C).
+// Source: desktop symbol 12600:7460 / mobile occurrence "Service" 12220:2696 —
+// re-verified against fresh Figma output; the two breakpoints are NOT a plain
+// flex-col/flex-row reflow of one shell:
+//   - `description` overlays the IMAGE panel at desktop (white text, bottom of
+//     the title column via justify-between) but sits BELOW the image, on the
+//     dark panel, at mobile — it never appears in both places at once, so this
+//     renders as two `hidden`/`lg:hidden` copies rather than one repositioned
+//     element (the two live in different flex containers entirely).
+//   - Feature rows are side-by-side (fixed 118px title + flex-1 description) at
+//     BOTH breakpoints — this was previously stacking at mobile, which doesn't
+//     match either frame.
+//   - Feature row divider: translucent white (`--opacity-white-15`) at mobile,
+//     solid white at desktop.
+//   - The numbered tag rotates the OPPOSITE direction from `TaglineWrapper`
+//     (`rotate(90deg)` clockwise here, vs. `TaglineWrapper`'s fixed -90deg) —
+//     confirmed in both breakpoint exports, so this is a genuine per-instance
+//     difference, not a mistake to reconcile by changing the shared
+//     primitive. Built inline here, reusing TaglineWrapper's fixed-size
+//     wrapper-box technique (h-[50px] w-[17px], content centered inside)
+//     rather than rotating from `transform-origin: top left` directly —
+//     rotating without a reserved box shifts the visual footprint outside
+//     the element's own flex-allocated space, which the image panel's
+//     `overflow-hidden` then clips away entirely (found by inspecting a
+//     screenshot where the tag was fully invisible, not just misaligned).
+//   - The mobile content overlay has padding on the BOTTOM and RIGHT only
+//     (`pb-[20px] pr-[15px]`, no top/left) — the tag+title sit flush at the
+//     photo's top-left corner. Desktop keeps uniform `p-8` padding on all
+//     sides. Previously this used `p-5` (all sides) uniformly, which inset
+//     the content away from the corner at mobile.
+//   - The tag's own box top-aligns with the title (both get a `pt-5` offset
+//     from the row's top) rather than being vertically centered in its
+//     reserved box — Figma gives the pre-rotation tag a `padding-left: 25`
+//     that becomes a ~20px top offset once rotated, landing it level with
+//     the title's own `padding-top: 20`; centering instead left the tag
+//     sitting visibly above the title.
+//   - The photo bleeds through the outer wrapper's RIGHT padding at mobile
+//     (Figma's photo row is ~378px inside a 393px card with 15px padding on
+//     BOTH sides — 393 − 15 ≈ 378, i.e. only the left inset applies). Fixed
+//     with `mr-[-15px]` on the photo row, canceling just the right side of
+//     the outer wrapper's padding; the content overlay's own `pr-[15px]`
+//     still keeps the tag/title text clear of that now-extended edge.
+//   - The mobile description/features panel had a stray `p-8` (32px on all
+//     sides) that isn't in the mobile spec at all — it added extra
+//     horizontal inset beyond the outer wrapper's own 15px, so the
+//     description text didn't line up with the tag above it. Mobile now
+//     only gets vertical spacing; `p-8` applies at `lg:` only.
+//   - The tag+title content is TOP-anchored within the photo at both
+//     breakpoints (`align-items: flex-start` in both exports) — previously
+//     this used `items-end` on the image container, bottom-anchoring the
+//     content and leaving a large empty gap above the title that doesn't
+//     exist in the design. Mobile photo height is 227px, not 300px.
+//   - The whole card sits inside its OWN inset padding, which is intrinsic to
+//     this component (confirmed in both breakpoint exports, not page-section
+//     padding a caller adds — corrects the original Phase 2 "no padding"
+//     read). Mobile: `px-[15px] py-[30px]` on a wrapper that is ALSO the
+//     card's dark background (unifying photo + content into one dark block,
+//     photo inset at the top). Desktop: `p-8` (32px) on a transparent
+//     wrapper — the photo and dark panel sit side by side inside it, each
+//     keeping their own background.
+// Shell only: no Services page grid, no accordion open/close behavior.
 export type ServiceCardFeature = {
   title: string;
   description: string;
@@ -33,36 +86,52 @@ export default function ServiceCard({
   className?: string;
 }) {
   return (
-    <div className={`flex w-full flex-col items-stretch lg:flex-row ${className ?? ""}`.trim()}>
-      <div className="relative flex h-[300px] w-full shrink-0 items-end overflow-hidden lg:h-auto lg:min-h-[520px] lg:flex-1">
-        <Image src={image.src} alt={image.alt} fill className="object-cover" />
-        <div className="relative z-10 flex w-full items-start gap-4 p-5 pb-7 lg:p-8">
-          <TaglineWrapper label={index} tone="light" />
-          <p className="font-display text-display-h3 min-w-0 flex-1 [word-break:break-word] pt-5 font-bold uppercase text-(--color-basic-background)">
-            {title}
-          </p>
-        </div>
-      </div>
-      <div className="flex w-full flex-col items-start gap-8 bg-(--color-basic-accent) p-8 lg:w-[656px] lg:shrink-0">
-        <p className="font-body text-body-l text-(--color-basic-background)">{description}</p>
-        <div className="flex w-full flex-col items-stretch">
-          {features.map((feature) => (
-            <div
-              key={feature.title}
-              className="flex flex-col gap-3 border-t border-(--opacity-white-15) py-[11px] lg:flex-row"
-            >
-              <p className="font-display text-display-h7 w-[118px] shrink-0 font-bold uppercase text-(--color-brand-primary-green)">
-                {feature.title}
+    <div
+      className={`bg-(--color-basic-accent) px-[15px] py-[30px] lg:bg-transparent lg:p-8 ${className ?? ""}`.trim()}
+    >
+      <div className="flex w-full flex-col items-stretch lg:flex-row">
+        <div className="relative mr-[-15px] flex h-[227px] w-[calc(100%+15px)] shrink-0 items-start overflow-hidden lg:mr-0 lg:h-auto lg:w-auto lg:min-h-[520px] lg:flex-1">
+          <Image src={image.src} alt={image.alt} fill className="object-cover" />
+          <div className="relative z-10 flex w-full items-start gap-1 pr-[15px] pb-[20px] lg:h-full lg:p-8">
+            <div className="flex h-[50px] w-[17px] shrink-0 items-start justify-center pt-[33px] lg:pt-0">
+              <div className="flex rotate-90 items-center gap-[10px] whitespace-nowrap lg:gap-[8px]">
+                <span className="size-[6px] shrink-0 bg-(--color-brand-primary-green)" />
+                <span className="font-body text-label-m font-normal uppercase text-(--color-basic-background)">
+                  {index}
+                </span>
+              </div>
+            </div>
+            <div className="flex min-w-0 flex-1 flex-col gap-4 lg:h-full lg:justify-between">
+              <p className="font-display text-display-h3 [word-break:break-word] pt-5 font-bold uppercase text-(--color-basic-background) lg:pt-0">
+                {title}
               </p>
-              <p className="font-body text-body-xs flex-1 text-(--color-basic-background)">
-                {feature.description}
+              <p className="hidden font-body text-[15px] leading-[23.25px] text-(--color-basic-background) lg:block">
+                {description}
               </p>
             </div>
-          ))}
+          </div>
         </div>
-        <SecondaryCta href={ctaHref} tone="light" className="self-center">
-          {ctaLabel}
-        </SecondaryCta>
+        <div className="flex w-full flex-col items-start gap-8 bg-(--color-basic-accent) pt-[46px] lg:w-[656px] lg:shrink-0 lg:p-8">
+          <p className="font-body text-body-l text-(--color-basic-background) lg:hidden">{description}</p>
+          <div className="flex w-full flex-col items-stretch gap-4 lg:gap-0">
+            {features.map((feature) => (
+              <div
+                key={feature.title}
+                className="flex items-start gap-3 border-t border-(--opacity-white-15) pt-[10px] lg:border-(--color-basic-background) lg:py-[20px]"
+              >
+                <p className="font-display text-display-h7 w-[118px] shrink-0 font-bold uppercase text-(--color-brand-primary-green)">
+                  {feature.title}
+                </p>
+                <p className="font-body text-body-xs flex-1 text-(--color-basic-background)">
+                  {feature.description}
+                </p>
+              </div>
+            ))}
+          </div>
+          <SecondaryCta href={ctaHref} tone="light" className="self-center">
+            {ctaLabel}
+          </SecondaryCta>
+        </div>
       </div>
     </div>
   );

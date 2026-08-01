@@ -8,6 +8,7 @@ import {
 } from "./_components/TokenSpecimens";
 import PrimitiveSpecimens from "./_components/PrimitiveSpecimens";
 import CardSpecimens from "./_components/CardSpecimens";
+import ShellSpecimens from "./_components/ShellSpecimens";
 
 export const metadata: Metadata = {
   title: "Styleguide — In Utero Inc.",
@@ -76,6 +77,16 @@ export default function StyleguidePage() {
       <section lang="zh" data-locale="zh" className="flex flex-col gap-10">
         <h2 className="font-display text-display-h5">卡片元件 — 繁體中文</h2>
         <CardSpecimens locale="zh" />
+      </section>
+
+      <section className="flex flex-col gap-6">
+        <h2 className="font-display text-display-h5">Shell — Nav &amp; Footer</h2>
+        <ShellSpecimens />
+      </section>
+
+      <section lang="zh" data-locale="zh" className="flex flex-col gap-6">
+        <h2 className="font-display text-display-h5">頁面框架 — 繁體中文</h2>
+        <ShellSpecimens locale="zh" />
       </section>
     </main>
   );

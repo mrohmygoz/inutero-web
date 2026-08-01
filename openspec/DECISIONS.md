@@ -25,6 +25,12 @@ Do **not** record things readable from the code or the design itself.
 - [D014 — Interaction states for primitives are derived, not designed](#d014--interaction-states-for-primitives-are-derived-not-designed)
 - [D015 — Fill→hug width switch for buttons at 1024px](#d015--fillhug-width-switch-for-buttons-at-1024px)
 - [D016 — Styleguide Chinese specimens need `data-locale="zh"`, not just `lang="zh"`](#d016--styleguide-chinese-specimens-need-data-localezh-not-just-langzh)
+- [D017 — NAV theme is a static per-page prop, not scroll-driven](#d017--nav-theme-is-a-static-per-page-prop-not-scroll-driven)
+- [D018 — One typed route table, `app/_lib/routes.ts`](#d018--one-typed-route-table-app_libroutests)
+- [D019 — `Nav` is a client component; `Footer` stays a server component](#d019--nav-is-a-client-component-footer-stays-a-server-component)
+- [D020 — Detail-route stubs use a placeholder slug](#d020--detail-route-stubs-use-a-placeholder-slug)
+- [D021 — Nav collapses to the mobile menu at 1024px](#d021--nav-collapses-to-the-mobile-menu-at-1024px)
+- [D022 — Footer's non-route content is scoped down, not omitted](#d022--footers-non-route-content-is-scoped-down-not-omitted)
 
 ## D001 — Locale strategy
 
@@ -289,3 +295,82 @@ have reintroduced that bug for the new branch.
 must add `data-locale="zh"` to its wrapping element, not rely on `lang="zh"` alone. This does
 not affect the real site — `[locale]/layout.tsx` continues to set `lang` directly on `<html>`,
 which the `html[lang="zh"]` branch still matches exactly as before.
+
+## D017 — NAV theme is a static per-page prop, not scroll-driven
+
+**Decision:** `Nav` takes `theme: 'light' | 'dark'` (default `'light'`). Pages under a
+full-bleed hero pass `'dark'`. Nothing watches scroll position.
+
+**Why:** The design ships `Desktop NAV` (`12653:5366`) and `Desktop NAV/DARK` (`12653:5259`) as
+two separate component definitions with no transition, intermediate state, or scroll annotation
+anywhere in the file — matching D007's earlier finding that the dark NAV is a per-component
+variant, not a theme system. Phase 3's occurrence survey confirmed real usage: the Home desktop
+frame (`12405:6998`) places a `Desktop NAV/DARK` instance directly over the Hero.
+
+**How to apply:** A page phase building a hero checks its own Figma frame for a dark NAV
+instance and passes `theme="dark"` accordingly — `Nav` does not infer this itself.
+
+## D018 — One typed route table, `app/_lib/routes.ts`
+
+**Decision:** A single `routes` array (`key`, path `segment`, per-locale `label`) is the one
+source `Nav`, `Footer`, the locale switcher, and stub-page metadata all read from.
+`openspec/reference/routes.md` stays the human source of truth; `routes.ts` is its
+machine-readable transcription.
+
+**Why:** The nav and footer link sets overlap but are not identical (footer also links a
+Services sub-group with no route of its own), so hardcoding links per component would create
+two places for the same path to drift. Display labels live in `routes.ts` rather than the i18n
+dictionaries because they are structural, not prose — duplicating them into `en.ts`/`zh.ts`
+would be a second copy of the same string (D010 still governs actual prose copy).
+
+## D019 — `Nav` is a client component; `Footer` stays a server component
+
+**Decision:** `Nav` is `'use client'` in full (not split into server shell + client islands);
+`Footer` has no interactivity and stays a server component.
+
+**Why:** `Nav` needs `usePathname` for the locale switcher and `useState` for the mobile menu.
+It is a few hundred bytes of markup with no data dependency, so the JS cost of shipping it whole
+is smaller than the complexity cost of splitting one visual element across three files — the
+mobile expanded state re-renders the entire bar anyway, so an island boundary would end up
+wrapping the whole component regardless.
+
+## D020 — Detail-route stubs use a placeholder slug
+
+**Decision:** `portfolio/[slug]` and `news/[slug]` ship with `generateStaticParams` returning a
+single hardcoded `"placeholder"` slug per locale, relying on `dynamicParams = false` (already
+set on the locale layout) to 404 every other slug.
+
+**Why:** The route shape is exactly what "the shell is navigable end to end" needs to prove, and
+the 404-on-unknown-slug behavior (part of this phase's `localized-routing` spec delta) is easier
+to verify now than to retrofit later. Building the real MDX pipeline here would violate the
+one-phase rule — Phase 4 replaces the hardcoded list with a content directory scan and this
+behavior carries over unchanged.
+
+## D021 — Nav collapses to the mobile menu at 1024px
+
+**Decision:** `Nav` switches from the inline desktop link row to the hamburger/mobile-menu
+button at `lg` (1024px), matching D009 (token mode switch) and D015 (button fill→hug switch).
+
+**Why:** The designed frames are 393px and 1440px; the collapse point between them is not a
+design value (falls under D005). Reusing 1024px is the third derivation to land on the same
+width, which is the point — one boundary for type scale, button width, and nav layout means a
+page never renders desktop navigation above mobile type or vice versa.
+
+## D022 — Footer's non-route content is scoped down, not omitted
+
+**Decision:** The Footer's Services sub-links (Artist Management, International Booking & Tour
+Planning, PR & Marketing, Event Production) all point at the whole `/services` route rather than
+per-section anchors. The legal links (Privacy Policy, Terms of Service, Cookies Settings) render
+as inert `<span>`s, not `<a>`s.
+
+**Why:** Neither Services' in-page anchor structure nor any legal page was ever in scope for
+this phase — Services content is Phase 8/9, and legal pages were never in the nine-route table
+in `routes.md` at all. Rendering the Services group as real, working links to the whole page
+surfaces a visible part of the Figma footer usefully; rendering the legal links as dead
+`<a href="#">`s would silently promise a destination that never resolves, which is worse than a
+plain label.
+
+**How to apply:** Add real routes for legal pages, or per-section anchors for Services, only if
+a later phase or the user decides they're in scope — not assumed here. If Phase 8/9 adds anchor
+IDs to the Services page sections, `Footer.tsx`'s four Services links should be updated to point
+at them instead of the bare route.

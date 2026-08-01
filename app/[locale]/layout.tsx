@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 import "../globals.css";
 import { fontVariables } from "../_lib/fonts";
 import { getDictionary, isLocale, locales, type Locale } from "../_lib/i18n";
+import Nav from "../_components/Nav";
+import Footer from "../_components/Footer";
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -43,7 +45,11 @@ export default async function LocaleLayout({
 
   return (
     <html lang={locale satisfies Locale} className={fontVariables}>
-      <body className="min-h-full antialiased">{children}</body>
+      <body className="min-h-full antialiased">
+        <Nav locale={locale} />
+        {children}
+        <Footer locale={locale} />
+      </body>
     </html>
   );
 }
