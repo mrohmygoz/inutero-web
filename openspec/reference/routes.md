@@ -27,17 +27,21 @@ from serving the same page at `/about` and `/en/about`.
 
 ## Routes
 
-| Route (en) | Route (zh) | Display name (EN) | Display name (TC) | Dynamic |
-| :--- | :--- | :--- | :--- | :--- |
-| `/en` | `/zh` | Home | 首頁 | — |
-| `/en/about` | `/zh/about` | Our Story | 關於子皿 | — |
-| `/en/services` | `/zh/services` | Services | 服務項目 | — |
-| `/en/portfolio` | `/zh/portfolio` | Portfolio | 過往案例 | — |
-| `/en/portfolio/[slug]` | `/zh/portfolio/[slug]` | Portfolio Details | 專案內容 | MDX |
-| `/en/artists` | `/zh/artists` | Featured Artists | 合作藝人 | — |
-| `/en/news` | `/zh/news` | News | 子皿超音波 | — |
-| `/en/news/[slug]` | `/zh/news/[slug]` | News Details | 文章內容 | MDX |
-| `/en/contact` | `/zh/contact` | Contact Us | 聯絡我們 | — |
+**Link label** is what NAV and Footer render. **Page name** is what the page itself is
+called (H1, eyebrow, metadata title). They are the same everywhere except `/artists` —
+see the drift table below.
+
+| Route (en) | Route (zh) | Link label (EN) | Page name (EN) | Display name (TC) | Dynamic |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| `/en` | `/zh` | Home | Home | 首頁 | — |
+| `/en/about` | `/zh/about` | Our Story | Our Story | 關於子皿 | — |
+| `/en/services` | `/zh/services` | Services | Services | 服務項目 | — |
+| `/en/portfolio` | `/zh/portfolio` | Portfolio | Portfolio | 過往案例 | — |
+| `/en/portfolio/[slug]` | `/zh/portfolio/[slug]` | — | Portfolio Details | 專案內容 | MDX |
+| `/en/artists` | `/zh/artists` | **Artists** | Featured Artists | 合作藝人 | — |
+| `/en/news` | `/zh/news` | News | News | 子皿超音波 | — |
+| `/en/news/[slug]` | `/zh/news/[slug]` | — | News Details | 文章內容 | MDX |
+| `/en/contact` | `/zh/contact` | Contact Us | Contact Us | 聯絡我們 | — |
 
 Slugs stay English in both locales. This is reversible — if localized slugs are
 wanted later, that is a routing change, so decide before Phase 3 ships stub routes.
@@ -47,8 +51,19 @@ wanted later, that is a routing change, so decide before Phase 3 ships stub rout
 | Route | Sitemap said | Desktop said | Mobile said | Canonical |
 | :--- | :--- | :--- | :--- | :--- |
 | `/about` | 關於子皿 About In Utero | Our Story | Our Stories | **Our Story** |
-| `/artists` | 合作藝人 Featured Artists | Our Artist | Featured Artists | **Featured Artists** |
+| `/artists` | 合作藝人 Featured Artists | Our Artist | Featured Artists | **Featured Artists** (page) / **Artists** (link) |
 | `/portfolio/[slug]` | 專案內容 Portfolio Details | Portfolio Details | Project Details | **Portfolio Details** |
+
+The `/artists` row compares **page frame names**, which is why it originally resolved to a
+single value. The link label is a separate string, and every place the design actually
+renders it agrees on **"Artists"**: desktop NAV `12573:10189`, mobile expanded menu
+`10270:2144`, desktop expanded menu `12612:8541`, and the Footer page-links column
+`12573:9181`. Corrected 2026-08-02 — "Featured Artists" wrapped to two lines in the
+393px menu and broke that frame's fixed 852px vertical layout.
+
+One unresolved drift remains in the Footer, not the NAV: its page-links column reads
+**"Contacts"** where the NAV reads "Contact Us". Not changed here — the NAV is the
+canonical link label and `Footer.tsx` currently renders from the same `routes.ts` entry.
 
 ## Shared Sections by Page
 

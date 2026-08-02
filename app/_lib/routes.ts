@@ -15,6 +15,11 @@ type RouteDef = {
   key: RouteKey;
   /** Path segment after the locale prefix. Empty string for home. */
   segment: string;
+  /**
+   * The NAV/Footer *link* label — not necessarily the page's own name. These
+   * diverge on `/artists`, where the design labels every link "Artists" but
+   * names the page "Featured Artists" (D004 amendment).
+   */
   label: Record<Locale, string>;
 };
 
@@ -23,7 +28,7 @@ export const routes: readonly RouteDef[] = [
   { key: "about", segment: "about", label: { en: "Our Story", zh: "關於子皿" } },
   { key: "services", segment: "services", label: { en: "Services", zh: "服務項目" } },
   { key: "portfolio", segment: "portfolio", label: { en: "Portfolio", zh: "過往案例" } },
-  { key: "artists", segment: "artists", label: { en: "Featured Artists", zh: "合作藝人" } },
+  { key: "artists", segment: "artists", label: { en: "Artists", zh: "合作藝人" } },
   { key: "news", segment: "news", label: { en: "News", zh: "子皿超音波" } },
   { key: "contact", segment: "contact", label: { en: "Contact Us", zh: "聯絡我們" } },
 ] as const;

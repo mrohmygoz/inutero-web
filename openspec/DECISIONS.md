@@ -70,11 +70,18 @@ slugs. Reversible, but only cheaply before stub routes ship in Phase 3.
 ## D004 — Canonical page naming
 
 **Decision:** Where the sitemap, desktop, and mobile designs disagree, `openspec/reference/routes.md`
-wins. Notably: `/about` is **Our Story**, `/artists` is **Featured Artists**,
-`/portfolio/[slug]` is **Portfolio Details**.
+wins. Notably: `/about` is **Our Story**, `/portfolio/[slug]` is **Portfolio Details**, and
+`/artists` is **Featured Artists** as a page but **Artists** as a NAV/Footer link label.
 
 **Why:** Three sources named these differently. Without one canonical table, every phase
 re-decides and the nav ends up inconsistent with page titles.
+
+**Amended 2026-08-02:** the original table conflated *page name* with *link label*. Those
+are two strings, and `/artists` is the one route where they differ — the design renders
+"Artists" in every NAV and Footer instance while naming the page frame "Featured Artists".
+The long label wrapped to two lines in the 393px expanded menu and pushed that frame's
+fixed 852px layout below the fold, which is what surfaced the conflation. `routes.md` now
+carries both columns; `routes.ts` `label` is the *link* label.
 
 ## D005 — Tablet breakpoint is derived, not designed
 

@@ -5,13 +5,20 @@ import { usePathname } from "next/navigation";
 import type { Locale } from "../_lib/i18n";
 import { localizedHref, routes, swapLocale, type RouteKey } from "../_lib/routes";
 import Logo from "./Logo";
+import LogoMark from "./LogoMark";
 
 // Source: Desktop NAV 12653:5366 (light) / Desktop NAV/DARK 12653:5259 (dark),
 // EN 12573:10177/12573:10140, CN 12653:5367/12653:5260. Mobile NAV 12219:1100
-// carries both Light/Dark as a real component property. Expanded/menu overlay:
-// mobile 10270:2118 (EN) / 12368:2386 (TC); the desktop expanded frame
-// (12612:8541) is a stray documentation duplicate with no real trigger in the
-// compact desktop bar — not built (see design.md Derived Sources).
+// carries both Light/Dark as a real component property (light symbol
+// 12212:6237). Expanded/menu overlay: mobile 10270:2118 (EN) / 12368:2386 (TC);
+// the desktop expanded frame (12612:8541) is a stray documentation duplicate
+// with no real trigger in the compact desktop bar — not built (see design.md
+// Derived Sources).
+//
+// The two breakpoints use *different logo lockups*, which is deliberate in the
+// design, not drift: desktop is the 97x89 `Logo` including the "IN UTERO"
+// wordmark; mobile is the 48x48 square `LogoMark` (wordmark-less seal) paired
+// with a 225px rule that runs off the left edge through the mark.
 //
 // theme is a static per-page prop (D-A) — no scroll-driven switching. Client
 // component (D-C) for the locale switcher and mobile menu state; nav collapses
@@ -20,16 +27,24 @@ export type NavTheme = "light" | "dark";
 
 const navRoutes: RouteKey[] = ["about", "services", "portfolio", "artists", "news", "contact"];
 
-const themeClassName: Record<NavTheme, { border: string; text: string; localePill: string }> = {
+const themeClassName: Record<
+  NavTheme,
+  { border: string; text: string; mark: string; localePill: string; localeOutline: string }
+> = {
   light: {
     border: "border-(--color-basic-accent)",
     text: "text-(--color-basic-accent)",
-    localePill: "bg-(--color-basic-accent) text-(--color-basic-background)",
+    // Mobile light: mark + rule are brand green, not black (12212:6237).
+    mark: "text-(--color-brand-primary-green)",
+    localePill: "bg-(--color-basic-accent) border-(--color-basic-accent) text-(--color-basic-background)",
+    localeOutline: "border-(--opacity-neutral-darkest-20) text-(--color-basic-accent)",
   },
   dark: {
     border: "border-(--color-basic-background)",
     text: "text-(--color-basic-background)",
-    localePill: "bg-(--color-basic-background) text-(--color-basic-accent)",
+    mark: "text-(--color-basic-background)",
+    localePill: "bg-(--color-basic-background) border-(--color-basic-background) text-(--color-basic-accent)",
+    localeOutline: "border-(--color-basic-background) text-(--color-basic-background)",
   },
 };
 
@@ -52,11 +67,25 @@ export default function Nav({ locale, theme = "light" }: { locale: Locale; theme
 
   return (
     <>
+      {/* Mobile bar is a fixed 64px row (12212:6237); desktop drops the bottom
+          hairline and grows to fit the 89px logo box. */}
       <div
-        className={`flex items-center justify-between border-b-[0.542px] px-3 py-[10px] lg:justify-start lg:border-b-0 lg:px-8 lg:pt-[30px] lg:pb-[10px] ${tone.border}`}
+        className={`relative flex h-16 items-center justify-between border-b-[0.542px] px-3 lg:h-auto lg:justify-start lg:border-b-0 lg:px-8 lg:pt-[30px] lg:pb-[10px] ${tone.border}`}
       >
-        <a href={localizedHref("home", locale)} aria-label="In Utero" className="block shrink-0">
-          <Logo className={`aspect-[97/89] h-12 lg:h-[89px] ${tone.text}`} />
+        {/* Mobile rule: starts flush at the left edge and stops at 225px,
+            crossing the mark at y=31.73 (Line 1, 12563:4300). */}
+        <span
+          aria-hidden
+          className={`pointer-events-none absolute top-[31px] left-0 h-[2px] w-[225px] bg-current lg:hidden ${tone.mark}`}
+        />
+
+        <a
+          href={localizedHref("home", locale)}
+          aria-label="In Utero"
+          className="relative z-10 block shrink-0 lg:-mr-[10px]"
+        >
+          <LogoMark className={`size-12 lg:hidden ${tone.mark}`} />
+          <Logo className={`hidden aspect-[97/89] h-[89px] lg:block ${tone.text}`} />
         </a>
 
         {/* Desktop only. The pt-10/pb-48 wrapper reproduces the exact Figma
@@ -67,7 +96,7 @@ export default function Nav({ locale, theme = "light" }: { locale: Locale; theme
         <div className="hidden flex-1 items-center justify-end gap-[23px] pt-[10px] pb-[48px] lg:flex">
           <nav
             aria-label="Primary"
-            className={`flex flex-1 items-end justify-end gap-6 border-b-3 pr-[13px] pb-[6px] pl-[13px] ${tone.border}`}
+            className={`flex flex-1 items-end justify-end gap-6 border-b-3 px-[13px] pb-[6px] ${tone.border}`}
           >
             {navRoutes.map((key) => {
               const route = routes.find((r) => r.key === key)!;
@@ -84,18 +113,19 @@ export default function Nav({ locale, theme = "light" }: { locale: Locale; theme
           </nav>
           <a
             href={swapLocale(pathname, otherLocale)}
-            className={`inline-flex shrink-0 self-stretch items-center justify-center px-[11px] font-body text-label-m uppercase focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-brand-primary-green) ${tone.localePill}`}
+            className={`font-body text-body-l inline-flex shrink-0 items-center justify-center border px-[11px] py-[7px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-brand-primary-green) ${tone.localePill}`}
           >
             {otherLocaleLabel}
           </a>
         </div>
 
         {/* Mobile only — outline-style locale pill (matches mobile NAV
-            12219:1100, not the desktop solid-fill pill) + menu trigger. */}
-        <div className="flex items-stretch gap-2 lg:hidden">
+            12219:1100, not the desktop solid-fill pill) + menu trigger.
+            Both sit in a 33px-tall row ending 12px from the right edge. */}
+        <div className="relative z-10 flex h-[33px] items-stretch gap-2 lg:hidden">
           <a
             href={swapLocale(pathname, otherLocale)}
-            className={`inline-flex items-center justify-center border-[0.542px] px-[12.5px] font-body text-label-m uppercase focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-brand-primary-green) ${tone.border} ${tone.text}`}
+            className={`font-body text-label-m inline-flex items-center justify-center border-[0.542px] px-[12.542px] uppercase focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-brand-primary-green) ${tone.localeOutline}`}
           >
             {otherLocaleLabel}
           </a>
@@ -104,7 +134,7 @@ export default function Nav({ locale, theme = "light" }: { locale: Locale; theme
             aria-expanded={menuOpen}
             aria-controls="nav-mobile-menu"
             onClick={() => setMenuOpen((open) => !open)}
-            className="inline-flex h-[33px] items-center justify-center bg-(--color-brand-accent-neon) px-5 py-[9px] font-body text-label-m font-normal text-(--color-basic-accent) uppercase focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-brand-primary-green)"
+            className="font-body text-label-m inline-flex items-center justify-center bg-(--color-brand-accent-neon) px-5 font-normal text-(--color-basic-accent) uppercase focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-brand-primary-green)"
           >
             {menuOpen ? closeLabel : "menu"}
           </button>
@@ -116,24 +146,30 @@ export default function Nav({ locale, theme = "light" }: { locale: Locale; theme
           id="nav-mobile-menu"
           className="fixed inset-0 z-50 flex flex-col overflow-y-auto bg-(--color-brand-primary-green) lg:hidden"
         >
-          <div className="flex items-center justify-end px-3 pt-[26px]">
+          {/* CLOSE is flush to the right edge in both locales — no gutter
+              (10270:2154 ends at x=393.8, 12368:2402 at x=393). */}
+          <div className="flex shrink-0 justify-end pt-[25.81px]">
             <button
               type="button"
               aria-label={closeLabel}
               onClick={() => setMenuOpen(false)}
-              className="inline-flex items-center justify-center bg-(--color-basic-background) px-5 py-[9px] font-body text-label-m text-(--color-basic-accent) uppercase focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-brand-primary-green)"
+              className="font-body text-label-m inline-flex items-center justify-center bg-(--color-basic-background) px-5 py-[9px] text-(--color-basic-accent) uppercase focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-brand-primary-green)"
             >
               {closeLabel}
             </button>
           </div>
 
-          <Logo className="mx-auto mt-8 aspect-[97/89] h-[115px] shrink-0 text-(--color-basic-background)" />
+          <LogoMark className="mx-auto mt-[10.19px] size-[115px] shrink-0 text-(--color-basic-background)" />
 
-          <nav aria-label="Mobile" className="flex flex-1 flex-col items-center pt-6">
+          <nav aria-label="Mobile" className="mt-[56px] flex flex-col">
             <a
               href={localizedHref("home", locale)}
               onClick={() => setMenuOpen(false)}
-              className="font-display w-full border-b border-(--color-basic-background) px-[13px] py-[6px] text-center text-[54px] leading-[0.7] font-bold tracking-[-0.54px] text-(--color-basic-accent) italic uppercase focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-brand-primary-green)"
+              className={`font-display w-full border-b border-(--color-basic-background) px-[13px] py-[6px] text-center font-bold text-(--color-basic-accent) uppercase focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-brand-primary-green) ${
+                locale === "en"
+                  ? "text-[81px] leading-[0.7] tracking-[-0.81px] italic"
+                  : "text-display-h3"
+              }`}
             >
               {locale === "en" ? "Home" : "首頁"}
             </a>
@@ -152,14 +188,14 @@ export default function Nav({ locale, theme = "light" }: { locale: Locale; theme
             })}
           </nav>
 
-          <div className="flex flex-col items-center gap-6 py-8">
-            <div className="flex gap-8">
+          <div className="mt-auto shrink-0">
+            <div className="flex h-[72px] items-center justify-center gap-8">
               {(["facebook", "instagram", "x", "youtube"] as const).map((platform) => (
                 <a
                   key={platform}
                   href="#"
                   aria-label={platform}
-                  className="relative block size-[37px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-basic-background)"
+                  className="relative block size-[37.4px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-basic-background)"
                 >
                   <span
                     className="absolute inset-0 bg-(--color-basic-accent)"
@@ -179,7 +215,7 @@ export default function Nav({ locale, theme = "light" }: { locale: Locale; theme
             </div>
             <a
               href={swapLocale(pathname, otherLocale)}
-              className="w-full bg-(--color-basic-accent) py-[15px] text-center font-body text-body-l text-(--color-basic-background)"
+              className="font-body text-body-l mt-[2px] block w-full bg-(--color-basic-accent) py-[15px] text-center text-(--color-basic-background)"
             >
               {locale === "en" ? "繁體中文" : "English"}
             </a>
