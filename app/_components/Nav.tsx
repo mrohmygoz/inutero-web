@@ -3,7 +3,13 @@
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import type { Locale } from "../_lib/i18n";
-import { localizedHref, routes, swapLocale, type RouteKey } from "../_lib/routes";
+import {
+  localizedHref,
+  navThemeForPath,
+  routes,
+  swapLocale,
+  type RouteKey,
+} from "../_lib/routes";
 import Logo from "./Logo";
 import LogoMark from "./LogoMark";
 
@@ -48,13 +54,17 @@ const themeClassName: Record<
   },
 };
 
-export default function Nav({ locale, theme = "light" }: { locale: Locale; theme?: NavTheme }) {
+export default function Nav({ locale, theme }: { locale: Locale; theme?: NavTheme }) {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
+  // An explicit prop still wins (the styleguide passes both variants); otherwise
+  // the route table decides, since the layout renders this and pages cannot pass
+  // props upward. Static per page either way — never scroll-driven.
+  const resolvedTheme: NavTheme = theme ?? navThemeForPath(pathname);
   const otherLocale: Locale = locale === "en" ? "zh" : "en";
   const otherLocaleLabel = locale === "en" ? "繁中" : "EN";
   const closeLabel = locale === "en" ? "Close" : "返回";
-  const tone = themeClassName[theme];
+  const tone = themeClassName[resolvedTheme];
 
   useEffect(() => {
     if (!menuOpen) return;
@@ -69,8 +79,13 @@ export default function Nav({ locale, theme = "light" }: { locale: Locale; theme
     <>
       {/* Mobile bar is a fixed 64px row (12212:6237); desktop drops the bottom
           hairline and grows to fit the 89px logo box. */}
+      {/* On dark-nav pages the bar is *inside* the hero frame in Figma (e.g.
+          12612:11873 sits at y=0 within Hero 12405:6947), so it overlays the
+          page rather than pushing it down. Light pages keep it in normal flow. */}
       <div
-        className={`relative flex h-16 items-center justify-between border-b-[0.542px] px-3 lg:h-auto lg:justify-start lg:border-b-0 lg:px-8 lg:pt-[30px] lg:pb-[10px] ${tone.border}`}
+        className={`flex h-16 items-center justify-between border-b-[0.542px] px-3 lg:h-auto lg:justify-start lg:border-b-0 lg:px-8 lg:pt-[30px] lg:pb-[10px] ${
+          resolvedTheme === "dark" ? "absolute inset-x-0 top-0 z-40" : "relative"
+        } ${tone.border}`}
       >
         <a
           href={localizedHref("home", locale)}

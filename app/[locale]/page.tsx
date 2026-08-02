@@ -1,16 +1,20 @@
 import { notFound } from "next/navigation";
-import { getDictionary, isLocale } from "../_lib/i18n";
+import { isLocale } from "../_lib/i18n";
+import HomeHero from "./_components/HomeHero";
+import HomeIntro from "./_components/HomeIntro";
 
+// Phase 5 builds the top half of Home only — the hero and the intro (Mission).
+// Services (12210:2346), Featured Projects (12210:2392) and the UniversalCTA
+// block are Phase 6, so the page currently ends at the intro and falls into the
+// Footer. That is the phase boundary, not a missing section.
 export default async function Home({ params }: PageProps<"/[locale]">) {
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
 
-  const dict = getDictionary(locale);
-
   return (
-    <main className="flex min-h-full flex-col items-center justify-center gap-4 px-(--spacing-page-padding) py-(--spacing-page-padding) text-center">
-      <h1 className="font-display text-display-h1">{dict.common.siteName}</h1>
-      <p className="font-body text-body-l">{dict.home.placeholder}</p>
+    <main>
+      <HomeHero locale={locale} />
+      <HomeIntro locale={locale} />
     </main>
   );
 }

@@ -41,6 +41,13 @@ Do **not** record things readable from the code or the design itself.
 - [D030 — `UniversalCTA` copy: English headline in both locales; two source conflicts resolved](#d030--universalcta-copy-english-headline-in-both-locales-two-source-conflicts-resolved)
 - [D031 — The article share row is built; the desktop-only left rail is not, and its X glyph replaces the row's YouTube](#d031--the-article-share-row-is-built-the-desktop-only-left-rail-is-not-and-its-x-glyph-replaces-the-rows-youtube)
 - [D032 — The content matrix outranks Figma for copy; Figma keeps layout](#d032--the-content-matrix-outranks-figma-for-copy-figma-keeps-layout)
+- [D033 — Home hero and intro are page-local sections](#d033--home-hero-and-intro-are-page-local-sections)
+- [D034 — The stacked layout holds to 1440px; the collage engages above it](#d034--the-stacked-layout-holds-to-1440px-the-collage-engages-above-it)
+- [D035 — The Home hero headline uses the Latin display scale in both locales](#d035--the-home-hero-headline-uses-the-latin-display-scale-in-both-locales)
+- [D036 — The dark NAV overlays the hero rather than sitting above it](#d036--the-dark-nav-overlays-the-hero-rather-than-sitting-above-it)
+- [D037 — The Intro heading gradient is written literally, not tokenized](#d037--the-intro-heading-gradient-is-written-literally-not-tokenized)
+- [D038 — The ZH Intro heading wraps naturally at the designed Chinese scale](#d038--the-zh-intro-heading-wraps-naturally-at-the-designed-chinese-scale)
+- [D039 — The floating desktop `MENU` square is not built](#d039--the-floating-desktop-menu-square-is-not-built)
 
 ## D001 — Locale strategy
 
@@ -634,3 +641,128 @@ matrix, #3 for the design. That is the point of escalating rather than applying 
 mechanically: a matrix row contradicting a TC frame its author may never have opened is a
 question, not a mandate. The general rule still stands; these are two named exceptions to it,
 and neither was decided by the implementer.
+
+## D033 — Home hero and intro are page-local sections
+
+**Decision:** `HomeHero` and `HomeIntro` live in `app/[locale]/_components/`, not
+`app/_components/`, and get no `INVENTORY.md` entry.
+
+**Why:** Each has exactly one consumer and no variant surface beyond locale, which the
+page already has from route params. The `TaglineWrapper` precedent applies: a Phase 2
+primitive extracted "for consistency", found to have a single consumer, and deleted again
+in Phase 3. `INVENTORY.md` earns its keep by listing what a later phase would otherwise
+rebuild; a Home-only hero is not that.
+
+**How to apply:** Promote a section to `app/_components/` when a *second* page needs it,
+and add the INVENTORY entry at that point — not in anticipation.
+
+## D034 — The stacked layout holds to 1440px; the collage engages above it
+
+**Decision:** Home's hero and intro run their 393px stacked layout from 393px to 1439px.
+The 1440px composition engages at `min-width: 1440px`, exposed as the Tailwind `desktop:`
+variant (`--breakpoint-desktop: 1440px` in `@theme`). This is deliberately *not* the same
+breakpoint as D009 (token switch) or D021 (NAV collapse), both at 1024px.
+
+**Why:** The desktop hero is placed against a fixed 1440px canvas — three overlapping
+photographs and four display words at absolute coordinates. It does not interpolate:
+shrinking it changes which photo covers which word. User decision 2026-08-02, chosen over
+scaling the collage in relative units (the overlaps become unverifiable against any frame)
+and over a centered fixed 1440px canvas (introduces horizontal overflow).
+
+**How to apply:**
+
+- Build the stacked subtree **fluid**, never to 393px fixed widths — it has to survive a
+  1280px viewport. Use `w-[calc(100%-Npx)] max-w-[Npx]` rather than a bare fixed width.
+- The stacked subtree carries `tokens-mobile-type`, which pins the display sizes back to
+  their mobile-mode values for the 1024–1440 band. Without it the mobile layout renders at
+  the desktop type scale it was never drawn for (Display/H1 jumps 113px → 220px at 1024px).
+  Extend that class in `globals.css` when a later phase's stacked section needs another
+  token; the values are transcribed from `design-tokens.md`, not new.
+- **Known unresolved consequence:** between 1024px and 1439px the desktop NAV bar (89px
+  logo, D021) renders over the stacked hero, whose headline starts at y=86 — the logo and
+  the first word collide. No frame exists at that width. Resolving it means changing either
+  D021 (hold the mobile NAV to 1440px, affects every page) or this decision (switch the
+  hero at 1024px, requires a derived collage). Left for the Polish phase.
+
+## D035 — The Home hero headline uses the Latin display scale in both locales
+
+**Decision:** The four hero words (`Creative` / `Souls` / `Global` / `Visions`) are English
+literals in both dictionaries *and* render at the English display sizes under `/zh`. Applied
+via `tokens-headline-h1-latin` / `tokens-headline-jumbo-latin` in `globals.css`, set on the
+headline elements so they outrank the `html[lang="zh"]` root.
+
+**Why:** The content matrix marks the headline `keep EN`, and the TC frames draw the same
+four English words at the *same* sizes — desktop `0:191`–`0:194` are 660×160 boxes exactly
+like their EN counterparts (one line of Jumbo desktop-English leading, 159.9px), and mobile
+`0:4`–`0:7` are 80px-tall lines (H1 mobile-English leading, 79.1px) rather than the 74.4px
+Chinese leading. Letting the Chinese scale apply shrank the `/zh` headline to 166px against
+EN's 246px — visibly wrong, and not what the design shows.
+
+**How to apply:** Any locked-English display lockup in a Chinese page needs this treatment.
+Locale-sensitive tokens are keyed to the *page* language, not the *string's* language, so a
+string that stays English needs its scale pinned explicitly.
+
+## D036 — The dark NAV overlays the hero rather than sitting above it
+
+**Decision:** On pages whose frames instance `Desktop NAV/DARK`, the NAV bar is
+`absolute inset-x-0 top-0`, overlaying the page's first section. Which routes those are
+lives in `darkNavRoutes` in `app/_lib/routes.ts`, resolved by `navThemeForPath()`.
+
+**Why:** In Figma the dark NAV is a child *of the Hero frame* (`12612:11873` sits at y=0
+inside `12405:6947`), so the hero starts at the top of the page and the bar floats over it.
+Rendered in normal flow it produced a white band above the hero with invisible white links.
+
+This also amends **D017**, which called the NAV theme "a static per-page prop". `Nav` is
+rendered by `app/[locale]/layout.tsx`, so a page cannot pass it one — props do not flow from
+a child to its layout. The route table expresses the same decision where the layout can
+reach it: still static per page, still not scroll-driven. The `theme` prop remains and still
+wins when passed, which is what `/styleguide` uses to show both variants.
+
+**How to apply:** A later page phase whose hero shows the dark NAV adds its route key to
+`darkNavRoutes` — it does not add a prop to the page.
+
+## D037 — The Intro heading gradient is written literally, not tokenized
+
+**Decision:** The Intro heading's three-stop green gradient is a literal in
+`HomeIntro.tsx` (two constants, one per breakpoint — the frames use different angles).
+
+**Why:** Only the first stop (`rgb(8,196,84)`) is a design token
+(`--color-brand-primary-green`). The mid and end greens exist solely inside this gradient and
+have no Figma variable behind them. Promoting them to `@theme` would invent tokens the design
+system does not have, which is the failure mode the "never eyedrop a value" rule exists to
+prevent — the rule targets re-deriving token values, not transcribing a one-off decoration.
+
+**How to apply:** If a second section ever uses the same ramp, tokenize it then. Until then a
+named constant beside its consumer is the honest representation.
+
+## D038 — The ZH Intro heading wraps naturally at the designed Chinese scale
+
+**Decision:** Under `/zh` the Intro heading renders `根植本土，前進世界。` at the desktop-Chinese
+`Display/H2` token and wraps on its own. The Intro section is simply shorter in `zh` than in
+`en`. Nothing is scaled up to fill the block the design drew.
+
+**Why:** The matrix line is nine characters against the English line's fifty-five, and the TC
+frames still draw older, longer Chinese copy — so no frame exists for the final string
+(D005/D032). User decision 2026-08-02, chosen over enlarging the type to occupy the designed
+1118×472 area, which would mean inventing a size outside the token set.
+
+**How to apply:** The overlapping Intro image is positioned against the *heading block*
+(`bottom-[-10px]`), not a fixed section offset, so it follows the shorter heading up instead of
+detaching from it. Any later section pairing a display heading with an overlapping element in
+both locales needs the same treatment — anchor to the text, not to the canvas.
+
+## D039 — The floating desktop `MENU` square is not built
+
+**Decision:** `12423:8613` (desktop EN) / `0:504` (desktop TC) — a 75×75 green square reading
+`MENU`, sitting at the Hero/Intro boundary top-right, outside the Hero frame — is **not
+implemented**. Deferred to the Polish phase.
+
+**Why:** Its position implies a scroll-driven desktop nav, but the panel it would open has no
+verified design: Phase 3 established that the desktop expanded-menu frame (`12612:8541`) is a
+stray documentation duplicate with no real trigger. Building the trigger alone ships a control
+that opens nothing; wiring it to the mobile overlay would contradict D017/D036 and stretch a
+393px design across 1440px. User decision 2026-08-02.
+
+**How to apply:** These nodes exist and are deliberate omissions — a later phase should not
+rediscover them as a defect, nor implement them without first resolving what the desktop menu
+panel actually looks like.

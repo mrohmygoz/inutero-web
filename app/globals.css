@@ -298,6 +298,11 @@
 }
 
 @theme inline {
+  /* The second designed width. Tailwind's `lg` (1024px) is where the token set
+     and the NAV switch (D009/D021); `desktop` is where a page's *layout* switches
+     to its 1440px Figma frame (D-B). The two are deliberately different. */
+  --breakpoint-desktop: 1440px;
+
   --color-background: var(--color-basic-background);
   --color-foreground: var(--color-basic-foreground);
   --color-basic-background: var(--color-basic-background);
@@ -391,6 +396,73 @@
   --text-accent-display--line-height: var(--text-accent-display--line-height);
   --text-accent-display--letter-spacing: var(--text-accent-display--letter-spacing);
   --text-accent-display--font-weight: var(--text-accent-display--font-weight);
+}
+
+/*
+ * D-B consequence. A section whose *layout* keeps its mobile form above 1024px
+ * (Home's hero and intro run the stacked layout until 1440px) would otherwise
+ * render at the desktop type scale the stacked layout was never drawn for —
+ * Display/H1 jumps 113px -> 220px at 1024px, which overruns a hero box sized
+ * for the smaller face. This pins the display sizes back to their mobile-mode
+ * values for the 1024–1440px band only.
+ *
+ * These are not new values: they are the Mobile English / Mobile Chinese columns
+ * of openspec/reference/design-tokens.md, identical to the :root and
+ * html[lang="zh"] blocks above, re-declared so they survive the @media override.
+ * Extend this list when a later phase's stacked section needs another token.
+ */
+@media (width >= 1024px) {
+  .tokens-mobile-type {
+    --text-display-h1: 113px;
+    --text-display-h1--line-height: 79.1px;
+    --text-display-h1--letter-spacing: -1.13px;
+    --text-display-h1--font-weight: 700;
+
+    --text-display-h2: 87px;
+    --text-display-h2--line-height: 60.9px;
+    --text-display-h2--letter-spacing: -0.87px;
+    --text-display-h2--font-weight: 700;
+  }
+
+  :is(html[lang="zh"], [data-locale="zh"]) .tokens-mobile-type {
+    --text-display-h1: 62px;
+    --text-display-h1--line-height: 74.4px;
+    --text-display-h1--letter-spacing: -1.24px;
+    --text-display-h1--font-weight: 400;
+
+    --text-display-h2: 43px;
+    --text-display-h2--line-height: 51.6px;
+    --text-display-h2--letter-spacing: -0.43px;
+    --text-display-h2--font-weight: 400;
+
+    --text-label-m: 14px;
+    --text-label-m--line-height: 14px;
+  }
+}
+
+/*
+ * The Home hero headline is an English lockup in BOTH locales, so the Chinese
+ * display scale must not apply to it. The TC frames prove it: desktop 0:191-0:194
+ * are 660x160 boxes exactly like their EN counterparts (one line of Jumbo
+ * desktop-English leading, 159.9px), and mobile 0:4-0:7 are 80px-tall lines
+ * (H1 mobile-English leading, 79.1px) rather than the 74.4px Chinese leading.
+ *
+ * Set on the headline elements themselves, so they win over both the
+ * html[lang="zh"] root and any `tokens-mobile-type` ancestor. Values are the
+ * English columns of openspec/reference/design-tokens.md.
+ */
+.tokens-headline-h1-latin {
+  --text-display-h1: 113px;
+  --text-display-h1--line-height: 79.1px;
+  --text-display-h1--letter-spacing: -1.13px;
+  --text-display-h1--font-weight: 700;
+}
+
+.tokens-headline-jumbo-latin {
+  --text-display-jumbo: 246px;
+  --text-display-jumbo--line-height: 159.9px;
+  --text-display-jumbo--letter-spacing: -2.46px;
+  --text-display-jumbo--font-weight: 700;
 }
 
 /* font-style isn't part of Tailwind's --text-* pairing mechanism — applied via

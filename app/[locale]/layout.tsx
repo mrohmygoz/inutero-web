@@ -25,7 +25,7 @@ export async function generateMetadata({
 
   return {
     title: dict.common.siteName,
-    description: dict.home.placeholder,
+    description: dict.home.metaDescription,
     alternates: {
       canonical: `/${locale}`,
       languages: {
@@ -45,7 +45,9 @@ export default async function LocaleLayout({
 
   return (
     <html lang={locale satisfies Locale} className={fontVariables}>
-      <body className="min-h-full antialiased">
+      {/* `relative` is the positioning context for the dark NAV, which overlays
+          the hero on pages that open on one rather than sitting above it. */}
+      <body className="relative min-h-full antialiased">
         <Nav locale={locale} />
         {children}
         <Footer locale={locale} />

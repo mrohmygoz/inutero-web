@@ -33,6 +33,25 @@ export const routes: readonly RouteDef[] = [
   { key: "contact", segment: "contact", label: { en: "Contact Us", zh: "聯絡我們" } },
 ] as const;
 
+/**
+ * Routes whose frames instance `Desktop NAV/DARK` rather than the light NAV —
+ * i.e. pages that open on a full-bleed dark hero. Home is the first (12612:11873
+ * in 12405:6947); later page phases add their own keys here.
+ *
+ * D017 called this "a static per-page prop", but `Nav` is rendered by
+ * `[locale]/layout.tsx`, so a page cannot pass it one — props do not flow from
+ * a child to its layout. This table is the same decision expressed where the
+ * layout can actually reach it: still static per page, still not scroll-driven.
+ */
+const darkNavRoutes: readonly RouteKey[] = ["home"];
+
+/** Resolves the NAV theme for a pathname, e.g. "/zh" -> "dark", "/en/news" -> "light". */
+export function navThemeForPath(pathname: string): "light" | "dark" {
+  const segment = pathname.split("/")[2] ?? "";
+  const route = routes.find((r) => r.segment === segment);
+  return route && darkNavRoutes.includes(route.key) ? "dark" : "light";
+}
+
 export function getRoute(key: RouteKey): RouteDef {
   const route = routes.find((r) => r.key === key);
   if (!route) throw new Error(`Unknown route key: ${key}`);
