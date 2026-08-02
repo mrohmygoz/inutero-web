@@ -298,11 +298,6 @@
 }
 
 @theme inline {
-  /* The second designed width. Tailwind's `lg` (1024px) is where the token set
-     and the NAV switch (D009/D021); `desktop` is where a page's *layout* switches
-     to its 1440px Figma frame (D-B). The two are deliberately different. */
-  --breakpoint-desktop: 1440px;
-
   --color-background: var(--color-basic-background);
   --color-foreground: var(--color-basic-foreground);
   --color-basic-background: var(--color-basic-background);
@@ -399,45 +394,46 @@
 }
 
 /*
- * D-B consequence. A section whose *layout* keeps its mobile form above 1024px
- * (Home's hero and intro run the stacked layout until 1440px) would otherwise
- * render at the desktop type scale the stacked layout was never drawn for —
- * Display/H1 jumps 113px -> 220px at 1024px, which overruns a hero box sized
- * for the smaller face. This pins the display sizes back to their mobile-mode
- * values for the 1024–1440px band only.
+ * Canvas sections (D040).
  *
- * These are not new values: they are the Mobile English / Mobile Chinese columns
- * of openspec/reference/design-tokens.md, identical to the :root and
- * html[lang="zh"] blocks above, re-declared so they survive the @media override.
- * Extend this list when a later phase's stacked section needs another token.
+ * A few sections are *placed* compositions rather than flow layouts — the Home
+ * hero is three overlapping photographs and four display words at absolute
+ * coordinates on the 1440px frame. Those cannot reflow: shrinking them changes
+ * which photo covers which word.
+ *
+ * Instead of re-deriving the composition at other widths, the canvas keeps its
+ * drawn 1440x960 geometry and is scaled uniformly to the available width. Every
+ * coordinate stays exactly as Figma draws it; only the scale factor varies, so
+ * there is nothing invented and nothing to verify against a frame that does not
+ * exist. `aspect-ratio` gives the wrapper its height; `cqw` reads the wrapper's
+ * own width, so this is independent of scrollbar width and of any ancestor
+ * padding. At and above 1440px the max-width caps it and the scale is exactly 1.
+ *
+ * Use this ONLY for genuinely placed compositions. Flow sections (the intro,
+ * card grids, article bodies) must reflow normally — scaling them would shrink
+ * body copy below its designed size.
  */
-@media (width >= 1024px) {
-  .tokens-mobile-type {
-    --text-display-h1: 113px;
-    --text-display-h1--line-height: 79.1px;
-    --text-display-h1--letter-spacing: -1.13px;
-    --text-display-h1--font-weight: 700;
+.canvas-1440 {
+  container-type: inline-size;
+  width: 100%;
+  max-width: 1440px;
+  margin-inline: auto;
+  aspect-ratio: 1440 / 960;
+  overflow: hidden;
+}
 
-    --text-display-h2: 87px;
-    --text-display-h2--line-height: 60.9px;
-    --text-display-h2--letter-spacing: -0.87px;
-    --text-display-h2--font-weight: 700;
-  }
-
-  :is(html[lang="zh"], [data-locale="zh"]) .tokens-mobile-type {
-    --text-display-h1: 62px;
-    --text-display-h1--line-height: 74.4px;
-    --text-display-h1--letter-spacing: -1.24px;
-    --text-display-h1--font-weight: 400;
-
-    --text-display-h2: 43px;
-    --text-display-h2--line-height: 51.6px;
-    --text-display-h2--letter-spacing: -0.43px;
-    --text-display-h2--font-weight: 400;
-
-    --text-label-m: 14px;
-    --text-label-m--line-height: 14px;
-  }
+/* The scale goes through a custom property deliberately. Written inline as
+   `transform: scale(calc(100cqw / 1440px))` the declaration is *silently
+   dropped* by Lightning CSS at build time — it never reaches the browser, and
+   the canvas renders at full size and gets clipped. Custom properties are
+   substituted at used-value time, so the browser does the container-unit
+   division itself and the build tool leaves it alone. */
+.canvas-1440 > * {
+  --canvas-scale: calc(100cqw / 1440px);
+  width: 1440px;
+  height: 960px;
+  transform-origin: top left;
+  transform: scale(var(--canvas-scale));
 }
 
 /*
@@ -448,8 +444,8 @@
  * (H1 mobile-English leading, 79.1px) rather than the 74.4px Chinese leading.
  *
  * Set on the headline elements themselves, so they win over both the
- * html[lang="zh"] root and any `tokens-mobile-type` ancestor. Values are the
- * English columns of openspec/reference/design-tokens.md.
+ * html[lang="zh"] root. Values are the English columns of
+ * openspec/reference/design-tokens.md.
  */
 .tokens-headline-h1-latin {
   --text-display-h1: 113px;

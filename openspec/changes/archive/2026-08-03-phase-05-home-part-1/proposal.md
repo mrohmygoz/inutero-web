@@ -81,3 +81,26 @@ prefer opting out over inventing a requirement to satisfy validation.
 
 No dependency changes. No API routes. Nothing existing is removed beyond the Phase 1 placeholder
 copy, whose dictionary key becomes unused and is deleted with it.
+
+## Addendum — breakpoint alignment (2026-08-03)
+
+Added after the review gate, on the user's direction, before archiving.
+
+Verification surfaced a collision the phase had recorded as deferred: between 1024px and 1439px
+the desktop NAV rendered over the stacked hero headline. Investigating it showed the deferral was
+the wrong call — the same band also sent 1366×768 and 1280×800 laptops to the mobile layout, and a
+1440px screen with a visible scrollbar reports a ~1425px viewport, so **the design's own width fell
+back to mobile.**
+
+Rather than patch Home, the layout breakpoint moved to 1024px to match D009 and D021, and the
+hero's fixed composition is now scaled uniformly instead of being swapped out. Done inside this
+phase rather than as a separate change because every route except Home is still a stub, so the
+blast radius is at its smallest and every later page phase is built against the final rule.
+
+- `.canvas-1440` in `globals.css` — placed compositions keep their drawn 1440×960 geometry and
+  scale to the available width. Flow sections continue to reflow.
+- `--breakpoint-desktop` and `tokens-mobile-type` deleted; both existed only to serve the
+  1024–1440 band.
+- `HomeIntro`'s positioned image and heading margin converted from fixed px to the frame's own
+  proportions — a fixed offset lands in the wrong place once the container narrows.
+- D040 supersedes D034. D035–D039 are unaffected.

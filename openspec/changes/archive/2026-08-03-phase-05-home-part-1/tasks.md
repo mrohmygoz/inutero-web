@@ -95,3 +95,18 @@
 - [x] 7.6 `npm run lint` and `npx tsc --noEmit` both clean.
 - [x] 7.7 Report honestly at the gate: state that Home ends after the Intro until Phase 6, and
       name anything skipped, blocked, or only partly done.
+
+## 8. Addendum — breakpoint alignment (post-gate, 2026-08-03)
+
+- [x] 8.1 Add `.canvas-1440` to `globals.css` — uniform scaling for placed compositions, with the
+      Lightning CSS custom-property workaround documented in place.
+- [x] 8.2 Delete `--breakpoint-desktop` and `tokens-mobile-type`; move `HomeHero` and `HomeIntro`
+      from `desktop:` to `lg:`.
+- [x] 8.3 Wrap the hero collage in `.canvas-1440`.
+- [x] 8.4 Convert `HomeIntro`'s positioned image (`left-[733px]` → `left-[50.903%]`) and heading
+      right margin (`pr-[231px]` → `pr-[16.042%]`) to the frame's proportions.
+- [x] 8.5 Verify the scale factor is exactly 1 at ≥1440px and proportional below (0.889 at 1280px,
+      0.711 at 1024px), with no horizontal overflow at 393/768/1024/1440 × both locales.
+- [x] 8.6 Confirm the NAV no longer collides with the hero headline at any width.
+- [x] 8.7 Append D040 to `openspec/DECISIONS.md` and mark D034 superseded in place.
+- [x] 8.8 `npm run lint` and `npx tsc --noEmit` clean.

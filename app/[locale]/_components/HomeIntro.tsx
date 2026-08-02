@@ -6,7 +6,9 @@ import { localizedHref } from "../../_lib/routes";
 // Source: desktop Intro 12405:6419 (TC 0:254); mobile Intro 12212:6318 (TC
 // 12368:2416). Page-local, not shared: one consumer (D-A).
 //
-// Two sibling subtrees (D-C): desktop puts the heading top-left with the image
+// Two sibling subtrees (D-C), switching at `lg:` (1024px, D040). The intro is a
+// FLOW section, not a placed canvas — it reflows rather than scaling, so it does
+// not use `canvas-1440`. Desktop puts the heading top-left with the image
 // overlapping its lower right and the body/CTA anchored bottom-right; mobile is
 // a plain column. The mobile TC frame confirmed the same tree as mobile EN —
 // its shorter height is text reflow (Display/H2 is 43px in Chinese vs 87px in
@@ -52,9 +54,9 @@ export default function HomeIntro({ locale }: { locale: Locale }) {
   return (
     <>
       {/* ---------------------------------------------------------------- */}
-      {/* Stacked — 393px design, held to 1439px (D-B)                      */}
+      {/* Stacked — 393px design, below 1024px (D040)                       */}
       {/* ---------------------------------------------------------------- */}
-      <section className="tokens-mobile-type flex flex-col items-center gap-[41px] bg-(--color-basic-background) pt-[30px] pb-[60px] desktop:hidden">
+      <section className="flex flex-col items-center gap-[41px] bg-(--color-basic-background) pt-[30px] pb-[60px] lg:hidden">
         <div className="flex w-full items-start gap-[5px] pr-[15px]">
           <Eyebrow label={intro.eyebrow} className="h-[92px] w-[17px] shrink-0" />
           <div className="flex w-[346px] max-w-full flex-col justify-center pt-[20px]">
@@ -78,21 +80,25 @@ export default function HomeIntro({ locale }: { locale: Locale }) {
             />
           </div>
           <div className="flex flex-col">{body}</div>
-          <Cta href={aboutHref} tone="green" className="w-full!">
+          <Cta href={aboutHref} tone="green" className="w-full">
             {intro.cta}
           </Cta>
         </div>
       </section>
 
       {/* ---------------------------------------------------------------- */}
-      {/* Desktop — 1440px design (D-B, D-C)                                */}
+      {/* Desktop — 1440px design, reflowing from 1024px up (D040)          */}
       {/* ---------------------------------------------------------------- */}
-      <section className="hidden bg-(--color-basic-background) desktop:block">
+      <section className="hidden bg-(--color-basic-background) lg:block">
         <div className="mx-auto w-full max-w-[1440px] pt-[138px] pb-[68px]">
           {/* The heading block is the positioning context for the image, so a
               shorter Chinese heading pulls the image up with it instead of
               leaving it stranded mid-section (D-D). */}
-          <div className="relative flex items-start pr-[231px] pl-[32px]">
+          {/* The right margin is width-dependent, so like the image below it
+              keeps the frame's proportion (231/1440) rather than a fixed px
+              value that would squeeze the heading column as the page narrows.
+              The left gutter stays 32px — it is the page gutter the NAV uses. */}
+          <div className="relative flex items-start pr-[16.042%] pl-[32px]">
             <Eyebrow label={intro.eyebrow} className="h-[97px] w-[27px] shrink-0 py-[15px]" />
             <h2
               className="font-display text-display-h2 min-w-px flex-1 bg-clip-text uppercase text-transparent"
@@ -102,8 +108,13 @@ export default function HomeIntro({ locale }: { locale: Locale }) {
             </h2>
 
             {/* image 21 (12405:6432) — inverted against the heading via a white
-                fill in difference mode, exactly as the frame composites it. */}
-            <div className="absolute bottom-[-10px] left-[733px] h-[193px] w-[243px] mix-blend-difference">
+                fill in difference mode, exactly as the frame composites it.
+                This element is *positioned*, so unlike the rest of this section
+                it cannot keep a fixed offset once the container narrows: 733px
+                is 50.9% of the 1440px frame but 71.6% of a 1024px one, which
+                would slide it off the heading. Expressed as the frame's own
+                proportion instead (D040). */}
+            <div className="absolute bottom-[-10px] left-[50.903%] h-[193px] w-[243px] mix-blend-difference">
               <div aria-hidden className="absolute inset-0">
                 <Image
                   src="/images/home/intro.jpg"

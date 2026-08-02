@@ -48,6 +48,7 @@ Do **not** record things readable from the code or the design itself.
 - [D037 — The Intro heading gradient is written literally, not tokenized](#d037--the-intro-heading-gradient-is-written-literally-not-tokenized)
 - [D038 — The ZH Intro heading wraps naturally at the designed Chinese scale](#d038--the-zh-intro-heading-wraps-naturally-at-the-designed-chinese-scale)
 - [D039 — The floating desktop `MENU` square is not built](#d039--the-floating-desktop-menu-square-is-not-built)
+- [D040 — One layout breakpoint at 1024px; placed compositions scale, flow sections reflow](#d040--one-layout-breakpoint-at-1024px-placed-compositions-scale-flow-sections-reflow)
 
 ## D001 — Locale strategy
 
@@ -658,6 +659,8 @@ and add the INVENTORY entry at that point — not in anticipation.
 
 ## D034 — The stacked layout holds to 1440px; the collage engages above it
 
+> **Superseded by [D040](#d040--one-layout-breakpoint-at-1024px-placed-compositions-scale-flow-sections-reflow) (2026-08-03).** Kept as the record of what was decided and built during Phase 5; the breakpoint it describes is no longer in the code.
+
 **Decision:** Home's hero and intro run their 393px stacked layout from 393px to 1439px.
 The 1440px composition engages at `min-width: 1440px`, exposed as the Tailwind `desktop:`
 variant (`--breakpoint-desktop: 1440px` in `@theme`). This is deliberately *not* the same
@@ -766,3 +769,47 @@ that opens nothing; wiring it to the mobile overlay would contradict D017/D036 a
 **How to apply:** These nodes exist and are deliberate omissions — a later phase should not
 rediscover them as a defect, nor implement them without first resolving what the desktop menu
 panel actually looks like.
+
+## D040 — One layout breakpoint at 1024px; placed compositions scale, flow sections reflow
+
+**Decision:** **Supersedes D034.** Every breakpoint is 1024px — tokens (D009), NAV (D021), and
+section layout. `--breakpoint-desktop` and `tokens-mobile-type` are deleted.
+
+Sections split into two kinds:
+
+| Kind | Behaviour | Example |
+| :--- | :--- | :--- |
+| **Placed canvas** | Keeps its drawn 1440×960 geometry, scaled uniformly to the available width via `.canvas-1440` | Home hero |
+| **Flow** | Reflows normally, as any responsive section does | Home intro, card grids, article bodies |
+
+**Why:** D034 put the layout switch at 1440px while tokens and NAV switched at 1024px, and the
+1024–1440 band is where they collided — the desktop NAV rendered over a stacked hero whose
+headline starts at y=86. That band also sent a large share of real desktop traffic to the mobile
+layout: 1366×768 and 1280×800 are common, and **a 1440px screen with a visible scrollbar reports
+a ~1425px viewport**, so the design's own width fell back to mobile. 1440 is a good width to
+design at and a bad width to branch at.
+
+Uniform canvas scaling is *not* the per-element fluid sizing rejected on 2026-08-02. Every
+coordinate stays exactly as Figma draws it and only the scale factor varies, so there is no
+drift and nothing to verify against a frame that does not exist. At ≥1440px the scale is exactly
+1 and the rendering is unchanged. User decision 2026-08-03.
+
+**How to apply:**
+
+- Use `.canvas-1440` **only** for genuinely placed compositions. Scaling a flow section would
+  shrink body copy below its designed size.
+- A positioned child of a flow section cannot keep a fixed pixel offset — it must carry the
+  frame's proportion. The intro image is `left-[50.903%]` (733/1440), not `left-[733px]`, which
+  at 1024px would land at 71.6% and slide off the heading. Same for the heading's right margin
+  (`16.042%` = 231/1440). Vertical rhythm and text-column widths stay in px.
+- **The scale must go through a custom property.** Written inline as
+  `transform: scale(calc(100cqw / 1440px))` the declaration is silently dropped by Lightning CSS
+  at build — it never reaches the browser and the canvas renders full-size and clipped. This
+  cost a debugging cycle; the workaround is commented in `globals.css`.
+
+**Accepted costs:** below 1440px a flow section has no frame, so the intro heading reflows to
+more lines than the design draws (7 at 1024px vs 4 at 1440px) and the section grows taller. The
+hero is scaled while the intro is not, so their relative proportions shift slightly between
+1024px and 1440px. Canvas scaling also reduces the effect of user font-size preferences within
+that section — browser zoom still works correctly, which is why it is confined to the hero and
+must never be applied page-wide.

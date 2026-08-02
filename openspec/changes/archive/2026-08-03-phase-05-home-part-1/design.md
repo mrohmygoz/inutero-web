@@ -125,3 +125,26 @@ placeholder rectangle in a phase whose whole output is a visual review is a fals
 None blocking. The three questions this phase raised — the tablet band, the ZH heading, and the
 `MENU` square — were resolved with the user before implementation and are recorded above as
 D-B, D-D, and D-E. All three are mirrored into `openspec/DECISIONS.md` as a task line.
+
+## Addendum — D-B reversed (2026-08-03)
+
+D-B (stacked layout to 1440px) was implemented, verified, committed as `afb0a41`, and then
+reversed at the user's direction. See `proposal.md` → Addendum for why, and D040 in
+`openspec/DECISIONS.md` for the replacement rule.
+
+What this changes in the design above:
+
+| Section | Then | Now |
+| :--- | :--- | :--- |
+| D-B | Stacked to 1439px, collage at 1440px+ | Stacked below 1024px; collage scaled uniformly from 1024px up |
+| D-C | Two sibling subtrees | Unchanged — still two subtrees, the desktop one now inside a scaled canvas |
+| Risk row 1 (1024–1440 band) | Mitigated by `tokens-mobile-type` + a 1280px screenshot | Dissolved — the band no longer mixes mobile layout with desktop tokens |
+
+The `tokens-mobile-type` mitigation is gone with the band that required it. The 1280px
+verification pass stays useful and is now a check for *scale correctness* rather than for
+tolerability.
+
+One implementation trap worth carrying forward: `transform: scale(calc(100cqw / 1440px))` written
+inline is silently stripped by Lightning CSS at build time. The declaration simply does not appear
+in the served stylesheet and the canvas renders full-size and clipped, with no error anywhere.
+Routing the value through a custom property avoids the build-time validation.
