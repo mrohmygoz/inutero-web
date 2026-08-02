@@ -1,5 +1,3 @@
-import TaglineWrapper, { type TaglineWrapperTone } from "./TaglineWrapper";
-
 // Source: mobile symbol 12219:946 (eyebrow + Display/H2 heading, dark-on-light).
 // Desktop occurrences agree on structure; two divergences observed and resolved
 // without re-asking (design.md Derived Sources):
@@ -9,7 +7,10 @@ import TaglineWrapper, { type TaglineWrapperTone } from "./TaglineWrapper";
 //    Home Hero section titles use Display/H2 — exposed as a prop rather than assumed.
 //  - Home Hero's green gradient heading fill is treated as a page-level `className`
 //    override, not part of the primitive (D-A "TitleGroup" row).
-export type TitleGroupTone = TaglineWrapperTone;
+// The eyebrow tag (green dot + rotated label) is built inline here rather than via
+// a shared wrapper — it had exactly one consumer (this component) and one demo
+// entry in styleguide, so the extra indirection wasn't earning its keep.
+export type TitleGroupTone = "dark" | "light";
 
 const toneClassName: Record<TitleGroupTone, string> = {
   dark: "text-(--color-basic-accent)",
@@ -24,25 +25,35 @@ const headingSizeClassName = {
 export default function TitleGroup({
   eyebrow,
   heading,
+  description,
   tone = "dark",
   headingSize = "h2",
   className,
 }: {
   eyebrow: string;
   heading: string;
+  description?: string;
   tone?: TitleGroupTone;
   headingSize?: keyof typeof headingSizeClassName;
   className?: string;
 }) {
   return (
-    <div className={`flex items-start gap-[5px] pr-[15px] ${className ?? ""}`.trim()}>
-      <TaglineWrapper label={eyebrow} tone={tone} />
-      <div className="flex min-w-px flex-1 flex-col items-center justify-center pt-5">
-        <p
-          className={`font-display ${headingSizeClassName[headingSize]} w-full [word-break:break-word] font-bold uppercase ${toneClassName[tone]}`}
-        >
+    <div className={`self-stretch p-0 inline-flex justify-start items-start ${className ?? ""}`.trim()}>
+      <div className="mt-2 w-2.5 inline-flex flex-col items-start justify-center gap-2.5">
+        <div className="flex origin-top-left rotate-90 items-center gap-[10px] whitespace-nowrap">
+          <div className="size-[7px] shrink-0 bg-(--color-brand-primary-green)" />
+          <div className={`whitespace-nowrap justify-start font-body text-label-m font-normal uppercase ${toneClassName[tone]}`.trim()}>
+            {eyebrow}
+          </div>
+        </div>
+      </div>
+      <div className="inline-flex flex-col justify-start items-start gap-5">
+        <div className={`font-display ${headingSizeClassName[headingSize]} w-full [word-break:break-word] font-bold uppercase ${toneClassName[tone]}`.trim()}>
           {heading}
-        </p>
+        </div>
+        {description && (
+          <div className={`justify-start ${toneClassName[tone]}`.trim()}>{description}</div>
+        )}
       </div>
     </div>
   );

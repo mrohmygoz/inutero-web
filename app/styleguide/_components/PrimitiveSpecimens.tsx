@@ -3,7 +3,6 @@ import Cta from "@/app/_components/Cta";
 import SecondaryCta from "@/app/_components/SecondaryCta";
 import Tag from "@/app/_components/Tag";
 import TitleGroup from "@/app/_components/TitleGroup";
-import TaglineWrapper from "@/app/_components/TaglineWrapper";
 import ProjectCard from "@/app/_components/ProjectCard";
 import type { Locale } from "@/app/_lib/i18n";
 
@@ -110,24 +109,27 @@ export default function PrimitiveSpecimens({ locale = "en" }: { locale?: Locale 
         </Tag>
       </Row>
 
-      <Row label="TaglineWrapper — tone=dark (default) / tone=light">
-        <div className="bg-(--color-basic-background) p-4">
-          <TaglineWrapper label={t.eyebrow} />
-        </div>
-        <div className="bg-(--color-basic-accent) p-4">
-          <TaglineWrapper label={t.eyebrow} tone="light" />
-        </div>
-      </Row>
-
       <Row label="TitleGroup — tone=dark, headingSize=h1 (page header default)">
         <div className="w-full bg-(--color-basic-background) p-4">
           <TitleGroup eyebrow={t.headerEyebrow} heading={t.headerHeading} headingSize="h1" />
         </div>
       </Row>
 
+      <Row label="TitleGroup — tone=dark, headingSize=h1 (page header default), w/ description">
+        <div className="w-full bg-(--color-basic-background) p-4">
+          <TitleGroup eyebrow={t.headerEyebrow} heading={t.headerHeading} headingSize="h1" description="Updates on artists, collaborations, and what we're building." />
+        </div>
+      </Row>
+
       <Row label="TitleGroup — tone=light, headingSize=h2 (dark section)">
         <div className="w-full bg-(--color-basic-accent) p-4">
           <TitleGroup eyebrow={t.eyebrow} heading={t.heading} tone="light" headingSize="h2" />
+        </div>
+      </Row>
+
+      <Row label="TitleGroup — tone=light, headingSize=h2 (dark section), w/ description">
+        <div className="w-full bg-(--color-basic-accent) p-4">
+          <TitleGroup eyebrow={t.eyebrow} heading={t.heading} tone="light" headingSize="h2" description="Updates on artists, collaborations, and what we're building." />
         </div>
       </Row>
 

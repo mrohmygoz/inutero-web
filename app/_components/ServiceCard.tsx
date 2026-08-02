@@ -14,13 +14,13 @@ import SecondaryCta from "./SecondaryCta";
 //     match either frame.
 //   - Feature row divider: translucent white (`--opacity-white-15`) at mobile,
 //     solid white at desktop.
-//   - The numbered tag rotates the OPPOSITE direction from `TaglineWrapper`
-//     (`rotate(90deg)` clockwise here, vs. `TaglineWrapper`'s fixed -90deg) —
-//     confirmed in both breakpoint exports, so this is a genuine per-instance
-//     difference, not a mistake to reconcile by changing the shared
-//     primitive. Built inline here, reusing TaglineWrapper's fixed-size
-//     wrapper-box technique (h-[50px] w-[17px], content centered inside)
-//     rather than rotating from `transform-origin: top left` directly —
+//   - The numbered tag rotates the OPPOSITE direction from the eyebrow tag in
+//     `TitleGroup` (`rotate(90deg)` clockwise here, vs. that one's fixed
+//     -90deg) — confirmed in both breakpoint exports, so this is a genuine
+//     per-instance difference, not a mistake to reconcile by sharing a
+//     primitive. Built inline here, reusing the same fixed-size wrapper-box
+//     technique (h-[50px] w-[17px], content centered inside) rather than
+//     rotating from `transform-origin: top left` directly —
 //     rotating without a reserved box shifts the visual footprint outside
 //     the element's own flex-allocated space, which the image panel's
 //     `overflow-hidden` then clips away entirely (found by inspecting a
