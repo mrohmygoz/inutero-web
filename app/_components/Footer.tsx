@@ -43,7 +43,7 @@ const socialPlatforms = ["facebook", "instagram", "x", "youtube"] as const;
 function VerticalLabel({ children }: { children: string }) {
   return (
     <div className="flex w-[21px] shrink-0 items-center justify-center py-[10px]">
-      <span className="font-body text-label-m w-[73px] rotate-90 text-center whitespace-nowrap text-(--color-brand-primary-green) uppercase">
+      <span className="font-body text-label-m w-[73px] rotate-90 text-center whitespace-nowrap text-(--color-brand-primary-green) uppercase translate-y-7 lg:translate-y-1">
         {children}
       </span>
     </div>
