@@ -159,8 +159,10 @@
    preview sections get the identical override guarantees as the real html[lang="zh"]
    root the [locale] layout sets — see D016 in openspec/DECISIONS.md. */
 :is(html[lang="zh"], [data-locale="zh"]) {
-  --font-display: var(--font-display-cjk);
-  --font-accent: var(--font-accent-cjk);
+  /* D023: Latin fallback first so mixed-in Latin characters render in the
+     designed Latin face rather than the CJK font's own Latin glyphs. */
+  --font-display: var(--font-display-latin), var(--font-display-cjk);
+  --font-accent: var(--font-accent-latin), var(--font-accent-cjk);
 
   /* Text Styles — Mobile Chinese overrides */
   --text-display-h1: 62px;

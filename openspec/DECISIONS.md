@@ -31,6 +31,7 @@ Do **not** record things readable from the code or the design itself.
 - [D020 — Detail-route stubs use a placeholder slug](#d020--detail-route-stubs-use-a-placeholder-slug)
 - [D021 — Nav collapses to the mobile menu at 1024px](#d021--nav-collapses-to-the-mobile-menu-at-1024px)
 - [D022 — Footer's non-route content is scoped down, not omitted](#d022--footers-non-route-content-is-scoped-down-not-omitted)
+- [D023 — Zh display/accent fonts fall back to the Latin face for mixed-in Latin text](#d023--zh-displayaccent-fonts-fall-back-to-the-latin-face-for-mixed-in-latin-text)
 
 ## D001 — Locale strategy
 
@@ -374,3 +375,21 @@ plain label.
 a later phase or the user decides they're in scope — not assumed here. If Phase 8/9 adds anchor
 IDs to the Services page sections, `Footer.tsx`'s four Services links should be updated to point
 at them instead of the bare route.
+
+## D023 — Zh display/accent fonts fall back to the Latin face for mixed-in Latin text
+
+**Decision:** In `html[lang="zh"]`, `--font-display` and `--font-accent` are two-font stacks —
+`var(--font-display-latin), var(--font-display-cjk)` (same pattern for `--font-accent`) — not a
+single CJK font.
+
+**Why:** User request, 2026-08-02. Without the Latin face first, a Latin word inside zh display
+or accent copy (e.g. an English brand name) rendered using Mochiy Pop One / Noto Serif TC's own
+Latin glyphs instead of the designed Alumni Sans / Bodoni Moda SC shapes. This mirrors D008's
+Chivo Mono → Noto Sans TC fallback, in the opposite direction.
+
+**Consequence to accept:** Each face in `app/_lib/fonts.ts` is loaded at one fixed weight —
+Alumni Sans and Bodoni Moda SC at 700, Mochiy Pop One at 400. Zh h1/h5/h6/h7 (mobile) request
+`font-weight: 400`; a Latin word inside one of those still renders at Alumni Sans's only
+available weight, 700 — visibly bolder than the surrounding Chinese text. Accepted rather than
+loading a second Latin weight, which D008 already rules out changing without raising with the
+designer.
