@@ -32,9 +32,18 @@ export default function ProjectCard({
 }) {
   const content: ReactNode = (
     <div
-      className={`flex w-[353px] flex-col items-start gap-[15px] bg-(--color-basic-accent) px-[10px] py-[13px] lg:w-[325px] ${className ?? ""}`.trim()}
+      className={`inline-flex w-full flex-col items-start overflow-hidden bg-(--color-basic-accent) outline outline-[0.54px] outline-offset-[-0.54px] outline-(--opacity-white-10) ${className ?? ""}`.trim()}
     >
-      <div className="flex w-full flex-col items-start gap-[10px]">
+      {/* Image — full-bleed at top */}
+      <div className="relative h-96 w-full shrink-0 bg-(--opacity-white-10)">
+        {image ? (
+          <Image src={image.src} alt={image.alt} fill className="object-cover" />
+        ) : null}
+      </div>
+
+      {/* Content section */}
+      <div className="flex w-full flex-col items-start gap-4 px-3 py-5">
+        {/* Tags */}
         <div className="flex flex-wrap items-start gap-[5px]">
           {tags.map((tag) => (
             <Tag key={tag.label} variant="solid" color={tag.color}>
@@ -42,21 +51,24 @@ export default function ProjectCard({
             </Tag>
           ))}
         </div>
-        <p className="font-style-accent-display font-accent text-accent-display w-full [word-break:break-word] font-bold uppercase text-(--color-basic-background)">
-          {title}
-        </p>
-        <p className="font-body text-body-xs w-full text-(--color-basic-background)">
-          {dateLabel}
-        </p>
+
+        {/* Title + date + description */}
+        <div className="flex w-full flex-col items-start">
+          <div className="flex w-full flex-col items-start">
+            <p className="w-full font-['Bodoni_Moda_SC'] text-4xl font-bold uppercase leading-9 tracking-tight text-(--primitive-white)">
+              {title}
+            </p>
+            <p className="w-full font-['Chivo_Mono'] text-xs font-normal leading-4 text-(--primitive-white) line-clamp-1">
+              {dateLabel}
+            </p>
+          </div>
+          <div className="w-full pt-2">
+            <p className="w-full font-['Chivo_Mono'] text-xs font-normal leading-5 text-(--opacity-white-60)">
+              {description}
+            </p>
+          </div>
+        </div>
       </div>
-      <div className="relative h-[445px] w-full shrink-0 overflow-hidden bg-(--opacity-white-10)">
-        {image ? (
-          <Image src={image.src} alt={image.alt} fill className="object-cover" />
-        ) : null}
-      </div>
-      <p className="font-body text-body-s w-full text-(--opacity-white-60)">
-        {description}
-      </p>
     </div>
   );
 
