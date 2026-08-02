@@ -9,6 +9,7 @@ import {
 import PrimitiveSpecimens from "./_components/PrimitiveSpecimens";
 import CardSpecimens from "./_components/CardSpecimens";
 import ShellSpecimens from "./_components/ShellSpecimens";
+import BlockSpecimens from "./_components/BlockSpecimens";
 
 export const metadata: Metadata = {
   title: "Styleguide — In Utero Inc.",
@@ -87,6 +88,18 @@ export default function StyleguidePage() {
       <section lang="zh" data-locale="zh" className="flex flex-col gap-6">
         <h2 className="font-display text-display-h5">頁面框架 — 繁體中文</h2>
         <ShellSpecimens locale="zh" />
+      </section>
+
+      <section className="flex flex-col gap-6">
+        <h2 className="font-display text-display-h5">
+          Shared blocks — UniversalCTA, NewsletterSignup &amp; Cms
+        </h2>
+        <BlockSpecimens />
+      </section>
+
+      <section lang="zh" data-locale="zh" className="flex flex-col gap-6">
+        <h2 className="font-display text-display-h5">共用區塊 — 繁體中文</h2>
+        <BlockSpecimens locale="zh" />
       </section>
     </main>
   );

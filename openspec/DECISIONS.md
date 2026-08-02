@@ -33,6 +33,13 @@ Do **not** record things readable from the code or the design itself.
 - [D022 — Footer's non-route content is scoped down, not omitted](#d022--footers-non-route-content-is-scoped-down-not-omitted)
 - [D023 — Zh display/accent fonts fall back to the Latin face for mixed-in Latin text](#d023--zh-displayaccent-fonts-fall-back-to-the-latin-face-for-mixed-in-latin-text)
 - [D024 — The mobile NAV rule stretches to the locale pill instead of a fixed 225px](#d024--the-mobile-nav-rule-stretches-to-the-locale-pill-instead-of-a-fixed-225px)
+- [D025 — MDX via `@next/mdx` and dynamic imports; the root `mdx-components.tsx` is a deliberate no-op](#d025--mdx-via-nextmdx-and-dynamic-imports-the-root-mdx-componentstsx-is-a-deliberate-no-op)
+- [D026 — Content contract: basename is the slug, frontmatter is guarded by hand](#d026--content-contract-basename-is-the-slug-frontmatter-is-guarded-by-hand)
+- [D027 — `Cms` renders the article body only; unmapped elements are derived](#d027--cms-renders-the-article-body-only-unmapped-elements-are-derived)
+- [D028 — MDX detail pages ship a deliberately plain wrapper](#d028--mdx-detail-pages-ship-a-deliberately-plain-wrapper)
+- [D029 — `NewsletterSignup` is inert without an `action`, and is not the Footer's block](#d029--newslettersignup-is-inert-without-an-action-and-is-not-the-footers-block)
+- [D030 — `UniversalCTA` copy: English headline in both locales; two source conflicts resolved](#d030--universalcta-copy-english-headline-in-both-locales-two-source-conflicts-resolved)
+- [D031 — The article share row is built; the desktop-only left rail is not, and its X glyph replaces the row's YouTube](#d031--the-article-share-row-is-built-the-desktop-only-left-rail-is-not-and-its-x-glyph-replaces-the-rows-youtube)
 
 ## D001 — Locale strategy
 
@@ -416,3 +423,162 @@ mobile-to-desktop-collapse range.
 **Consequence to accept:** The 32px trailing gap was tuned so that 393px lands at 222px —
 within 3px of the frame's 225px, so the designed width is effectively preserved where a
 designed value exists. Every wider viewport is derived behavior per D005.
+
+## D025 — MDX via `@next/mdx` and dynamic imports; the root `mdx-components.tsx` is a deliberate no-op
+
+**Decision:** Long-form content compiles through `@next/mdx` (with `@mdx-js/loader`,
+`remark-frontmatter`, `remark-mdx-frontmatter`). Detail pages load a file with
+`await import(...)` against a path that interpolates the locale and slug, with the content
+type baked in statically. `pageExtensions` is left at its default, so an `.mdx` file can
+never become a route and escape `app/[locale]/`. A root `mdx-components.tsx` exists but
+returns `{}`.
+
+**Why:** This is the pattern the vendored Next 16 docs document for content outside `app/`
+(`node_modules/next/dist/docs/01-app/02-guides/mdx.md` → "Using dynamic imports"). It
+compiles at build time with no runtime MDX cost. `next-mdx-remote/rsc` was rejected — it
+compiles from a string at render time, which is right for a CMS and pointless for local files.
+
+The empty `mdx-components.tsx` is not an oversight: `@next/mdx` **requires** the file to exist
+(the App Router integration silently fails without it), while the `CMS` design is an
+article-body treatment rather than a site-wide markdown theme. Returning `{}` satisfies the
+framework without applying the treatment globally. `<Cms>` passes its element map as a
+`components` prop, which the MDX runtime spreads last and which therefore always wins.
+`MDXProvider` was rejected specifically because it is React context and would have forced
+`'use client'` onto every article body.
+
+**How to apply:** remark/rehype plugins must be named as **strings** in `next.config.ts` —
+Turbopack passes plugin config to Rust and cannot serialize a JS function. The two-variable
+dynamic import was verified to work under Turbopack; the eager-registry fallback contemplated
+in the phase design was not needed.
+
+## D026 — Content contract: basename is the slug, frontmatter is guarded by hand
+
+**Decision:** `content/{news,portfolio}/{en,zh}/<slug>.mdx`. The filename minus `.mdx` is the
+slug — it is never declared in frontmatter. Frontmatter declares `title`, `date` (ISO
+`YYYY-MM-DD`), and `excerpt`, validated by a hand-written type guard in `app/_lib/content/`,
+not a schema library. One module (`app/_lib/content/index.ts`) scans the directories, checks
+locale parity, and validates every file; `generateStaticParams` calls it, so a violation fails
+the build before any route is emitted.
+
+**Why:** A slug in frontmatter can disagree with the route the file produces; a filename cannot.
+The hand-rolled guard follows the precedent D010 set for the i18n dictionaries — three fields on
+two content types does not justify a dependency, and the guard names the exact file and field in
+its message, which a generic schema error does not. Centralizing the parity check matters more
+than it looks: checked inside `generateStaticParams` instead, a missing `zh` file would produce a
+*shorter route list* — a silently narrower site — rather than the loud failure D002 requires.
+
+**How to apply:** Verified failure modes, all naming the file: missing counterpart locale,
+missing required field, and wrong-typed field (a non-ISO date). Do not add a fallback path for
+any of them.
+
+## D027 — `Cms` renders the article body only; unmapped elements are derived
+
+**Decision:** `app/_components/Cms.tsx` implements the five body elements the `CMS` node
+(`12610:7361`) defines — paragraph, heading, figure image, figure caption, blockquote. The left
+share rail and the bottom share row that also live in that node are **not** built. Elements the
+design does not cover (`h1`, `h3`, lists, links, `hr`) get minimal token-derived styling.
+Content images render through a plain `<img>`, not `next/image`.
+
+**Why:** The share rails are News-Details / Portfolio-Details page chrome, not MDX body elements,
+and belong to Phases 14 and 11 under D-E. For the derived elements: real MDX produces lists and
+links whatever the design says, and browser-default styling inside a designed article body reads
+as a bug — but this styling has no Figma reference and must not be reported as matching one.
+`next/image` needs intrinsic width and height, which markdown image syntax cannot carry.
+
+**How to apply:** Caption text comes from markdown's `title` (`![alt](/src "caption")`), so `alt`
+stays real alt text rather than being read aloud twice. Two structural fixes are load-bearing and
+must survive refactors: a paragraph whose only child is the figure renders as the figure (markdown
+wraps a lone image in `<p>`, which would put `<figure>` inside `<p>` — invalid HTML and a
+hydration error), and the blockquote unwraps its nested paragraph (otherwise the paragraph's
+Body/L mapping silently renders a 45px display quote at 16px). Phases 11/14 may replace the plain
+`<img>` with an explicit MDX `<Figure>` component carrying real dimensions.
+
+## D028 — MDX detail pages ship a deliberately plain wrapper
+
+**Decision:** `app/[locale]/_components/ContentDetail.tsx` renders the frontmatter title, the
+date, and the `<Cms>` body in a plain centered container. No hero, meta row, share rail, or
+related posts. Like `PagePlaceholder`, it is throwaway scaffolding colocated under `[locale]/` —
+not in `app/_components/` and not in INVENTORY.md.
+
+**Why:** News Details is 6448px tall (Phase 14, likely splitting) and Portfolio Details is Phase
+11. Building that chrome in Phase 4 is exactly the "start the next phase because it looks obvious"
+failure the one-phase rule exists to prevent. The bar Phase 4 has to clear is "the pipeline works
+and the body is styled".
+
+**How to apply:** Nothing in this wrapper matches the design, because it was not built from one.
+Phases 11 and 14 replace it wholesale rather than extending it.
+
+## D029 — `NewsletterSignup` is inert without an `action`, and is not the Footer's block
+
+**Decision:** `NewsletterSignup` takes an optional `action`. Without it the field and button
+render as inert markup — no `<form>`, button `type="button"`, no handler and no fake success
+state. `Footer.tsx` keeps its own separate newsletter block, whose button changed from
+`type="submit"` to `type="button"` for the same reason.
+
+**Why:** No newsletter endpoint exists and none is in scope — the only planned Route Handler is
+Phase 15's contact form. A `<form>` with no `action` submits a GET to the current URL and visibly
+reloads the page, which is worse than doing nothing; the Footer had exactly that live defect. Same
+reasoning D022 applied to the Footer's legal links.
+
+The Phase 4 Figma survey answered the open question about the two blocks: they are **genuinely
+different designs**. The Footer block has a small green `Label/M` heading plus a disclaimer line
+and sits as one of three columns on a light surface; `NewsletterSignup` (`12612:8163` /
+`12212:6048`) is a standalone full-width dark section with a `Display/H3` heading and no
+disclaimer. Footer was therefore not refactored to compose it.
+
+**How to apply:** Whoever wires a real endpoint passes `action` and decides then whether the block
+needs to become a client component.
+
+## D030 — `UniversalCTA` copy: English headline in both locales; two source conflicts resolved
+
+**Decision:** `universalCta.headingLine1/2` ("Let's make" / "Some noise") and `inquiriesLabel`
+("General Inquiries") are **the same English strings in `en.ts` and `zh.ts`**. Only `button`
+translates.
+
+**Why:** Not an untranslated string — the CN desktop frame (`12653:5650`) and the TC mobile frame
+(`12368:2429`) both render the headline and the label in English. Copying that faithfully means
+duplicating English into `zh.ts`, which looks like a missing translation and is not one.
+
+**Two source conflicts, both resolved by picking one string:**
+
+| Conflict | Frames | Resolution |
+| :--- | :--- | :--- |
+| Button label | desktop CN `和我們聊聊` vs. mobile TC `跟我們聊聊` | `跟我們聊聊` — D010 gives one key one string, and the two are semantically identical |
+| Inquiries label | desktop "General / Other Inquiries" vs. mobile "General Inquiries" | "General Inquiries" — the shorter form carries the same meaning, and D010 dictionaries are not breakpoint-aware |
+
+**Also worth knowing:** the desktop headline size (288px / 187.238px / -3px) is not any token —
+desktop Jumbo is 246px and H1 is 220px. Locally drawn per D012, transcribed literally. The same is
+true of the `CMS` desktop heading at 64px, which is *not* the desktop `Display/H5` token (that
+token's letter-spacing is overridden to -0.78px; the heading uses -0.41px).
+
+## D031 — The article share row is built; the desktop-only left rail is not, and its X glyph replaces the row's YouTube
+
+**Decision:** `ShareRow.tsx` implements the bottom share row from the `CMS` node (desktop
+`12612:8414`, mobile `12211:4535`), composed by `ContentDetail` below the body — not by `Cms`.
+The desktop-only **left share rail** (`12610:7339`) is still not built. The row's third glyph
+is the **X** icon taken from the left rail, not the YouTube icon the row itself draws.
+
+**Why (row built, rail not):** the bottom row exists at both designed breakpoints, so it ships
+complete under D006, and it is self-contained — a label, four icons, and a hairline rule that
+sits under the body with no layout dependency. The left rail has no 393px counterpart and
+occupies a 353px column *beside* the article, which is the detail page's two-column layout
+rather than a body element. Building it now would mean building it against a page shell that
+Phases 11/14 have not yet designed, then reworking it.
+
+**Why the glyph swap:** the design's two share groups disagree on the third icon — the bottom
+row draws YouTube (`16.682×11.686`), the left rail draws X (`14.997×13.337`). YouTube has no
+share endpoint, so a YouTube icon under a "SHARE" label could only ever be dead, which is the
+defect D022 exists to prevent. The rail's X makes all four targets real (copy link, LinkedIn,
+X, Facebook) and is drawn from the same node rather than invented. **This is a visible
+deviation from the bottom-row frame** — reverse it by swapping `public/icons/share/x.svg` back
+for the YouTube glyph and deciding what that button should do.
+
+**Why it is a client component:** a real share intent needs the page's absolute URL, and the
+project has no configured site origin — there is no `metadataBase` anywhere. The URL is read
+via `useSyncExternalStore` (browser snapshot `window.location.href`, server snapshot `""`)
+rather than an effect-then-`setState`, which React 19's lint rules reject. The alternative was
+`href="#"` placeholders, i.e. the same dead-link defect the Footer's social icons still carry.
+
+**How to apply:** `ShareRow` takes `locale` and `title`. If a site origin is ever configured,
+this can become a server component and the URL can be built at render time. The Footer's
+`href="#"` social links remain a separate, pre-existing gap — not fixed here.

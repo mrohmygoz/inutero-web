@@ -1,33 +1,36 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { getDictionary, isLocale, locales } from "../../../_lib/i18n";
-import { getRoute } from "../../../_lib/routes";
-import PagePlaceholder from "../../_components/PagePlaceholder";
+import { getEntry, getManifest } from "../../../_lib/content";
+import { getDictionary, isLocale } from "../../../_lib/i18n";
+import ContentDetail from "../../_components/ContentDetail";
 
-// D-D: placeholder slug until Phase 4's MDX pipeline supplies real content.
-// dynamicParams = false (inherited from [locale]/layout.tsx) 404s every
-// other slug — that behavior is what this route exists to prove this phase.
-const PLACEHOLDER_SLUG = "placeholder";
-
-export function generateStaticParams() {
-  return locales.map((locale) => ({ locale, slug: PLACEHOLDER_SLUG }));
+// Phase 4 replaced Phase 3's hardcoded PLACEHOLDER_SLUG (D020) with the content
+// manifest. `getManifest` is what turns a missing translation or malformed frontmatter
+// into a build failure: it runs before any route is emitted (D-C). `dynamicParams = false`
+// on [locale]/layout.tsx still 404s every slug not listed here.
+export async function generateStaticParams() {
+  const entries = await getManifest("portfolio");
+  return entries.map(({ locale, slug }) => ({ locale, slug }));
 }
 
 export async function generateMetadata({
   params,
 }: PageProps<"/[locale]/portfolio/[slug]">): Promise<Metadata> {
   const { locale, slug } = await params;
-  if (!isLocale(locale) || slug !== PLACEHOLDER_SLUG) notFound();
+  if (!isLocale(locale)) notFound();
+
+  const entry = await getEntry("portfolio", locale, slug);
+  if (!entry) notFound();
 
   const dict = getDictionary(locale);
-  const { label } = getRoute("portfolio");
   return {
-    title: `${label[locale]} — ${dict.common.siteName}`,
+    title: `${entry.frontmatter.title} — ${dict.common.siteName}`,
+    description: entry.frontmatter.excerpt,
     alternates: {
-      canonical: `/${locale}/portfolio/${PLACEHOLDER_SLUG}`,
+      canonical: `/${locale}/portfolio/${slug}`,
       languages: {
-        en: `/en/portfolio/${PLACEHOLDER_SLUG}`,
-        zh: `/zh/portfolio/${PLACEHOLDER_SLUG}`,
+        en: `/en/portfolio/${slug}`,
+        zh: `/zh/portfolio/${slug}`,
       },
     },
   };
@@ -37,6 +40,10 @@ export default async function PortfolioDetailPage({
   params,
 }: PageProps<"/[locale]/portfolio/[slug]">) {
   const { locale, slug } = await params;
-  if (!isLocale(locale) || slug !== PLACEHOLDER_SLUG) notFound();
-  return <PagePlaceholder routeKey="portfolio" locale={locale} />;
+  if (!isLocale(locale)) notFound();
+
+  const entry = await getEntry("portfolio", locale, slug);
+  if (!entry) notFound();
+
+  return <ContentDetail entry={entry} />;
 }

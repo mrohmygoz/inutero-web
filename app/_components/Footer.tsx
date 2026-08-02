@@ -43,7 +43,7 @@ const socialPlatforms = ["facebook", "instagram", "x", "youtube"] as const;
 function VerticalLabel({ children }: { children: string }) {
   return (
     <div className="flex w-[21px] shrink-0 items-center justify-center py-[10px]">
-      <span className="font-body text-label-m w-[73px] rotate-90 text-center whitespace-nowrap text-(--color-brand-primary-green) uppercase translate-y-7 lg:translate-y-1">
+      <span className="font-body text-label-m w-[73px] rotate-90 text-center whitespace-nowrap text-(--color-brand-primary-green) uppercase translate-y-6 lg:translate-y-1">
         {children}
       </span>
     </div>
@@ -100,7 +100,12 @@ export default function Footer({ locale }: { locale: Locale }) {
             <p className="font-body text-label-m text-center text-(--color-brand-primary-green) uppercase lg:text-left">
               {f.newsletterLabel}
             </p>
-            <form className="flex flex-col gap-7">
+            {/* Not a <form>: there is no newsletter endpoint, and a <form> with no
+                action GETs the current URL and visibly reloads the page. Inert markup
+                instead, matching NewsletterSignup (D-F) and the same reasoning D022
+                applied to the legal links below. The Footer block stays its own design —
+                the Phase 4 survey confirmed it is not the NewsletterSignup component. */}
+            <div className="flex flex-col gap-7">
               <label className="border-b border-(--color-basic-accent) py-3">
                 <span className="sr-only">{f.newsletterPlaceholder}</span>
                 <input
@@ -110,12 +115,12 @@ export default function Footer({ locale }: { locale: Locale }) {
                 />
               </label>
               <button
-                type="submit"
+                type="button"
                 className="bg-(--color-brand-primary-green) py-[17px] font-body text-label-m text-(--color-basic-accent) uppercase focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-basic-accent)"
               >
                 {f.newsletterCta}
               </button>
-            </form>
+            </div>
             <p className="font-body text-body-s text-(--color-basic-text-secondary)">
               {f.newsletterDisclaimer}
             </p>
