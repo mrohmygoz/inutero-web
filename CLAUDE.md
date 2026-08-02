@@ -18,6 +18,7 @@ Do not re-derive what has already been established. Before any implementation wo
 | `openspec/reference/routes.md` | Canonical route table, locale strategy, resolved naming drift |
 | `openspec/reference/design-inventory.md` | Figma canvas map, every page/component node ID, do-not-implement list |
 | `openspec/reference/design-tokens.md` | All 124 design tokens, all modes. **Source of truth for `@theme`.** |
+| `openspec/reference/content-matrix.md` | Every string on the site, both locales. **Source of truth for copy — outranks the Figma text layers.** Also lists what the client still owes. |
 | `openspec/DECISIONS.md` | Decisions the design does not make for us — read before inventing one |
 | `app/_components/INVENTORY.md` | What components already exist. **Read before building any component.** |
 

@@ -38,7 +38,22 @@ const serviceLabelKeys = [
 
 const legalKeys = ["privacyPolicy", "termsOfService", "cookiesSettings"] as const;
 
-const socialPlatforms = ["facebook", "instagram", "x", "youtube"] as const;
+// URLs from openspec/reference/content-matrix.md -> Contact -> social URLs.
+//
+// The fourth slot is Podcast (Firstory), not X — user decision 2026-08-02 resolving the
+// conflict between the matrix (which supplies a Podcast URL and no X URL) and both the TC
+// Footer frame 12635:16558 and the committed icon set (which carry X).
+//
+// ICON TBD: there is no Podcast glyph in the Figma social set, so this slot borrows the
+// neutral link/chain glyph from the share icons rather than reusing the X logo, which
+// would point a brand mark at the wrong platform. Swap `icon` below when a real asset
+// arrives; `social-brand/x.svg` stays committed in case the decision is reversed.
+const socialPlatforms = [
+  { key: "facebook", icon: "/icons/social-brand/facebook.svg", href: "https://www.facebook.com/inuteromusic" },
+  { key: "instagram", icon: "/icons/social-brand/instagram.svg", href: "https://www.instagram.com/inuteromusic_official/" },
+  { key: "podcast", icon: "/icons/share/link.svg", href: "https://cl7z0x1hm09ua01wi2ukt6kjq.firstory.io/" },
+  { key: "youtube", icon: "/icons/social-brand/youtube.svg", href: "https://www.youtube.com/channel/UCyKN9UgKnYyPX1AWxQLPo9Q" },
+] as const;
 
 function VerticalLabel({ children }: { children: string }) {
   return (
@@ -130,18 +145,20 @@ export default function Footer({ locale }: { locale: Locale }) {
 
       <div className="flex flex-col items-center gap-8 bg-(--color-basic-accent) px-5 py-10 lg:flex-row lg:justify-between lg:px-8">
         <div className="flex gap-8">
-          {socialPlatforms.map((platform) => (
+          {socialPlatforms.map(({ key: platform, icon, href }) => (
             <a
               key={platform}
-              href="#"
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
               aria-label={platform}
               className="relative block size-[37px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-basic-background)"
             >
               <span
                 className="absolute inset-0 bg-(--color-brand-primary-green)"
                 style={{
-                  maskImage: `url(/icons/social-brand/${platform}.svg)`,
-                  WebkitMaskImage: `url(/icons/social-brand/${platform}.svg)`,
+                  maskImage: `url(${icon})`,
+                  WebkitMaskImage: `url(${icon})`,
                   maskSize: "contain",
                   WebkitMaskSize: "contain",
                   maskRepeat: "no-repeat",

@@ -37,12 +37,24 @@ const zh: typeof en = {
     placeholder: "youremail@gmail.com",
     button: "訂閱",
   },
+  // Copy below follows openspec/reference/content-matrix.md (the client's copy deck),
+  // which outranks the Figma text layers for wording (D032).
   footer: {
+    // CONFLICT #3 — left as English pending a decision. The matrix's Footer tab gives
+    // 服務項目 with no （保留英文） marker, but the TC Footer frame (12635:16558) renders
+    // this label as "SERVICES" in English, matching the "IN UTERO" label beside it that
+    // the matrix *does* mark 保留英文. Shipping the Chinese also rotates CJK glyphs onto
+    // their side (VerticalLabel uses rotate-90, correct for Latin, wrong for CJK — that
+    // needs writing-mode: vertical-rl + text-orientation: upright instead).
     servicesHeading: "Services",
-    artistManagement: "藝人經紀整合",
-    internationalTourPlanning: "海內外巡演規劃",
+    artistManagement: "藝人經紀",
+    internationalTourPlanning: "巡演規劃",
     prMarketing: "行銷宣傳",
-    eventProduction: "演出活動製作",
+    // The site-wide name for this service line. The matrix contradicted itself —
+    // its Footer tab said 演出製作, its Home/Services/Portfolio tabs said 活動製作.
+    // User decision 2026-08-02: 活動製作 everywhere. Phases 6, 9 and 10 render the
+    // same string; do not re-derive it from the Footer tab's outlier.
+    eventProduction: "活動製作",
     pagesHeading: "In Utero",
     newsletterLabel: "加入子皿電子報，取得音樂新訊",
     newsletterPlaceholder: "youremail@gmail.com",

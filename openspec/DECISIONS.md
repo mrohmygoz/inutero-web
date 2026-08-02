@@ -40,6 +40,7 @@ Do **not** record things readable from the code or the design itself.
 - [D029 — `NewsletterSignup` is inert without an `action`, and is not the Footer's block](#d029--newslettersignup-is-inert-without-an-action-and-is-not-the-footers-block)
 - [D030 — `UniversalCTA` copy: English headline in both locales; two source conflicts resolved](#d030--universalcta-copy-english-headline-in-both-locales-two-source-conflicts-resolved)
 - [D031 — The article share row is built; the desktop-only left rail is not, and its X glyph replaces the row's YouTube](#d031--the-article-share-row-is-built-the-desktop-only-left-rail-is-not-and-its-x-glyph-replaces-the-rows-youtube)
+- [D032 — The content matrix outranks Figma for copy; Figma keeps layout](#d032--the-content-matrix-outranks-figma-for-copy-figma-keeps-layout)
 
 ## D001 — Locale strategy
 
@@ -582,3 +583,54 @@ rather than an effect-then-`setState`, which React 19's lint rules reject. The a
 **How to apply:** `ShareRow` takes `locale` and `title`. If a site origin is ever configured,
 this can become a server component and the URL can be built at render time. The Footer's
 `href="#"` social links remain a separate, pre-existing gap — not fixed here.
+
+## D032 — The content matrix outranks Figma for copy; Figma keeps layout
+
+**Decision:** `openspec/reference/content-matrix.md` — a transcription of the client's copy deck
+(Google Sheet `1DMrnb5xxDZoMlt1TxX372Z_BvMn__0-vtYqwMSWLRv0`, 子皿網站_內容矩陣) — is the source of
+truth for **what a string says**. Figma remains the source of truth for everything else: which
+strings exist, where they sit, layout, spacing, type scale, and component structure.
+
+**Why:** The sheet's own instructions tab states the Figma English is
+「多數為暫定文案或 Lorem ipsum 占位文字，僅供參考版型與語氣長度」 — mostly provisional or placeholder
+text, useful only for judging layout and tone length. Every string shipped before Phase 4's
+addendum was transcribed from those text layers. Without a written precedence rule, each of
+Phases 5–15 would re-derive copy from a source the client has already superseded.
+
+The transcription is hand-written and versioned in git rather than fetched at build time: the
+architecture forbids runtime fetching, the sheet is a human deliverable revised in bursts rather
+than a live source, and a build that reads it would depend on a Google account's auth state. The
+doc records the sheet's `modifiedTime` so a later phase can detect staleness in one MCP call.
+
+**How to apply:**
+
+- Read `content-matrix.md` before writing any user-visible string. It is now in CLAUDE.md's
+  "Read These First" table.
+- When the final copy is materially longer or shorter than the Figma string it replaces — the
+  Home hero drops from four lines to two — the layout consequence is **derived** under D005.
+  No frame exists for the new copy. Stop and ask rather than reflowing a designed lockup.
+- The doc preserves the sheet's markers rather than flattening them: `（保留英文）` means ship
+  English under `/zh`; `（待補）` means the copy does not exist yet and the phase is blocked, not
+  that the string is empty; `直接刪除段落` / `新增段落` are layout instructions, not copy.
+
+**Confirmations and conflicts found on adoption:**
+
+The matrix independently confirms two D030 judgment calls that were picked from disagreeing
+Figma frames — the `UniversalCTA` headline stays English in both locales, and the button reads
+`跟我們聊聊`. Those are now sourced rather than inferred. It also confirms `ShareRow`'s `Share`
+label stays English under `/zh` (「功能性文字，通常不需業主提供」).
+
+Three conflicts surfaced. One is settled; two are open and recorded in the doc:
+
+| # | Conflict | Status |
+| :--- | :--- | :--- |
+| 1 | Service #4's Chinese name — the matrix's Footer tab says `演出製作`, its Home/Services/Portfolio tabs say `活動製作` | **Resolved 2026-08-02: `活動製作`**, site-wide. Phases 6, 9 and 10 render the same string. |
+| 2 | Social platforms — the matrix supplies Facebook/Instagram/YouTube/**Podcast**; the Footer and the TC Figma frame both carry **X** | **Resolved 2026-08-02: Podcast replaces X.** All four slots resolve to real destinations. No Podcast glyph exists in the Figma social set, so that slot uses the neutral link/chain glyph as an explicit placeholder rather than pointing the X brand mark at another platform; `social-brand/x.svg` stays committed. |
+| 3 | Footer Services column heading — the matrix gives `服務項目`, the TC Footer frame `12635:16558` renders `SERVICES` in English | **Resolved 2026-08-02: stays English.** The matrix row is treated as an oversight — the adjacent `IN UTERO` label *is* marked `保留英文`, the TC frame renders English, and `VerticalLabel`'s `rotate-90` lays CJK glyphs on their side. |
+
+**Note on precedence in practice.** Conflicts #2 and #3 are both cases where the matrix and a
+*locale-specific* Figma frame disagree, and they were resolved in opposite directions — #2 for the
+matrix, #3 for the design. That is the point of escalating rather than applying the rule
+mechanically: a matrix row contradicting a TC frame its author may never have opened is a
+question, not a mandate. The general rule still stands; these are two named exceptions to it,
+and neither was decided by the implementer.
