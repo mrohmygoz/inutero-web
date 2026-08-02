@@ -32,6 +32,7 @@ Do **not** record things readable from the code or the design itself.
 - [D021 — Nav collapses to the mobile menu at 1024px](#d021--nav-collapses-to-the-mobile-menu-at-1024px)
 - [D022 — Footer's non-route content is scoped down, not omitted](#d022--footers-non-route-content-is-scoped-down-not-omitted)
 - [D023 — Zh display/accent fonts fall back to the Latin face for mixed-in Latin text](#d023--zh-displayaccent-fonts-fall-back-to-the-latin-face-for-mixed-in-latin-text)
+- [D024 — The mobile NAV rule stretches to the locale pill instead of a fixed 225px](#d024--the-mobile-nav-rule-stretches-to-the-locale-pill-instead-of-a-fixed-225px)
 
 ## D001 — Locale strategy
 
@@ -400,3 +401,18 @@ Alumni Sans and Bodoni Moda SC at 700, Mochiy Pop One at 400. Zh h1/h5/h6/h7 (mo
 available weight, 700 — visibly bolder than the surrounding Chinese text. Accepted rather than
 loading a second Latin weight, which D008 already rules out changing without raising with the
 designer.
+
+## D024 — The mobile NAV rule stretches to the locale pill instead of a fixed 225px
+
+**Decision:** The horizontal rule that crosses the mobile logo mark (Line 1, `12563:4300`) is a
+`flex-1` item that grows to 32px short of the locale pill, rather than the fixed `225px` the
+design gives it.
+
+**Why:** User request, 2026-08-02. `225px` is only correct at the designed 393px width. Between
+394px and 1023px the bar keeps widening while the rule does not, leaving it stranded well short
+of the controls. Growing it keeps the bar reading as one composition across the whole
+mobile-to-desktop-collapse range.
+
+**Consequence to accept:** The 32px trailing gap was tuned so that 393px lands at 222px —
+within 3px of the frame's 225px, so the designed width is effectively preserved where a
+designed value exists. Every wider viewport is derived behavior per D005.

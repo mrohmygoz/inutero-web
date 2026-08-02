@@ -72,13 +72,6 @@ export default function Nav({ locale, theme = "light" }: { locale: Locale; theme
       <div
         className={`relative flex h-16 items-center justify-between border-b-[0.542px] px-3 lg:h-auto lg:justify-start lg:border-b-0 lg:px-8 lg:pt-[30px] lg:pb-[10px] ${tone.border}`}
       >
-        {/* Mobile rule: starts flush at the left edge and stops at 225px,
-            crossing the mark at y=31.73 (Line 1, 12563:4300). */}
-        <span
-          aria-hidden
-          className={`pointer-events-none absolute top-[31px] left-0 h-[2px] w-[225px] bg-current lg:hidden ${tone.mark}`}
-        />
-
         <a
           href={localizedHref("home", locale)}
           aria-label="In Utero"
@@ -87,6 +80,17 @@ export default function Nav({ locale, theme = "light" }: { locale: Locale; theme
           <LogoMark className={`size-12 lg:hidden ${tone.mark}`} />
           <Logo className={`hidden aspect-[97/89] h-[89px] lg:block ${tone.text}`} />
         </a>
+
+        {/* Mobile rule (Line 1, 12563:4300): crosses the mark at y=31 and runs
+            flush off the left edge. Figma draws it to a fixed 225px; here it's
+            a flex item that grows to meet the locale pill instead, so the bar
+            stays balanced at widths other than the designed 393px. It sits
+            after the mark in source order and the negative left margin (48px
+            mark + the 12px px-3 gutter) pulls it back under the mark to x=0. */}
+        <span
+          aria-hidden
+          className={`pointer-events-none relative mt-[31px] mr-8 -ml-[60px] h-[2px] flex-1 self-start bg-current lg:hidden ${tone.mark}`}
+        />
 
         {/* Desktop only. The pt-10/pb-48 wrapper reproduces the exact Figma
             vertical rhythm (12653:5366) — it's what makes the links row's
