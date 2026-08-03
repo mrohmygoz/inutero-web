@@ -51,8 +51,8 @@ const legalKeys = ["privacyPolicy", "termsOfService", "cookiesSettings"] as cons
 const socialPlatforms = [
   { key: "facebook", icon: "/icons/social-brand/facebook.svg", href: "https://www.facebook.com/inuteromusic" },
   { key: "instagram", icon: "/icons/social-brand/instagram.svg", href: "https://www.instagram.com/inuteromusic_official/" },
-  { key: "podcast", icon: "/icons/share/link.svg", href: "https://cl7z0x1hm09ua01wi2ukt6kjq.firstory.io/" },
   { key: "youtube", icon: "/icons/social-brand/youtube.svg", href: "https://www.youtube.com/channel/UCyKN9UgKnYyPX1AWxQLPo9Q" },
+  { key: "podcast", icon: "/icons/share/link.svg", href: "https://cl7z0x1hm09ua01wi2ukt6kjq.firstory.io/" },
 ] as const;
 
 function VerticalLabel({ children }: { children: string }) {
