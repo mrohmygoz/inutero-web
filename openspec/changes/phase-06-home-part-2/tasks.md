@@ -143,8 +143,29 @@ Folded in on the user's direction — a Phase 5 omission, not new scope. Desktop
 - [x] 8.7 Scroll the full page in both locales and confirm the Phase 5 → Phase 6 seam has no gap,
       overlap, or doubled spacing.
 - [x] 8.8 `npm run lint` and `npx tsc --noEmit` both clean.
-- [ ] 8.9 Report honestly at the gate: state that the accordion interaction and the 1024–1440
+- [x] 8.9 Report honestly at the gate: state that the accordion interaction and the 1024–1440
       band are derived with no Figma reference, that the hero cycle's timing is *not* derived
       (it is the prototype's own values) while its reduced-motion behavior is, that the three
       card images are Figma exports that Phase 11 replaces, and name anything skipped, blocked,
       or only partly done.
+
+## 9. Addendum — prototype motion and card corrections (post-gate, 2026-08-03)
+
+- [x] 9.1 Sweep the whole mobile Home frame with `node.reactions` (not just `get_motion_context`
+      and the frame roots) and record what it finds — D046.
+- [x] 9.2 Animate the Services accordion to the designed `SMART_ANIMATE / EASE_OUT / 0.3s`:
+      `grid-template-rows` 0fr→1fr, panels mounted and `inert` while closed, `+`/`×` cross-faded.
+- [x] 9.3 Correct D041 in place — the interaction is designed, not Derived.
+- [x] 9.4 Build the Featured Projects scroll stack from the user's prototype recordings: sticky
+      heading, cards pinned at one offset with rising z-index. Use `overflow-x-clip`, never
+      `overflow-hidden`, which would kill `sticky`.
+- [x] 9.5 Fix `ProjectCard` to one order at every width, matching Home's own desktop card
+      `12210:2404` rather than the Portfolio page's `12610:6812`.
+- [x] 9.6 Replace the card image's fixed height with `aspect-[333/445]` so it scales with the
+      caller's width instead of cropping the posters.
+- [x] 9.7 Set both Featured Projects CTAs to `tone="green"`.
+- [x] 9.8 Preserve the user's hand-tuned card spacing across the restructure.
+- [x] 9.9 Append D046 and D047; update `ProjectCard`'s INVENTORY row with the Portfolio
+      divergence so Phase 10 does not rediscover it.
+- [x] 9.10 Re-verify at 393/1024/1440 × both locales: no horizontal overflow, accordion animating,
+      cards stacking, desktop row unchanged. `npm run lint` and `npx tsc --noEmit` clean.

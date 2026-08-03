@@ -105,3 +105,31 @@ No dependency changes. No API routes. Nothing is removed.
 **User verifies:** `/en` and `/zh` at 393px and 1440px — Home now runs hero → intro → services
 → featured projects → green CTA → footer with no gap, the accordion opens and closes, and the
 `VIEW ALL PROJECTS` / `full services list` buttons navigate.
+
+## Addendum — prototype motion and card corrections (post-gate, 2026-08-03)
+
+Added after the review gate, on the user's direction, before archiving. Four commits
+(`5fde4cd`, `ce5133c`, `1ab082d`, `777ecbb`).
+
+The gate report claimed the accordion interaction was *Derived* and that Featured Projects had no
+motion. **Both were wrong**, and the cause was a single bad method: the phase checked
+`get_motion_context` and the frame roots, which report timeline keyframes only. A deep
+`node.reactions` sweep and the user's prototype recordings showed the design specifies far more.
+
+- **The Services accordion is animated and designed** — the mobile section is a component set
+  (`10275:2617`) with one variant per open item, and every item carries `ON_CLICK` → `CHANGE_TO`
+  with `SMART_ANIMATE / EASE_OUT / 0.3s`. It shipped snapping. Now a 300ms ease-out
+  `grid-template-rows` transition with cross-fading `+`/`×` glyphs. D041 corrected in place.
+- **Featured Projects cards stack on scroll** — the heading pins and each card slides up over the
+  previous. No API surface exposes this; it was built from the user's recordings and stays
+  **Derived**. `overflow-x-clip` is load-bearing: `overflow-hidden` would silently kill `sticky`.
+- **`ProjectCard` rendered the wrong order**, corrected twice. Home's desktop card `12210:2404`
+  matches mobile; the image-first `12610:6812` is the **Portfolio page's** card — a different
+  design that Phase 10 must reconcile with a variant prop, not a breakpoint switch.
+- **The card image is now an aspect ratio, not a fixed height** — `h-96` against a ~400px desktop
+  card was near-square and `object-cover` cropped the posters badly.
+- **Both Featured Projects CTAs were the wrong tone** — `10275:3147` and `12358:2031` are green,
+  and were built dark.
+
+D046 and D047 added; D041 rewritten. The user's hand-tuned card spacing was preserved across the
+restructure rather than reverted to the drawn values.
