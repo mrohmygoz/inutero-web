@@ -102,7 +102,7 @@ const zh: typeof en = {
           description:
             "攜手緩緩 Huan Huan 先後走訪台北市中山老人住宅暨服務中心、彰化花壇安耆日照中心，以及彰化北斗有冊店，在母親節前後為長輩與在地社區帶來一場場跨世代的音樂相聚。",
           tags: ["巡演規劃", "行銷宣傳"],
-          image: "/images/projects/you-and-me.jpg",
+          image: "/images/projects/inner-voices-of-that-day.jpg",
         },
       ],
     },

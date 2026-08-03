@@ -99,7 +99,7 @@ const en = {
           description:
             "Partnering with Huan Huan, we brought music directly to local communities, creating warm, cross-generational gatherings for seniors and neighbors alike around Mother's Day.",
           tags: ["Tour Planning", "PR & Marketing"],
-          image: "/images/projects/you-and-me.jpg",
+          image: "/images/projects/inner-voices-of-that-day.jpg",
         },
       ],
     },
