@@ -31,7 +31,13 @@ const en = {
         "We work with artists who create from real experience, not formulas.",
         "We believe music is a cultural language - shaped by where it comes from and where it can go.",
       ],
-      cta: "Our story",
+      // MATRIX OVERRIDE (user decision 2026-08-03): the matrix row reads "Our story"
+      // and the Figma frame draws it lowercase, but the page name is "Our Story"
+      // everywhere else — `routes.ts`, the NAV, and the Footer all take it from one
+      // typed table (D018). `Cta` renders uppercase so this is invisible on screen,
+      // but the two spellings sat side by side in the DOM. Do not revert to the
+      // matrix's casing. See D048.
+      cta: "Our Story",
     },
     // Home's Services summary (12210:2346 desktop, 10275:2585 mobile). A four-item
     // accordion; Figma draws only item 1 open, so only item 1's description appears

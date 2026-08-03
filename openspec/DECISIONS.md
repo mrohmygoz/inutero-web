@@ -56,6 +56,7 @@ Do **not** record things readable from the code or the design itself.
 - [D045 — Two prototype findings recorded for later phases; neither acted on in Phase 6](#d045--two-prototype-findings-recorded-for-later-phases-neither-acted-on-in-phase-6)
 - [D046 — `get_motion_context` is not sufficient to answer "does this animate?"](#d046--get_motion_context-is-not-sufficient-to-answer-does-this-animate)
 - [D047 — Home's Featured Projects cards stack on scroll; the card's own order is breakpoint-dependent](#d047--homes-featured-projects-cards-stack-on-scroll-the-cards-own-order-is-breakpoint-dependent)
+- [D048 — "Our Story" is the site-wide spelling; the matrix's "Our story" is overridden](#d048--our-story-is-the-site-wide-spelling-the-matrixs-our-story-is-overridden)
 
 ## D001 — Locale strategy
 
@@ -1028,3 +1029,23 @@ that is the design's intent, since Figma fills the box rather than fitting to it
 fills `#08c454` with `#131417` text, and `12358:2031` is the green-bg/dark-text desktop
 occurrence that `Cta`'s `tone` prop was introduced for in the first place (see `INVENTORY.md`).
 Both are now `tone="green"`.
+
+## D048 — "Our Story" is the site-wide spelling; the matrix's "Our story" is overridden
+
+**Decision:** Every English occurrence of the `/about` page name is **"Our Story"**. The Home
+intro CTA in `app/_lib/i18n/en.ts` was the only string spelling it "Our story"; it is now
+capitalised to match.
+
+**Why:** user decision, 2026-08-03. `openspec/reference/content-matrix.md` row 144 gives
+`Our story`, and D032 makes the matrix authoritative for copy — so this is a deliberate override
+of that precedence, recorded here so a later phase does not "correct" it back. Everything else
+already read "Our Story" because NAV, Footer and page titles all draw from the one typed route
+table (D018); only this hand-written CTA diverged.
+
+**"Our Stories" is not a website string.** It is the *Figma frame name* for the mobile `/about`
+page (`12210:2817`), and `design-inventory.md` records it as such because that is what the file
+is called. `routes.md` and D004 already resolve the display name to "Our Story", and the site has
+never rendered the plural. Leave the inventory entry alone — it documents Figma, not the product.
+
+**Scope note:** this is casing only, and `Cta` renders `uppercase`, so nothing changes visually.
+It matters for the DOM, for copied text, and for anyone who later removes the uppercase styling.
