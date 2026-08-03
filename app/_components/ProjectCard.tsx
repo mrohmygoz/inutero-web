@@ -46,8 +46,10 @@ export default function ProjectCard({
           is a genuinely different design; reconciling it is Phase 10's problem,
           and it will need a variant prop rather than a breakpoint switch. */}
 
-      {/* Tags + title + date — `Frame 27`, gap-[10px]. */}
-      <div className="flex w-full flex-col items-start gap-[10px]">
+      {/* Tags + title + date — `Frame 27`. The frame's own gap is 10px; the
+          14px/24px here and the date's `mt-2` are the user's hand-tuning, kept
+          across the restructure rather than reverted to the drawn values. */}
+      <div className="flex w-full flex-col items-start gap-[14px] lg:gap-6">
         <div className="flex flex-wrap items-start gap-[5px]">
           {tags.map((tag) => (
             <Tag key={tag.label} variant="solid" color={tag.color}>
@@ -60,7 +62,7 @@ export default function ProjectCard({
           <p className="w-full font-['Bodoni_Moda_SC'] text-4xl leading-9 font-bold tracking-tight text-(--primitive-white) uppercase">
             {title}
           </p>
-          <p className="line-clamp-1 w-full font-['Chivo_Mono'] text-xs leading-4 font-normal text-(--primitive-white)">
+          <p className="mt-2 line-clamp-1 w-full font-['Chivo_Mono'] text-xs leading-4 font-normal text-(--primitive-white)">
             {dateLabel}
           </p>
         </div>
