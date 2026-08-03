@@ -54,6 +54,7 @@ Do **not** record things readable from the code or the design itself.
 - [D043 — Where Home's summary sections link, and what the prototype says they should](#d043--where-homes-summary-sections-link-and-what-the-prototype-says-they-should)
 - [D044 — The mobile hero photo cycle is designed, not derived](#d044--the-mobile-hero-photo-cycle-is-designed-not-derived)
 - [D045 — Two prototype findings recorded for later phases; neither acted on in Phase 6](#d045--two-prototype-findings-recorded-for-later-phases-neither-acted-on-in-phase-6)
+- [D046 — `get_motion_context` is not sufficient to answer "does this animate?"](#d046--get_motion_context-is-not-sufficient-to-answer-does-this-animate)
 
 ## D001 — Locale strategy
 
@@ -823,19 +824,41 @@ must never be applied page-wide.
 
 **Decision:** The Home Services summary (`12210:2346` desktop, `10275:2585` mobile) is an
 interactive four-item accordion. Item 1 is open on load, clicking another opens it and closes
-the current, and only one is ever open. `HomeServices` is `'use client'`; collapsed panels are
-unmounted rather than CSS-hidden, and each header is a real `<button>` with `aria-expanded` /
+the current, and only one is ever open. Open/close is a **300ms ease-out height animation**.
+`HomeServices` is `'use client'`; each header is a real `<button>` with `aria-expanded` /
 `aria-controls`.
 
-**Why:** User decision, 2026-08-03, taken before the phase was planned. Figma draws exactly one
-state, so the interaction is **Derived** (D005) — it must not be reported as matching the design.
-The design does supply two icon glyphs, which is what made an interactive reading the likely
-intent: a green `×` on the open row and a green `+` on the closed rows.
+**Why:** **Corrected 2026-08-03, after the user reported the built section did not match the
+prototype.** This entry originally called the interaction *Derived* on the grounds that "Figma
+draws exactly one state." That was wrong, and it was wrong because the first sweep only checked
+`get_motion_context` and the frame roots. A deep `node.reactions` sweep of the mobile Home frame
+shows the interaction is fully specified:
 
-**Consequence:** the toggle **swaps two exported SVGs** (`public/icons/accordion-close.svg` /
-`accordion-open.svg`) rather than rotating one — the phase plan had assumed a single rotating
-glyph, which the frames disproved. Opening a different item changes the section's height; there
-is no fixed-height container in the design and none was invented.
+- Mobile Services is a **component set** `10275:2617` with four variants — `Default` plus
+  `Variant2` `10275:2650`, `Variant3` `10275:2682`, `Variant4` `10275:2714` — one per open item.
+  So "one open at a time" is the design's own model, not a choice made for it.
+- Each item's `Tab` instance carries `ON_CLICK` → `CHANGE_TO` the sibling variant, transition
+  **`SMART_ANIMATE`**, easing **`EASE_OUT`**, duration **`0.3`**.
+- The `Tab` component set `10275:2552` carries the per-item open/closed variants
+  (`Property 1=Default` `10275:2545` / `Property 1=open` `10275:2553`).
+
+The user's decision of 2026-08-03 (interactive, one open at a time) therefore matches the design
+rather than substituting for it. Only two things here remain derived: `prefers-reduced-motion`,
+under which the transition is dropped and the panel snaps; and the desktop accordion's motion,
+since the reactions live on the mobile component set — desktop reuses the same timing rather
+than inventing a second one.
+
+**How smart-animate is reproduced:** a `grid-template-rows: 0fr → 1fr` transition, which animates
+to the content's natural height without hardcoding one and lets the rows below slide as the panel
+grows. Panels stay **mounted** (superseding this entry's original "unmounted" note — there must be
+something to animate) and are marked `inert` while closed, keeping their copy out of the a11y tree
+and out of tab order.
+
+**Icons:** the toggle cross-fades the two exported SVGs (`public/icons/accordion-close.svg` /
+`accordion-open.svg`) over the same 300ms. The phase plan had assumed one rotating glyph; the
+frames disprove it twice over — Figma draws both, and they are not the same shape rotated (the `×`
+sits at inset 33.13%, the `+` at 26.64%), so rotating the `+` by 45° would render the `×` larger
+than designed.
 
 This accordion stays page-local. The Services *page* (Phases 8–9) has its own accordion and its
 own frames; a second consumer with a verified design is the bar for promoting it to
@@ -922,3 +945,35 @@ recorded in `design-inventory.md` for TC desktop sections are main-component int
 `get_design_context` **cannot resolve** — the addressable ids are `I12635:15868;<en-node-id>` —
 and `get_screenshot` rejects that form, so TC desktop sections must be captured via the Plugin
 API's `node.screenshot()`.
+
+## D046 — `get_motion_context` is not sufficient to answer "does this animate?"
+
+**Decision:** Before declaring any section static or any interaction *Derived*, run a deep
+`node.reactions` sweep over the whole page frame via the Plugin API. `get_motion_context` alone
+is not evidence of absence.
+
+**Why:** this has now caused two misses in one phase.
+
+| Miss | What `get_motion_context` said | What `node.reactions` said |
+| :--- | :--- | :--- |
+| Mobile hero photo cycle (D044) | empty on the variant set, the instance, and the whole mobile Home frame | `AFTER_TIMEOUT 0.8s` → `CHANGE_TO` → `DISSOLVE`/`LINEAR`/`0.2s` on all five variants |
+| Services accordion (D041) | empty | `ON_CLICK` → `CHANGE_TO` → `SMART_ANIMATE`/`EASE_OUT`/`0.3s` on every item |
+
+`get_motion_context` reports **timeline keyframe animations**. Prototype reactions — timed
+transitions, click-driven variant changes, overlays, navigation — are a separate channel it does
+not cover. Phase 5 shipped a still hero and Phase 6 first shipped a snapping accordion for exactly
+this reason; both were caught only when the user compared against the prototype.
+
+**The sweep that works** (a shallow check on the frame root is not enough — every one of these
+reactions lives on a nested instance):
+
+```js
+const home = await figma.getNodeByIdAsync(FRAME_ID);
+return home.findAll(n => n.reactions && n.reactions.length > 0)
+  .map(n => ({ id: n.id, name: n.name, reactions: n.reactions }));
+```
+
+**Known blind spot:** Figma's *scroll-driven* animations do not appear to be exposed through the
+Plugin API at all — `animationStyles` reads empty across the whole mobile Home frame, and there is
+no `scrollBehavior` property on these nodes. If a section is meant to animate on scroll, the file
+cannot tell us; it has to come from the designer or from watching the prototype.

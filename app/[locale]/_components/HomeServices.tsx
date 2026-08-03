@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import Image from "next/image";
 import Cta from "../../_components/Cta";
 import { getDictionary, type Locale } from "../../_lib/i18n";
@@ -15,11 +15,22 @@ import { localizedHref } from "../../_lib/routes";
 // 1377px in Chinese, so a fixed-aspect canvas would letterbox one locale or squash
 // the other. It reflows instead.
 //
-// The accordion is INTERACTIVE — one item open at a time, item 1 open on load. Figma
-// draws only that single state, so the interaction is derived (D005) and must not be
-// reported as matching the design. What Figma *does* draw is both icon glyphs: a
-// green "×" on the open row and a green "+" on the closed ones, so the toggle swaps
-// assets rather than rotating one.
+// The accordion is INTERACTIVE and its behaviour is DESIGNED, not derived. The mobile
+// Services section is a component set (`10275:2617`) with four variants — Default plus
+// Variant2/3/4, one per open item — and each item's `Tab` instance carries a prototype
+// reaction: ON_CLICK -> CHANGE_TO the sibling variant, transition SMART_ANIMATE,
+// easing EASE_OUT, duration 0.3s. Exactly one item is open at a time, and the
+// open/close is a 300ms ease-out height animation, not a snap.
+//
+// Smart-animate is reproduced with a `grid-template-rows: 0fr -> 1fr` transition: it
+// animates to the content's natural height without hardcoding one, and the rows below
+// slide as the panel grows. Panels stay mounted (so there is something to animate) and
+// are `inert` while closed, which keeps their copy out of the a11y tree and tab order.
+//
+// Figma draws both icon glyphs — a green "×" on the open row, a green "+" on the
+// closed ones. They are NOT one glyph rotated (the × sits at inset 33.13%, the + at
+// 26.64%), so the two exported SVGs cross-fade over the same 300ms rather than one
+// rotating 45°, which would draw the × larger than designed.
 //
 // The photograph is absolutely positioned behind the accordion. In the frames it sits
 // at a fixed offset that does not track the accordion, which drifts 72px between the
@@ -32,15 +43,54 @@ import { localizedHref } from "../../_lib/routes";
 // invented as a token, same call as HomeIntro's heading gradient.
 const DOT_GREEN = "#00ea17";
 
+// Both glyphs are stacked and cross-faded, so the swap animates over the same 300ms
+// as the panel rather than popping.
 function AccordionIcon({ open }: { open: boolean }) {
   return (
-    <Image
-      src={open ? "/icons/accordion-close.svg" : "/icons/accordion-open.svg"}
-      alt=""
-      width={36}
-      height={36}
-      className="block size-full"
-    />
+    <span className="relative block size-full">
+      <Image
+        src="/icons/accordion-open.svg"
+        alt=""
+        width={36}
+        height={36}
+        className={`absolute inset-0 block size-full transition-opacity duration-300 ease-out motion-reduce:transition-none ${open ? "opacity-0" : "opacity-100"}`}
+      />
+      <Image
+        src="/icons/accordion-close.svg"
+        alt=""
+        width={36}
+        height={36}
+        className={`absolute inset-0 block size-full transition-opacity duration-300 ease-out motion-reduce:transition-none ${open ? "opacity-100" : "opacity-0"}`}
+      />
+    </span>
+  );
+}
+
+// The animating panel wrapper, shared by both breakpoints. `grid-template-rows`
+// animates to the content's own height; the inner element must clip.
+function AccordionPanel({
+  id,
+  labelledBy,
+  open,
+  children,
+}: {
+  id: string;
+  labelledBy: string;
+  open: boolean;
+  children: ReactNode;
+}) {
+  return (
+    <div
+      id={id}
+      role="region"
+      aria-labelledby={labelledBy}
+      inert={!open}
+      className={`grid transition-[grid-template-rows] duration-300 ease-out motion-reduce:transition-none ${
+        open ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+      }`}
+    >
+      <div className="overflow-hidden">{children}</div>
+    </div>
   );
 }
 
@@ -134,18 +184,17 @@ export default function HomeServices({ locale }: { locale: Locale }) {
                         </span>
                       </button>
                     </h3>
-                    {open ? (
-                      <div
-                        id={`home-service-panel-${index}`}
-                        role="region"
-                        aria-labelledby={`home-service-trigger-${index}`}
-                        className="flex justify-end"
-                      >
+                    <AccordionPanel
+                      id={`home-service-panel-${index}`}
+                      labelledBy={`home-service-trigger-${index}`}
+                      open={open}
+                    >
+                      <div className="flex justify-end">
                         <p className="font-body text-body-s w-[326px] pb-[20px] text-(--color-basic-background)">
                           {item.description}
                         </p>
                       </div>
-                    ) : null}
+                    </AccordionPanel>
                   </div>
                 );
               })}
@@ -240,18 +289,17 @@ export default function HomeServices({ locale }: { locale: Locale }) {
                           </span>
                         </button>
                       </h3>
-                      {open ? (
-                        <div
-                          id={`home-service-panel-lg-${index}`}
-                          role="region"
-                          aria-labelledby={`home-service-trigger-lg-${index}`}
-                          className="pr-[8px] pb-[40px] pl-[52px]"
-                        >
+                      <AccordionPanel
+                        id={`home-service-panel-lg-${index}`}
+                        labelledBy={`home-service-trigger-lg-${index}`}
+                        open={open}
+                      >
+                        <div className="pr-[8px] pb-[40px] pl-[52px]">
                           <p className="font-body text-body-l text-(--color-basic-background)">
                             {item.description}
                           </p>
                         </div>
-                      ) : null}
+                      </AccordionPanel>
                     </div>
                   );
                 })}
