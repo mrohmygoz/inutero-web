@@ -32,38 +32,22 @@ export default function ProjectCard({
 }) {
   const content: ReactNode = (
     <div
-      className={`inline-flex w-full flex-col items-start gap-[15px] overflow-hidden bg-(--color-basic-accent) px-[10px] py-[13px] outline outline-[0.54px] outline-offset-[-0.54px] outline-(--opacity-white-10) lg:gap-0 lg:p-0 ${className ?? ""}`.trim()}
+      className={`inline-flex w-full flex-col items-start gap-[15px] overflow-hidden bg-(--color-basic-accent) px-[10px] py-[13px] outline outline-[0.54px] outline-offset-[-0.54px] outline-(--opacity-white-10) ${className ?? ""}`.trim()}
     >
-      {/* The two breakpoints order these three blocks differently, and it is the
-          ONLY structural difference between them — so the image is reordered with
-          flex `order` rather than shipping two card trees:
+      {/* ONE order at both breakpoints: tags -> title -> date -> image ->
+          description. Mobile `10274:2306` and Home's desktop cards
+          (`12210:2404` — tags y=11, title/date y=59, image y=131, description
+          y=625) agree; the card is simply larger at 1440px.
 
-            mobile  10274:2306 : tags+title+date -> image -> description
-            desktop 12610:6812 : image -> tags+title+date -> description
+          Corrected twice in Phase 6. It first shipped image-first at both
+          breakpoints, then briefly image-first at desktop only — both wrong,
+          because the "desktop card" both readings used, `12610:6812`, is the
+          PORTFOLIO PAGE's card, not Home's. That one really is image-first and
+          is a genuinely different design; reconciling it is Phase 10's problem,
+          and it will need a variant prop rather than a breakpoint switch. */}
 
-          Corrected in Phase 6: the card previously used the desktop order at both
-          breakpoints, which put the photograph above the tags on mobile. */}
-
-      {/* Image */}
-      <div className="relative order-2 h-[445px] w-full shrink-0 bg-(--opacity-white-10) lg:order-1 lg:h-96">
-        {image ? (
-          <Image
-            src={image.src}
-            alt={image.alt}
-            fill
-            // The card is `w-full`, so this covers every current occurrence:
-            // ~400px at the widest (Home's first desktop card), 353px of a 393px
-            // viewport at mobile. Without it next/image warns and ships the
-            // full-resolution source.
-            sizes="(min-width: 1024px) 400px, 90vw"
-            className="object-cover"
-          />
-        ) : null}
-      </div>
-
-      {/* Tags + title + date. On mobile these are one block above the image
-          (Frame 27, gap-[10px]); on desktop they sit below it. */}
-      <div className="order-1 flex w-full flex-col items-start gap-[10px] lg:order-2 lg:gap-4 lg:px-3 lg:pt-5">
+      {/* Tags + title + date — `Frame 27`, gap-[10px]. */}
+      <div className="flex w-full flex-col items-start gap-[10px]">
         <div className="flex flex-wrap items-start gap-[5px]">
           {tags.map((tag) => (
             <Tag key={tag.label} variant="solid" color={tag.color}>
@@ -82,8 +66,34 @@ export default function ProjectCard({
         </div>
       </div>
 
-      {/* Description — last at both breakpoints. */}
-      <div className="order-3 w-full lg:px-3 lg:pt-2 lg:pb-5">
+      {/* Image. An ASPECT RATIO, not a fixed height: the card's width varies by
+          consumer (353px at mobile, ~400/353px across Home's desktop scatter),
+          and a fixed height made the box progressively squarer than the frame's
+          as the card widened, so `object-cover` cropped the posters — heavily at
+          desktop, where 384px against a ~400px card was near-square.
+
+          333/445 is the frame's own box (353px card less its 10px padding,
+          445px tall). Posters are 0.71–0.80, so this still crops slightly —
+          that is the design's own intent, since Figma fills the box rather than
+          fitting to it. */}
+      <div className="relative aspect-[333/445] w-full shrink-0 bg-(--opacity-white-10)">
+        {image ? (
+          <Image
+            src={image.src}
+            alt={image.alt}
+            fill
+            // The card is `w-full`, so this covers every current occurrence:
+            // ~400px at the widest (Home's first desktop card), 353px of a 393px
+            // viewport at mobile. Without it next/image warns and ships the
+            // full-resolution source.
+            sizes="(min-width: 1024px) 400px, 90vw"
+            className="object-cover"
+          />
+        ) : null}
+      </div>
+
+      {/* Description */}
+      <div className="w-full">
         <p className="w-full font-['Chivo_Mono'] text-xs leading-5 font-normal text-(--opacity-white-60)">
           {description}
         </p>

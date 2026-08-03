@@ -1001,19 +1001,28 @@ Plugin API does not expose. The mechanic is reproduced from the recording, not r
 `overflow-hidden` on the wrapper — makes that element a scroll container and **silently kills
 every `sticky` inside it**. Use `overflow-x-clip`, which clips without establishing one.
 
-**The same review found `ProjectCard` was rendering the wrong order on mobile.** The two Figma
-components genuinely differ, and Phase 2 collapsed them into the desktop order at both
-breakpoints:
+**The same review found `ProjectCard` was rendering the wrong order.** It shipped
+image-first at both breakpoints. **Corrected, then corrected again** — the first fix made the
+order breakpoint-dependent, which was also wrong. The card Home actually uses is the *same* at
+both sizes:
 
-| | Order |
+| Node | Order |
 | :--- | :--- |
-| Mobile `10274:2306` | tags + title + date → **image** → description |
-| Desktop `12610:6812` | **image** → tags + title + date → description |
+| Mobile `10274:2306` | tags → title → date → **image** → description |
+| Home desktop `12210:2404` (tags y=11, title/date y=59, image y=131, desc y=625) | **identical** |
+| Portfolio page `12610:6812` | **image** → tags → title → description |
 
-Only the image moves, so it is reordered with flex `order` rather than shipping two card trees —
-the rest of the content keeps the same relative sequence at both breakpoints. This is exactly the
-"the two Figma component sets are not 1:1" case CLAUDE.md warns about, and it went unnoticed
-because Phase 6 composed the shell "unchanged" on the strength of the width check alone.
+So `ProjectCard` uses one order everywhere. The image-first reading came from `12610:6812`, which
+is the **Portfolio page's** card — a genuinely different design that Phase 10 must reconcile, and
+which will need a variant prop rather than a breakpoint switch. Two wrong turns came from
+treating "the desktop occurrence" as one thing when Home and Portfolio disagree; the lesson is to
+check the occurrence on *the page being built*, not the one INVENTORY happens to cite first.
+
+**The image is an aspect ratio, not a fixed height.** `h-96` at desktop against a ~400px-wide
+card was near-square, so `object-cover` cropped the posters badly (the user caught it). The box is
+now `aspect-[333/445]` — the frame's own (a 353px card less its 10px padding, 445px tall) — so it
+scales with whatever width the consumer sets. Posters run 0.71–0.80, so a slight crop remains;
+that is the design's intent, since Figma fills the box rather than fitting to it.
 
 **Also corrected:** both Featured Projects CTAs were built `tone="dark"`. Mobile `10275:3147`
 fills `#08c454` with `#131417` text, and `12358:2031` is the green-bg/dark-text desktop
