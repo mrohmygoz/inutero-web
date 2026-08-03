@@ -58,20 +58,33 @@ graph LR
 ## Page Frames
 
 Nine pages, each existing at two breakpoints × two locales = 36 frames.
-Frame names differ between canvases; the **Route** column is canonical
-(see `openspec/reference/routes.md`).
+
+> **The names below are Figma frame names, not page names.** They are recorded only so you can
+> find the frame in the file. Three disagree with the page's real name and are marked **†**.
+> **Never copy a frame name into UI copy, a nav label, or metadata** — page names come from
+> `app/_lib/routes.ts` (D018), documented in `openspec/reference/routes.md`. The **Route**
+> column here is canonical.
 
 | Route | Desktop EN | Desktop TC | Mobile EN | Mobile TC |
 | :--- | :--- | :--- | :--- | :--- |
 | `/[locale]` | Home `12405:6998` | `12635:15868` | Home `10268:2046` | `12368:2413` |
-| `/[locale]/about` | Our Story `12612:8545` | `12635:12924` | Our Stories `12210:2817` | `12368:2432` |
+| `/[locale]/about` | Our Story `12612:8545` | `12635:12924` | Our Stories **†** `12210:2817` | `12368:2432` |
 | `/[locale]/services` | Services `12612:8668` | `12635:12925` | Services `12220:2064` | `12368:2814` |
 | `/[locale]/portfolio` | Portfolio `12612:8704` | `12635:12926` | Portfolio `12210:3063` | `12368:2453` |
-| `/[locale]/portfolio/[slug]` | Portfolio Details `12612:8706` | `12635:12927` | Project Details `12211:3371` | `12368:2481` |
-| `/[locale]/artists` | Our Artist `12612:8774` | `12635:12928` | Featured Artists `12211:3608` | `12368:2593` |
+| `/[locale]/portfolio/[slug]` | Portfolio Details `12612:8706` | `12635:12927` | Project Details **†** `12211:3371` | `12368:2481` |
+| `/[locale]/artists` | Our Artist **†** `12612:8774` | `12635:12928` | Featured Artists `12211:3608` | `12368:2593` |
 | `/[locale]/news` | News `12612:8808` | `12635:12929` | News `12211:4003` | `12368:2630` |
 | `/[locale]/news/[slug]` | News Details `12612:8828` | `12635:20097` | News Details `12211:4467` | `12368:2669` |
 | `/[locale]/contact` | Contact Us `12612:8829` | `12635:12930` | Contact Us `12212:5283` | `12368:2766` |
+
+**†** Frame name only — **not** the page name. The real names, resolved in
+`routes.md` → *Naming Drift Resolved Here*:
+
+| Frame says | Page is actually called |
+| :--- | :--- |
+| `Our Stories` (mobile `/about`) | **Our Story** — singular, and capital S (D048) |
+| `Our Artist` (desktop `/artists`) | **Featured Artists** (page) / **Artists** (nav link) |
+| `Project Details` (mobile `/portfolio/[slug]`) | **Portfolio Details** |
 
 There is also a standalone `NAV` frame per canvas showing the expanded/menu state:
 desktop `12612:8541` / `12635:12923`, mobile `10270:2118` / `12368:2386`.

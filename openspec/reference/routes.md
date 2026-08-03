@@ -48,9 +48,14 @@ wanted later, that is a routing change, so decide before Phase 3 ships stub rout
 
 ## Naming Drift Resolved Here
 
+**Only the Canonical column is a page name.** The other three record what each *source* called
+the page, kept so the drift stays traceable — they are history, not options. If you are writing
+UI copy, a nav label, or metadata, take it from `app/_lib/routes.ts` (D018) and ignore this table
+entirely.
+
 | Route | Sitemap said | Desktop said | Mobile said | Canonical |
 | :--- | :--- | :--- | :--- | :--- |
-| `/about` | 關於子皿 About In Utero | Our Story | Our Stories | **Our Story** |
+| `/about` | 關於子皿 About In Utero | Our Story | Our Stories | **Our Story** — singular, capital S (D048) |
 | `/artists` | 合作藝人 Featured Artists | Our Artist | Featured Artists | **Featured Artists** (page) / **Artists** (link) |
 | `/portfolio/[slug]` | 專案內容 Portfolio Details | Portfolio Details | Project Details | **Portfolio Details** |
 
