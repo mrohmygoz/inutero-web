@@ -61,7 +61,7 @@ export default function HomeIntro({ locale }: { locale: Locale }) {
           <Eyebrow label={intro.eyebrow} className="h-[92px] w-[17px] shrink-0" />
           <div className="flex w-[346px] max-w-full flex-col justify-center pt-[20px]">
             <h2
-              className="font-display text-display-h2 w-full bg-clip-text uppercase text-transparent"
+              className="font-display text-display-h2 w-full bg-clip-text whitespace-pre-line uppercase text-transparent"
               style={{ backgroundImage: HEADING_GRADIENT_MOBILE }}
             >
               {intro.headline}
@@ -101,7 +101,7 @@ export default function HomeIntro({ locale }: { locale: Locale }) {
           <div className="relative flex items-start pr-[16.042%] pl-[32px]">
             <Eyebrow label={intro.eyebrow} className="h-[97px] w-[27px] shrink-0 py-[15px]" />
             <h2
-              className="font-display text-display-h2 min-w-px flex-1 bg-clip-text uppercase text-transparent"
+              className="font-display text-display-h2 min-w-px flex-1 bg-clip-text whitespace-pre-line uppercase text-transparent"
               style={{ backgroundImage: HEADING_GRADIENT_DESKTOP }}
             >
               {intro.headline}

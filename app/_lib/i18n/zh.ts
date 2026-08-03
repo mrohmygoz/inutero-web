@@ -27,7 +27,11 @@ const zh: typeof en = {
       // (讓台灣的音樂市場與國際接軌，創造更大的聲浪。). The matrix wins (D032), so no
       // frame exists for this lockup — it wraps naturally at the designed Chinese
       // display token rather than being scaled up to fill the designed block (D-D).
-      headline: "根植本土，前進世界。",
+      // The `\n` is a deliberate break after the comma (user decision 2026-08-03),
+      // honoured by `whitespace-pre-line` on the heading. It overrides D038's
+      // "wraps naturally" for this one string; `en` has no newline, so the English
+      // heading still wraps on its own.
+      headline: "根植本土，\n前進世界。",
       bodyParagraphs: [
         "在分眾市場林立、聽眾追求私人化敘事的時代，真誠的創作成為每個人播放器中最親密的語言。無論風格與人氣，子皿期望所有音樂故事能找到契合它的聽眾，創造文化共鳴，同時帶來經濟價值。",
       ],
