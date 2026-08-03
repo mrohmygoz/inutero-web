@@ -202,8 +202,8 @@
 
   /* Jumbo is identical in size across all four modes and stays Bold — no override */
 
-  --text-label-m: 14px;
-  --text-label-m--line-height: 14px;
+  --text-label-m: 11px;
+  --text-label-m--line-height: 11px;
 
   --text-accent-display--line-height: 48.1px;
   --text-accent-display--font-style: normal;
