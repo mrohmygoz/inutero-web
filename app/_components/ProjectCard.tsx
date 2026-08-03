@@ -37,7 +37,17 @@ export default function ProjectCard({
       {/* Image — full-bleed at top */}
       <div className="relative h-96 w-full shrink-0 bg-(--opacity-white-10)">
         {image ? (
-          <Image src={image.src} alt={image.alt} fill className="object-cover" />
+          <Image
+            src={image.src}
+            alt={image.alt}
+            fill
+            // The card is `w-full`, so this covers every current occurrence:
+            // ~400px at the widest (Home's first desktop card), 353px of a 393px
+            // viewport at mobile. Without it next/image warns and ships the
+            // full-resolution source.
+            sizes="(min-width: 1024px) 400px, 90vw"
+            className="object-cover"
+          />
         ) : null}
       </div>
 

@@ -49,6 +49,11 @@ Do **not** record things readable from the code or the design itself.
 - [D038 — The ZH Intro heading wraps naturally at the designed Chinese scale](#d038--the-zh-intro-heading-wraps-naturally-at-the-designed-chinese-scale)
 - [D039 — The floating desktop `MENU` square is not built](#d039--the-floating-desktop-menu-square-is-not-built)
 - [D040 — One layout breakpoint at 1024px; placed compositions scale, flow sections reflow](#d040--one-layout-breakpoint-at-1024px-placed-compositions-scale-flow-sections-reflow)
+- [D041 — Home's Services accordion is interactive; one item open at a time](#d041--homes-services-accordion-is-interactive-one-item-open-at-a-time)
+- [D042 — Home's Services and Featured Projects reflow; they do not enter `canvas-1440`](#d042--homes-services-and-featured-projects-reflow-they-do-not-enter-canvas-1440)
+- [D043 — Where Home's summary sections link, and what the prototype says they should](#d043--where-homes-summary-sections-link-and-what-the-prototype-says-they-should)
+- [D044 — The mobile hero photo cycle is designed, not derived](#d044--the-mobile-hero-photo-cycle-is-designed-not-derived)
+- [D045 — Two prototype findings recorded for later phases; neither acted on in Phase 6](#d045--two-prototype-findings-recorded-for-later-phases-neither-acted-on-in-phase-6)
 
 ## D001 — Locale strategy
 
@@ -813,3 +818,107 @@ hero is scaled while the intro is not, so their relative proportions shift sligh
 1024px and 1440px. Canvas scaling also reduces the effect of user font-size preferences within
 that section — browser zoom still works correctly, which is why it is confined to the hero and
 must never be applied page-wide.
+
+## D041 — Home's Services accordion is interactive; one item open at a time
+
+**Decision:** The Home Services summary (`12210:2346` desktop, `10275:2585` mobile) is an
+interactive four-item accordion. Item 1 is open on load, clicking another opens it and closes
+the current, and only one is ever open. `HomeServices` is `'use client'`; collapsed panels are
+unmounted rather than CSS-hidden, and each header is a real `<button>` with `aria-expanded` /
+`aria-controls`.
+
+**Why:** User decision, 2026-08-03, taken before the phase was planned. Figma draws exactly one
+state, so the interaction is **Derived** (D005) — it must not be reported as matching the design.
+The design does supply two icon glyphs, which is what made an interactive reading the likely
+intent: a green `×` on the open row and a green `+` on the closed rows.
+
+**Consequence:** the toggle **swaps two exported SVGs** (`public/icons/accordion-close.svg` /
+`accordion-open.svg`) rather than rotating one — the phase plan had assumed a single rotating
+glyph, which the frames disproved. Opening a different item changes the section's height; there
+is no fixed-height container in the design and none was invented.
+
+This accordion stays page-local. The Services *page* (Phases 8–9) has its own accordion and its
+own frames; a second consumer with a verified design is the bar for promoting it to
+`app/_components/`, consistent with D033.
+
+## D042 — Home's Services and Featured Projects reflow; they do not enter `canvas-1440`
+
+**Decision:** Both Phase 6 sections are flow sections under D040 — no `.canvas-1440`, no fixed
+aspect ratio. Positioned children (the Services photograph, the three scattered project cards,
+the green dot) are placed at the frames' own **proportions** of their container, not fixed px.
+
+**Why:** desktop Services is **1535px tall in English and 1377px in Chinese**. A fixed-aspect
+canvas would letterbox one locale or scale the other down to fit; the height is content-driven,
+which is D040's own definition of a flow section. Parameterising `.canvas-1440` with a
+`--canvas-aspect` was considered and rejected for the same reason D038 exists — it would lock
+the Chinese layout to the English frame's proportions.
+
+**One derived call inside this:** the Services photograph is absolutely placed in the frames at
+an offset that does **not** track the accordion, and drifts 72px between the two desktop locales
+(EN puts it level with the accordion top, TC 72px below). It is anchored to the accordion block
+here instead — top-aligned at desktop, vertically centred at mobile — so it stays behind the
+panel in both locales. Within ~8px of either drawn frame.
+
+## D043 — Where Home's summary sections link, and what the prototype says they should
+
+**Decision:** The `full services list` CTA points at `/[locale]/services`; the
+`VIEW ALL PROJECTS` CTA and **all three project cards** point at `/[locale]/portfolio`. The
+accordion headers are disclosure buttons and do not navigate.
+
+**Why:** D-G's precedent — link to the whole page when the anchor does not exist. The Home
+project cards are prototyped to Portfolio **Details** (`12612:8706`), but no portfolio slug
+exists until Phase 11, and three cards pointing at a 404 is worse than three pointing at the
+index. `ProjectCard`'s `href` is optional, but unclickable cards read as broken.
+
+**Phase 11 must repoint the three cards at their real detail routes.** This is a deferral with a
+known target, not an open question.
+
+## D044 — The mobile hero photo cycle is designed, not derived
+
+**Decision:** The mobile hero cycles five photographs — 0.8s hold, 0.2s linear cross-dissolve,
+1.0s per photo, 5s loop, wrapping. Implemented in `MastPhotoCycle` (`'use client'`), which stacks
+five `next/image` layers and drives opacity from an active index. Desktop is untouched: its hero
+is a static three-photo collage with no variant set and no timed reaction.
+
+**Why:** these are the design's own values, not a chosen tempo. The `Mast` variant set
+(`10275:3101`) carries a prototype reaction on every variant — `AFTER_TIMEOUT 0.8` →
+`CHANGE_TO` next → `DISSOLVE` / `LINEAR` / `0.2` — verified on all five and on the TC instance
+`12368:2414`, which is identical. Phase 5 shipped only the `Default` variant, leaving the hero a
+still image; this phase corrects that omission on the user's direction.
+
+**Read `node.reactions`, not just `get_motion_context`.** `get_motion_context` reports timeline
+keyframe animations and returns **empty** for this node, the `Mast` instance, and the whole mobile
+Home frame. Prototype reactions are a separate channel reachable only through the Plugin API. That
+empty result nearly shipped this as a still image a second time — any later phase asking "does
+this animate?" must check both.
+
+**The one derived part:** `prefers-reduced-motion: reduce` holds the hero on photo 1 and never
+starts the interval. A ~1Hz full-viewport dissolve is what that preference exists to suppress, and
+no Figma frame can express it. Only photo 1 carries `priority`; the rest have ≥0.8s of lead time
+and four more would compete with the LCP.
+
+**Asset note:** variants 2 and 4 reuse photographs already shipped for the desktop collage
+(`hero-2.jpg` / `hero-3.jpg`), confirmed by md5 — only two files were genuinely new. Hence the
+non-sequential order in `MastPhotoCycle`'s `PHOTOS` array.
+
+## D045 — Two prototype findings recorded for later phases; neither acted on in Phase 6
+
+Sweeping the desktop Home frame for prototype reactions surfaced two things outside Phase 6's
+scope. Recorded so they are not rediscovered as defects.
+
+**D039's premise is contradicted by the prototype.** The floating desktop `MENU` square
+`12423:8613` carries a real reaction: `ON_CLICK` → `OVERLAY` to **`12612:8541`**, transition
+`MOVE_IN` from `BOTTOM`, easing `EASE_OUT`, duration `0.5`. D039 deferred the square because
+"the panel it would open has no verified design — Phase 3 found the desktop expanded-menu frame
+to be a stray documentation duplicate." The prototype names that exact frame as the overlay
+target, which is evidence the Phase 3 reading was wrong rather than evidence the design is
+incomplete. **D039 should be revisited with this data before the Polish phase re-litigates it** —
+as its own change, since it touches `Nav` and every page that renders it.
+
+**Desktop TC Home is an instance of desktop EN Home.** `12635:15868` has
+`mainComponent: 12405:6998`, so structural parity between the two desktop locales is guaranteed
+by construction and only text overrides differ. Two practical consequences: the `0:xxx` node ids
+recorded in `design-inventory.md` for TC desktop sections are main-component internals that
+`get_design_context` **cannot resolve** — the addressable ids are `I12635:15868;<en-node-id>` —
+and `get_screenshot` rejects that form, so TC desktop sections must be captured via the Plugin
+API's `node.screenshot()`.

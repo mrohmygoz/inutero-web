@@ -2,6 +2,7 @@ import Image from "next/image";
 import Cta from "../../_components/Cta";
 import { getDictionary, type Locale } from "../../_lib/i18n";
 import { localizedHref } from "../../_lib/routes";
+import MastPhotoCycle from "./MastPhotoCycle";
 
 // Source: desktop Hero 12405:6947 (TC 0:187); mobile is two nodes — Mast
 // 10275:3094 + the green copy panel `Component 1` 12217:911 (TC 12368:2414 /
@@ -53,16 +54,11 @@ export default function HomeHero({ locale }: { locale: Locale }) {
       {/* Stacked — 393px design, below 1024px (D040)                       */}
       {/* ---------------------------------------------------------------- */}
       <section className="lg:hidden">
-        {/* Mast 10275:3094 — 665px tall, full-bleed photo under a 30% scrim */}
+        {/* Mast 10275:3094 — 665px tall, full-bleed photo under a 30% scrim.
+            The photo is not a still: the Mast is a five-variant set wired to a
+            timed dissolve in the prototype. See MastPhotoCycle. */}
         <div className="relative h-[665px] w-full overflow-hidden bg-(--color-basic-accent)">
-          <Image
-            src="/images/home/hero-1.jpg"
-            alt=""
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover"
-          />
+          <MastPhotoCycle />
           <div aria-hidden className="absolute inset-0 bg-black/30" />
 
           <h1 className="sr-only">

@@ -33,6 +33,76 @@ const en = {
       ],
       cta: "Our story",
     },
+    // Home's Services summary (12210:2346 desktop, 10275:2585 mobile). A four-item
+    // accordion; Figma draws only item 1 open, so only item 1's description appears
+    // in the frames. The other three come from the matrix, which supplies all four —
+    // an interactive accordion needs a body for every item.
+    services: {
+      eyebrow: "Services",
+      headline: "Your all-in-one partner for global music reach.",
+      cta: "full services list",
+      items: [
+        {
+          title: "Artist Management",
+          description:
+            "Driving comprehensive career development for artists through strategic planning, music distribution, artist branding & identity and long-term vision to cultivate growth and global visibility.",
+        },
+        {
+          title: "International Booking & Tour Planning",
+          description:
+            "Curating and booking cross-border tours and events. Bringing international acts to Taiwan while sending Taiwanese artists abroad to foster global musical exchange.",
+        },
+        {
+          title: "PR & Marketing",
+          description:
+            "Delivering integrated PR and marketing strategies, spanning media relations, EPKs, digital advertising, and multilingual campaigns to maximize international reach.",
+        },
+        {
+          title: "Event Production",
+          description:
+            "Providing end-to-end event production services from showcases to large-scale festivals, managing everything from budgeting and logistics to technical production and on-site execution.",
+        },
+      ],
+    },
+    // Featured Projects (12210:2392 desktop, 10275:3132 mobile). The cards come from
+    // content-matrix → "Home — featured project cards (3)", which REPLACES Figma's
+    // third card: the frames draw "Yesterday Once More" (臥軌的火車), the matrix lists
+    // In Utero Present Vol.3. Matrix wins on copy (D032).
+    //
+    // Figma splits each card into a title and a short date line, so the matrix's
+    // single bolded string is split across those two slots rather than dropping the
+    // "In Utero Present Vol.N" half.
+    featuredProjects: {
+      eyebrow: "Portfolio",
+      heading: "Featured Projects",
+      cta: "View all projects",
+      cards: [
+        {
+          dateLabel: "2025.11 In Utero Present Vol.2",
+          title: "Bottoms Up",
+          description:
+            "Bringing together L8ching, Giyu Tjuljaviya, and Erin Song, this tour transformed everyday encounters and musical rhythms into a shared live experience.",
+          tags: ["Artist Management", "Tour Planning", "PR & Marketing"],
+          image: "/images/projects/bottoms-up.jpg",
+        },
+        {
+          dateLabel: "2024.09 In Utero Present Vol.1",
+          title: "Hotpot Band Show",
+          description:
+            'Hosted at Chan Chi Hot Pots Lab, Ximen, this event reimagined the classic "dinner show" concept, blending live performances with a hotpot dining experience.',
+          tags: ["Tour Planning", "PR & Marketing"],
+          image: "/images/projects/hotpot-band-show.jpg",
+        },
+        {
+          dateLabel: "2026.05 In Utero Present Vol.3",
+          title: "Inner Voices of That Day",
+          description:
+            "Partnering with Huan Huan, we brought music directly to local communities, creating warm, cross-generational gatherings for seniors and neighbors alike around Mother's Day.",
+          tags: ["Tour Planning", "PR & Marketing"],
+          image: "/images/projects/you-and-me.jpg",
+        },
+      ],
+    },
   },
   common: {
     siteName: "In Utero Inc.",
