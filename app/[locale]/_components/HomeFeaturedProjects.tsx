@@ -67,33 +67,58 @@ export default function HomeFeaturedProjects({ locale }: { locale: Locale }) {
       {/* ------------------------------------------------------------------ */}
       {/* Stacked — 393px design, below 1024px (D040)                         */}
       {/* ------------------------------------------------------------------ */}
-      <div className="lg:hidden">
-        <div className="relative pt-[25px] pb-[27px]">
-          <Eyebrow label={featuredProjects.eyebrow} className="absolute top-1 h-[106px] w-[17px]" />
+      {/* `overflow-x-clip`, never `overflow-hidden`: the rotated cards would
+          otherwise widen the page, but `hidden` makes this element a scroll
+          container and silently kills the `sticky` stacking below. `clip` does
+          not. */}
+      <div className="overflow-x-clip lg:hidden">
+        <div className="relative pb-[27px]">
+          {/* Sticky header. It stays pinned for the whole section while the cards
+              stack beneath it — see the stacking note below. It needs its own
+              opaque background so cards scroll under it rather than through it. */}
+          <div className="sticky top-0 z-10 bg-(--color-basic-background) pt-[25px] pb-[12px]">
+            <Eyebrow
+              label={featuredProjects.eyebrow}
+              className="absolute top-1 h-[106px] w-[17px]"
+            />
+            {/* 346px is the Figma text box's own width — a margin, not padding. */}
+            <h2 className="font-display text-display-h2 ml-[32px] w-[346px] text-(--color-basic-accent) uppercase">
+              {featuredProjects.heading}
+            </h2>
+          </div>
 
-          {/* 346px is the Figma text box's own width — a margin, not padding. */}
-          <h2 className="font-display text-display-h2 ml-[32px] w-[346px] text-(--color-basic-accent) uppercase">
-            {featuredProjects.heading}
-          </h2>
+          {/* STACKING CARDS. Every card pins at the same offset with an
+              increasing z-index, so each one slides up over the previous rather
+              than scrolling past it, and the earlier cards stay visible as
+              offset edges behind (their differing rotations are what makes those
+              edges peek out).
 
-          {/* The scatter. Left offsets are the frames' own (17 / 33 / 16 within
-              393px); the vertical gaps in the frames are not constant between
-              locales because the card heights are content-driven, so a single
-              gap is used and the column reflows. */}
-          <div className="mt-[40px] flex flex-col gap-[20px] overflow-hidden py-[10px]">
-            <div className="w-[353px] rotate-[1.94deg] self-start" style={{ marginLeft: 17 }}>
+              This is the one part of the section with no data behind it: the
+              Figma file exposes nothing for it — `reactions`, `animations`,
+              `animationStyles`, `overflowDirection` and `get_motion_context` all
+              come back empty — because it is a prototype scroll behaviour rather
+              than node data. Built from the user's prototype recording, so it is
+              Derived (D005) and must not be reported as design-matching.
+
+              Left offsets and rotations are the frames' own (x 17/33/16 within
+              393px; +1.94/-1.23/+0.94 degrees). The vertical gaps are the frames'
+              too — the cards sit 3px and 19px apart, nearly flush, which is what
+              makes the next card begin covering the previous almost immediately. */}
+          <div className="flex flex-col">
+            <div className="sticky top-[132px] z-[1] ml-[17px] w-[353px] rotate-[1.94deg]">
               {cards[0]}
             </div>
-            <div className="w-[353px] rotate-[-1.23deg] self-start" style={{ marginLeft: 33 }}>
+            <div className="sticky top-[132px] z-[2] mt-[3px] ml-[33px] w-[353px] rotate-[-1.23deg]">
               {cards[1]}
             </div>
-            <div className="w-[353px] rotate-[0.94deg] self-start" style={{ marginLeft: 16 }}>
+            <div className="sticky top-[132px] z-[3] mt-[19px] ml-[16px] w-[353px] rotate-[0.94deg]">
               {cards[2]}
             </div>
           </div>
 
-          <div className="mt-[40px] px-[15px]">
-            <Cta href={portfolioHref} tone="dark" className="w-full">
+          {/* z-index above the cards so the last one stacks behind it, not over. */}
+          <div className="relative z-[4] mt-[40px] bg-(--color-basic-background) px-[15px] pt-[27px]">
+            <Cta href={portfolioHref} tone="green" className="w-full">
               {featuredProjects.cta}
             </Cta>
           </div>
@@ -128,8 +153,11 @@ export default function HomeFeaturedProjects({ locale }: { locale: Locale }) {
             <div className="mt-[52px] ml-[2.413%] w-[25.654%] rotate-[0.94deg]">{cards[2]}</div>
           </div>
 
+          {/* Green, not dark — 12358:2031 is the green-bg/dark-text occurrence
+              that `Cta`'s `tone` prop exists for (see INVENTORY), and the mobile
+              CTA 10275:3147 fills #08c454 too. Both were built dark by mistake. */}
           <div className="mt-[40px] flex justify-center">
-            <Cta href={portfolioHref} tone="dark">
+            <Cta href={portfolioHref} tone="green">
               {featuredProjects.cta}
             </Cta>
           </div>

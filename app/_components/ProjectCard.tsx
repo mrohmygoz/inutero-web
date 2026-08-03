@@ -32,10 +32,20 @@ export default function ProjectCard({
 }) {
   const content: ReactNode = (
     <div
-      className={`inline-flex w-full flex-col items-start overflow-hidden bg-(--color-basic-accent) outline outline-[0.54px] outline-offset-[-0.54px] outline-(--opacity-white-10) ${className ?? ""}`.trim()}
+      className={`inline-flex w-full flex-col items-start gap-[15px] overflow-hidden bg-(--color-basic-accent) px-[10px] py-[13px] outline outline-[0.54px] outline-offset-[-0.54px] outline-(--opacity-white-10) lg:gap-0 lg:p-0 ${className ?? ""}`.trim()}
     >
-      {/* Image — full-bleed at top */}
-      <div className="relative h-96 w-full shrink-0 bg-(--opacity-white-10)">
+      {/* The two breakpoints order these three blocks differently, and it is the
+          ONLY structural difference between them — so the image is reordered with
+          flex `order` rather than shipping two card trees:
+
+            mobile  10274:2306 : tags+title+date -> image -> description
+            desktop 12610:6812 : image -> tags+title+date -> description
+
+          Corrected in Phase 6: the card previously used the desktop order at both
+          breakpoints, which put the photograph above the tags on mobile. */}
+
+      {/* Image */}
+      <div className="relative order-2 h-[445px] w-full shrink-0 bg-(--opacity-white-10) lg:order-1 lg:h-96">
         {image ? (
           <Image
             src={image.src}
@@ -51,9 +61,9 @@ export default function ProjectCard({
         ) : null}
       </div>
 
-      {/* Content section */}
-      <div className="flex w-full flex-col items-start gap-4 px-3 py-5">
-        {/* Tags */}
+      {/* Tags + title + date. On mobile these are one block above the image
+          (Frame 27, gap-[10px]); on desktop they sit below it. */}
+      <div className="order-1 flex w-full flex-col items-start gap-[10px] lg:order-2 lg:gap-4 lg:px-3 lg:pt-5">
         <div className="flex flex-wrap items-start gap-[5px]">
           {tags.map((tag) => (
             <Tag key={tag.label} variant="solid" color={tag.color}>
@@ -62,22 +72,21 @@ export default function ProjectCard({
           ))}
         </div>
 
-        {/* Title + date + description */}
         <div className="flex w-full flex-col items-start">
-          <div className="flex w-full flex-col items-start">
-            <p className="w-full font-['Bodoni_Moda_SC'] text-4xl font-bold uppercase leading-9 tracking-tight text-(--primitive-white)">
-              {title}
-            </p>
-            <p className="w-full font-['Chivo_Mono'] text-xs font-normal leading-4 text-(--primitive-white) line-clamp-1">
-              {dateLabel}
-            </p>
-          </div>
-          <div className="w-full pt-2">
-            <p className="w-full font-['Chivo_Mono'] text-xs font-normal leading-5 text-(--opacity-white-60)">
-              {description}
-            </p>
-          </div>
+          <p className="w-full font-['Bodoni_Moda_SC'] text-4xl leading-9 font-bold tracking-tight text-(--primitive-white) uppercase">
+            {title}
+          </p>
+          <p className="line-clamp-1 w-full font-['Chivo_Mono'] text-xs leading-4 font-normal text-(--primitive-white)">
+            {dateLabel}
+          </p>
         </div>
+      </div>
+
+      {/* Description — last at both breakpoints. */}
+      <div className="order-3 w-full lg:px-3 lg:pt-2 lg:pb-5">
+        <p className="w-full font-['Chivo_Mono'] text-xs leading-5 font-normal text-(--opacity-white-60)">
+          {description}
+        </p>
       </div>
     </div>
   );

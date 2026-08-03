@@ -55,6 +55,7 @@ Do **not** record things readable from the code or the design itself.
 - [D044 — The mobile hero photo cycle is designed, not derived](#d044--the-mobile-hero-photo-cycle-is-designed-not-derived)
 - [D045 — Two prototype findings recorded for later phases; neither acted on in Phase 6](#d045--two-prototype-findings-recorded-for-later-phases-neither-acted-on-in-phase-6)
 - [D046 — `get_motion_context` is not sufficient to answer "does this animate?"](#d046--get_motion_context-is-not-sufficient-to-answer-does-this-animate)
+- [D047 — Home's Featured Projects cards stack on scroll; the card's own order is breakpoint-dependent](#d047--homes-featured-projects-cards-stack-on-scroll-the-cards-own-order-is-breakpoint-dependent)
 
 ## D001 — Locale strategy
 
@@ -977,3 +978,44 @@ return home.findAll(n => n.reactions && n.reactions.length > 0)
 Plugin API at all — `animationStyles` reads empty across the whole mobile Home frame, and there is
 no `scrollBehavior` property on these nodes. If a section is meant to animate on scroll, the file
 cannot tell us; it has to come from the designer or from watching the prototype.
+
+## D047 — Home's Featured Projects cards stack on scroll; the card's own order is breakpoint-dependent
+
+**Decision:** At mobile, the Featured Projects heading pins to the top of the viewport for the
+length of the section, and the three cards each pin at the same offset with an increasing
+z-index, so every card slides up *over* the previous one instead of scrolling past it. Desktop
+keeps the 3-across row and does not stack.
+
+**Why:** the user supplied prototype recordings, 2026-08-03, after twice reporting the section
+did not match. The stack is unmistakable across the frames: the heading stays pinned through six
+consecutive scroll positions, and the earlier cards remain visible as offset edges behind the
+active one — their differing rotations are what makes those edges peek out.
+
+**This is Derived (D005) and must never be reported as design-matching.** Every API surface
+returns nothing for it — `reactions` (only a click-to-navigate on card 1), `animations`,
+`animationStyles`, `overflowDirection` (`NONE`), `numberOfFixedChildren` (`0`) and
+`get_motion_context` are all empty. It is a prototype *scroll behaviour*, which per D046 the
+Plugin API does not expose. The mechanic is reproduced from the recording, not read from a file.
+
+**One trap worth naming:** the rotated cards overflow horizontally, and the obvious fix —
+`overflow-hidden` on the wrapper — makes that element a scroll container and **silently kills
+every `sticky` inside it**. Use `overflow-x-clip`, which clips without establishing one.
+
+**The same review found `ProjectCard` was rendering the wrong order on mobile.** The two Figma
+components genuinely differ, and Phase 2 collapsed them into the desktop order at both
+breakpoints:
+
+| | Order |
+| :--- | :--- |
+| Mobile `10274:2306` | tags + title + date → **image** → description |
+| Desktop `12610:6812` | **image** → tags + title + date → description |
+
+Only the image moves, so it is reordered with flex `order` rather than shipping two card trees —
+the rest of the content keeps the same relative sequence at both breakpoints. This is exactly the
+"the two Figma component sets are not 1:1" case CLAUDE.md warns about, and it went unnoticed
+because Phase 6 composed the shell "unchanged" on the strength of the width check alone.
+
+**Also corrected:** both Featured Projects CTAs were built `tone="dark"`. Mobile `10275:3147`
+fills `#08c454` with `#131417` text, and `12358:2031` is the green-bg/dark-text desktop
+occurrence that `Cta`'s `tone` prop was introduced for in the first place (see `INVENTORY.md`).
+Both are now `tone="green"`.
