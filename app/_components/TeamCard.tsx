@@ -18,9 +18,7 @@ export default function TeamCard({
   className?: string;
 }) {
   return (
-    <div
-      className={`flex w-[284px] flex-col items-start gap-5 border-r border-solid border-(--color-basic-border) pr-[21px] ${className ?? ""}`.trim()}
-    >
+    <div className={`flex w-[284px] flex-col items-start gap-5 border-r border-solid border-(--color-basic-border) pr-[21px] ${className ?? ""}`.trim()}>
       <div className="relative h-[368px] w-full shrink-0">
         <Image src={image.src} alt={image.alt} fill className="object-cover" />
       </div>
@@ -31,8 +29,8 @@ export default function TeamCard({
         <p className="font-body text-label-m w-full pt-1 font-normal uppercase text-(--color-basic-text-secondary)">
           {role}
         </p>
+        <p className="mt-2 font-body text-body-s w-full text-(--color-basic-text-secondary)">{bio}</p>
       </div>
-      <p className="font-body text-body-s w-full text-(--color-basic-text-secondary)">{bio}</p>
     </div>
   );
 }

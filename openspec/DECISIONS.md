@@ -1049,3 +1049,72 @@ never rendered the plural. Leave the inventory entry alone — it documents Figm
 
 **Scope note:** this is casing only, and `Cta` renders `uppercase`, so nothing changes visually.
 It matters for the DOM, for copied text, and for anyone who later removes the uppercase styling.
+
+## D049 — Our Story hero headline comes from Figma, not the matrix
+
+**Decision:** the `/about` hero headline is **FROM TAIWAN TO THE WORLD.** / **立足台灣走向世界**, as
+drawn in both live Figma frames (desktop `12573:6372`, mobile `12212:6345`, and their TC
+counterparts). `content-matrix.md`'s "Real artists. Real stories." row for the Hero is *not*
+built — it is a deliberate, narrow exception to D032.
+
+**Why:** that matrix row is identical to the matrix's own Intro row, and both TC frames confirm
+the Hero and Intro headings are genuinely different lockups. The duplication reads as a
+transcription slip, not an intended override — the opposite of D032's usual case (frame is wrong,
+matrix is right). The hero *body*, however, still follows the matrix: Figma's own EN/TC hero body
+is a short 2–3 sentence summary, while the matrix supplies In Utero's founder story. That body
+override stands on ordinary D032 grounds and made the hero section's height derived (drawn
+960px/665px are minimums, not fixed) — recorded in `phase-07-our-story/design.md` D-C.
+
+## D050 — Our Story Intro body paragraph is built; the matrix's REMOVE cited the wrong node
+
+**Decision:** the `/about` Intro section's body paragraph ("We believe that authentic music
+carries a cultural energy…" / its ZH counterpart) **is built**, in both locales, at both
+breakpoints.
+
+**Why:** `content-matrix.md` marks this paragraph `REMOVE` (`直接拿掉`), citing node `12212:6370`
+— but that ID resolves to the whole `Intro` instance, not a paragraph, and live `get_design_context`
+calls on both the desktop (`12573:6107`) and mobile (`12212:6370`) frames show the exact text still
+drawn in full, matching the matrix's own transcription of the "removed" copy word-for-word. Live
+design context is stronger evidence than a stale or mis-cited node reference. User-confirmed
+2026-08-03 (`phase-07-our-story/design.md` D-D).
+
+**Asymmetric paragraph count is intentional, not a bug:** the EN frame draws one paragraph; the TC
+frame draws two (an extra opening paragraph about In Utero's evolution that has no EN equivalent
+drawn anywhere). Both are built exactly as their own frame shows — same precedent as Home's Intro
+(see `app/_lib/i18n/en.ts`).
+
+## D051 — Our Story team roster: real photos over Figma's 5-card Lorem-ipsum sample
+
+**Decision:** `/about`'s Team section ships all 9 real members the client delivered into
+`public/images/about/`, not the 5 identical "Meng, Founder & Creative Director" placeholder cards
+Figma draws. Roster data lives in `app/_lib/team.ts`, hand-transcribed from each file's name
+(`{name} ／ {job title} ／ {short description}`, inconsistent separators and mixed
+CJK/ASCII across the 9 files) rather than parsed at build time.
+
+**EN cards use the Latin name and English title from the filename, and the Chinese description
+verbatim** — descriptions were only ever written in Chinese. Where no English title exists
+(`江明展 Si mamrat` / `冬季限定`), the Chinese title serves both locales. User-confirmed
+2026-08-03.
+
+**The row is a native horizontal scroll-snap track at every breakpoint**, not a fixed grid — both
+Figma frames already overflow at their own drawn card counts (desktop's 5th card starts past the
+1440px edge; mobile shows 2 of a wider row with a 5-dot indicator), and 9 real members make that
+overflow load-bearing rather than incidental. The mobile 5-dot indicator becomes **one dot per
+member**, tracking scroll position; desktop has no indicator, matching its own frame. This
+interaction is **Derived (D005)** — no frame shows a second scroll state — see
+`phase-07-our-story/design.md` D-B.
+
+`TeamCard`'s own design is untouched (INVENTORY.md); this is its first page with a real,
+variable-length roster, so long bios clamp inside its fixed 284px/368px box rather than resizing
+the card.
+
+## D052 — NAV theme for `/about` goes through `darkNavRoutes`, not a per-page prop
+
+**Decision:** `/about` renders the dark NAV instance, added by including `"about"` in
+`darkNavRoutes` (`app/_lib/routes.ts`), the same mechanism Home already uses — **not** by passing
+a `theme` prop from `AboutPage`.
+
+**Why:** `Nav` is rendered by `[locale]/layout.tsx`, one level above every page component, so a
+page cannot hand it a prop — this was already noted as an open correction in `routes.ts` (see the
+comment above `darkNavRoutes`, referencing D017). `/about`'s hero frame draws the dark NAV
+instance, exactly like Home's.
