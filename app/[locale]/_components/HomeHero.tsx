@@ -57,7 +57,7 @@ export default function HomeHero({ locale }: { locale: Locale }) {
         {/* Mast 10275:3094 — 665px tall, full-bleed photo under a 30% scrim.
             The photo is not a still: the Mast is a five-variant set wired to a
             timed dissolve in the prototype. See MastPhotoCycle. */}
-        <div className="relative h-[665px] w-full overflow-hidden bg-(--color-basic-accent)">
+        <div className="relative min-h-dvh w-full overflow-hidden bg-(--color-basic-accent)">
           <MastPhotoCycle />
           <div aria-hidden className="absolute inset-0 bg-black/30" />
 
@@ -76,15 +76,20 @@ export default function HomeHero({ locale }: { locale: Locale }) {
           >
             {hero.headlineWord2}
           </p>
+          {/* Bottom-anchored (not top-[483px]/top-[559px] against the old
+              665px frame) so the pair still sits flush to the bottom edge now
+              that the box grows to min-h-dvh — the gap between them and the
+              distance to the box's bottom edge match the original 665px
+              frame's spacing. */}
           <p
             aria-hidden
-            className={`${HEADLINE_MOBILE}  top-[483px] left-[10px] text-(--color-basic-background)`}
+            className={`${HEADLINE_MOBILE}  bottom-[108px] left-[10px] text-(--color-basic-background)`}
           >
             {hero.headlineWord3}
           </p>
           <p
             aria-hidden
-            className={`${HEADLINE_MOBILE}  top-[559px] right-[10px] text-(--color-brand-accent-neon)`}
+            className={`${HEADLINE_MOBILE}  bottom-[32px] right-[10px] text-(--color-brand-accent-neon)`}
           >
             {hero.headlineWord4}
           </p>

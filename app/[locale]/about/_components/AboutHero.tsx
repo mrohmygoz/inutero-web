@@ -25,7 +25,7 @@ export default function AboutHero({ locale }: { locale: Locale }) {
       {/* ---------------------------------------------------------------- */}
       {/* Stacked — 393px design, below 1024px (D040)                       */}
       {/* ---------------------------------------------------------------- */}
-      <section className="relative min-h-[665px] w-full overflow-hidden bg-(--color-basic-accent) lg:hidden">
+      <section className="relative min-h-dvh w-full overflow-hidden bg-(--color-basic-accent) lg:hidden">
         <div aria-hidden className="absolute inset-0">
           <Image src="/images/about/about-hero.png" alt="" fill priority className="object-cover" />
           <div className="absolute inset-0 bg-black/30" />
@@ -34,7 +34,7 @@ export default function AboutHero({ locale }: { locale: Locale }) {
         {/* Headline and body both stay in normal flow (only the photo is
             absolute) so a long body — grown per D-C — pushes down rather
             than overlapping the headline. */}
-        <div className="relative flex min-h-[665px] flex-col justify-between">
+        <div className="relative flex min-h-dvh flex-col justify-between">
           <div className="flex w-full items-start gap-[5px] pt-[74px] pr-[15px]">
             <div className="flex h-[99px] w-[17px] shrink-0 items-center justify-center translate-y-4">
               <div className="rotate-90">
