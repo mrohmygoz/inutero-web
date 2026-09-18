@@ -64,10 +64,12 @@ export default function ServicesHero({ locale }: { locale: Locale }) {
         </div>
       </div>
 
-      <div className="max-w-[576px] py-[25px] pr-[20px] pl-[29px] lg:hidden">
-        {/* 354px, not the 344px the padding leaves — the Figma text box
-            deliberately overruns the right padding, and at 344px this line
-            wraps to three rather than two. */}
+      <div className="max-w-[576px] py-[20px] pr-[16px] pl-[20px] lg:hidden">
+        {/* The width is pinned at Figma's own 354px text box rather than left
+            to fill the block: below ~350px this line wraps to three rather than
+            two, which is what the frame draws. The block's padding has since
+            been hand-tuned away from Figma's 29/20/25, so the hero now measures
+            814px at mobile EN against the frame's 825px. */}
         <p className="font-body text-body-l w-[354px] pt-[16px] text-(--color-basic-background)">
           {hero.body}
         </p>
