@@ -73,6 +73,7 @@ Do **not** record things readable from the code or the design itself.
 - [D062 — The mobile menu's viewport fit is two knobs, and the logo is the one that goes](#d062--the-mobile-menus-viewport-fit-is-two-knobs-and-the-logo-is-the-one-that-goes)
 - [D063 — 553px is the menu's floor and it is the same number as the link clamp's minimum](#d063--553px-is-the-menus-floor-and-it-is-the-same-number-as-the-link-clamps-minimum)
 - [D064 — `dvh` for lengths, `max-height` for the logo — the split is deliberate](#d064--dvh-for-lengths-max-height-for-the-logo--the-split-is-deliberate)
+- [D065 — The open mobile menu is pinned top and bottom with a centred middle](#d065--the-open-mobile-menu-is-pinned-top-and-bottom-with-a-centred-middle)
 
 ## D001 — Locale strategy
 
@@ -1350,8 +1351,11 @@ link list, re-measure and re-derive the clamp minima — do not shrink the exemp
 ## D063 — 553px is the menu's floor and it is the same number as the link clamp's minimum
 
 **Decision:** The menu is guaranteed to fit without scrolling down to **553px of visible
-height** — an iPhone SE's usable height once Safari's chrome is showing. Below that it scrolls,
-and `overflow-y-auto` stays on the container as the accepted degradation, not dead code. The
+height** — an iPhone SE's usable height once Safari's chrome is showing — **whenever the logo
+block is absent**. Below that it scrolls, and `overflow-y-auto` stays on the container as the
+accepted degradation, not dead code. D064 later set the logo's cutoff at 666px of *layout*
+viewport, which means the mark survives on most short phones and they scroll instead; read the
+two together, because this guarantee is conditional on the mark being gone. The
 link clamp's minimum *is* the floor: the minima were sized so the whole composition lands on
 553 exactly, rather than set independently and checked afterwards.
 
@@ -1383,7 +1387,7 @@ says so inline.
 ## D064 — `dvh` for lengths, `max-height` for the logo — the split is deliberate
 
 **Decision:** The overlay's height and the link clamps are `dvh`-based lengths in the style
-layer. The logo's disappearance is a `@media (max-height: 820px)` query. The two are driven by
+layer. The logo's disappearance is a `@media (max-height: 666px)` query. The two are driven by
 different things on purpose.
 
 **Why:** `@media (max-height: …)` reads the **layout** viewport, the same thing `vh` reads —
@@ -1396,14 +1400,58 @@ For the logo that blindness is a **feature**. A `dvh`-driven collapse would fire
 the URL bar collapses and reappears during scrolling, popping the logo in and out mid-gesture.
 The media query keys off device class, which is the stable property the decision actually wants.
 
-The threshold is 820px because with the logo present and the link clamp at its minimum the menu
-needs 733.6px of visible height. Every phone at or above 820px of layout viewport clears that
-(iPhone 12/13/14 at 844, 14/15 Pro at 852, Pixel 7/8 at 915); everything below does not (iPhone
-SE/8 at 667, Galaxy S8 at 740, Pixel 5/6a at 800, iPhone 13 mini at 812). 820 sits in the dead
-band between 812 and 844 where no common phone reports a height, so it tolerates ±8px of
-disagreement about chrome height, and it leaves the designed 393×852 untouched.
+**The threshold is 666px, and it is a preference, not an arithmetic result.** With the logo
+present the menu needs about **673px** of visible height (29 close row + 90 mark + 56 gap + 128
+footer = 303 fixed, plus 370.3 of links at the clamp minimum). A threshold derived purely from
+that number would sit around 820, in the dead band between the iPhone 13 mini (812) and the
+iPhone 12/13/14 (844), and would drop the mark on every phone from the 13 mini down.
+
+666 deliberately does not do that. It keeps the mark on every mainstream phone — the query reads
+the **layout** viewport, so an iPhone SE reports 667 and the mark survives — and only removes it
+on genuinely short viewports: landscape phones, split-screen, and very small or old devices.
+
+**The consequence, stated plainly: on a short portrait phone with browser chrome showing, the
+menu now scrolls rather than dropping the mark.** An SE has 553px visible against ~673 needed,
+so roughly 120px sits below the fold and `overflow-y-auto` carries it. That is the trade this
+threshold makes — brand presence over a scroll-free fit — and it is a deliberate user decision,
+not an oversight. It also means the 553px no-scroll guarantee in D063 now holds only where the
+mark is actually absent.
+
+One measured side effect: EN at 740px of visible height overflows by **1px** (741.4 needed).
+Invisible in practice, but it is why a 740-class phone shows a scrollbar at all.
 
 **How to apply:** This is the one a later phase will otherwise get wrong. If something in the
 menu must track what the user can actually see, give it a `dvh` length. If it must be stable
 across a chrome collapse, give it a media query. Do not convert one into the other for
 consistency's sake.
+
+## D065 — The open mobile menu is pinned top and bottom with a centred middle
+
+**Decision:** In the open mobile menu the close row is pinned to the top, the social row and
+locale bar are pinned to the bottom, and the logo mark plus the seven links are centred in the
+space between. Implemented as `my-auto` on a wrapper around the mark and the nav, with the
+footer's `mt-auto` removed.
+
+This is **Derived (D005)** and a **deliberate divergence from Figma**, by user decision. The
+design draws the menu at exactly one height and has nothing to say about how the composition
+should distribute slack on a taller device; previously the slack all collected above the footer,
+leaving the links top-heavy on anything above their natural height.
+
+**Why `my-auto` and not `justify-center` or `flex-1`:** in a flex column an `auto` margin
+absorbs free space, and `my-auto` on the middle child splits it evenly above and below. Leaving
+`mt-auto` on the footer as well would divide the same slack three ways and push the group off
+centre — the absence of that class is load-bearing and is commented in `Nav.tsx` for that reason.
+When there is no slack the margins collapse to zero on their own, so the below-floor scrolling
+case needs no special handling.
+
+**What this costs:** the phase's original pixel-identity guarantee. Before this change 393×852
+rendered byte-identically to the pre-phase build in both locales, which was the phase's stated
+success criterion and was verified by screenshot diff. Centring moves the mark and links at
+every height above the menu's natural one, so that claim no longer holds and
+`phase-07c/proposal.md` has been corrected rather than left to imply otherwise.
+
+**How to apply:** Measured centring is "centre of the space between the pinned rows", not centre
+of the device — the close row is 29px and the footer 128px, so the group's midpoint sits about
+50px above true viewport centre. If a later phase wants true optical centring against the
+viewport, that is a different change and needs its own decision; do not silently reinterpret
+this one.

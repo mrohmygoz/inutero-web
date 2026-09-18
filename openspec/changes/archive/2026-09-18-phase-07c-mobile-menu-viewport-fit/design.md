@@ -91,30 +91,32 @@ query cannot see the URL bar collapsing — which is exactly what stops the logo
 out while the user scrolls. It keys off device class, which is the stable property this
 decision actually wants. A `dvh`-driven collapse would flicker.
 
-**The threshold is `max-height: 820px`.** Device list it was chosen against — layout-viewport
-heights, which is what the query sees (D-A):
+**The threshold is `max-height: 666px`** — chosen as a preference, not derived from the
+arithmetic. Layout-viewport heights, which is what the query sees (D-A):
 
-| Device | Layout viewport | ≈ usable with chrome | Logo |
+| Device | Layout viewport | ≈ usable with chrome | Mark |
 | :--- | ---: | ---: | :--- |
-| iPhone SE 2/3, iPhone 8 | 375×667 | 553 | **dropped** |
-| Galaxy S8 / S9 | 360×740 | 626 | **dropped** |
-| Pixel 5 / 6a class | 360×800 | 686 | **dropped** |
-| iPhone 13 mini | 375×812 | 698 | **dropped** |
+| Landscape / split-screen | ≤666 | — | **dropped** |
+| iPhone SE 2/3, iPhone 8 | 375×667 | 553 | kept — scrolls |
+| Galaxy S8 / S9 | 360×740 | 626 | kept — scrolls |
+| Pixel 5 / 6a class | 360×800 | 686 | kept — scrolls |
+| iPhone 13 mini | 375×812 | 698 | kept |
 | iPhone 12/13/14 | 390×844 | 730 | kept |
 | iPhone 14/15 Pro | 393×852 | 738 | kept |
 | Pixel 7 / 8 | 412×915 | 801 | kept |
 
-With the logo present and the link clamp at its minimum the menu needs **733.6px**
-(363.99 fixed + 7×52.8 links). Every device at or above the threshold clears that; every
-device below it does not, which is why 812 drops the logo and 844 does not.
+With the mark present the menu needs about **673px** of visible height: 303 fixed (29 close row
++ 90 mark + 56 gap + 128 footer) plus 370.3 of links at the clamp minimum. A threshold derived
+from that number alone lands near 820, in the dead band between 812 and 844, and drops the mark
+on everything from the 13 mini down.
 
-820 sits in the dead space between 812 and 844 — no common phone reports a height in that
-band, so the choice is robust to ±8px of disagreement about chrome height. It fires on the SE
-(667) and leaves 393×852 untouched, which is the pixel-identity requirement.
+666 deliberately refuses that trade. It keeps the mark on every mainstream phone and removes it
+only on genuinely short viewports. **The cost is that short portrait phones scroll instead:** an
+SE has 553px visible against ~673 needed, so about 120px sits below the fold and
+`overflow-y-auto` carries it. Brand presence over a scroll-free fit — a user decision, recorded
+in D064.
 
-The logo's own margin and the nav's `mt-[56px]` collapse **with** it, as one unit. That is
-what makes it 181px rather than 125px, and it is also why the nav's top spacing does not need
-a third knob.
+Measured side effect: EN at 740px of visible height needs 741.4 and overflows by **1px**.
 
 ## D-D: The floor is 553px and it is the clamp minimum
 

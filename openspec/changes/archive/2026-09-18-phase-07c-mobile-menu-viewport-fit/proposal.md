@@ -52,9 +52,14 @@ the overlay. Masked today by the overlay's own `overflow-y-auto`; once the overl
 scrolling on normal devices it becomes the only scroll surface, and the bug gets more visible,
 not less.
 
-**Not in scope.** The desktop nav, the collapsed mobile bar, and the menu's visual design at
-≥838px — all unchanged. At full height every clamp sits at its maximum and the rendered output
-must be **pixel-identical** to today (see Verification).
+**Not in scope.** The desktop nav and the collapsed mobile bar — both unchanged.
+
+**Amended during implementation.** This section originally required the rendered output at
+≥838px to be **pixel-identical** to today, and that was met: 393×852 diffed byte-identically in
+both locales. The user then asked for the menu's vertical composition to change — close row
+pinned top, footer pinned bottom, mark and links centred in the slack between (D065) — which
+moves the mark and links at every height above the menu's natural one. The pixel-identity
+criterion no longer applies and is recorded here as superseded rather than quietly dropped.
 
 ## Capabilities
 
@@ -75,7 +80,7 @@ None. `skip_specs: true` is set in `.openspec.yaml`.
 | `app/globals.css` | Possibly a `@theme` entry if the clamp bounds are expressed as tokens (D-D) |
 | `openspec/DECISIONS.md` | Dropping the logo is Derived (D005) and needs an entry; so does the floor |
 | `openspec/reference/roadmap.md` | New 7c row |
-| Rendered output at ≥838px | **Unchanged.** Any difference at full height is a bug in this phase. |
+| Rendered output at ≥838px | Changed, by later user decision — see D065. The clamps alone left it byte-identical; the centring did not. |
 
 ## Verification
 
@@ -84,7 +89,7 @@ viewport sizes matter more than usual:
 
 | Width × height | What it is | Expect |
 | :--- | :--- | :--- |
-| 393 × 852 | iPhone 14/15 Pro | Identical to today, logo present |
+| 393 × 852 | iPhone 14/15 Pro | Logo present, nothing clipped. (Was "identical to today" — superseded by D065.) |
 | 393 × 740 | mid-size, chrome showing | Everything visible, logo present or absent |
 | **375 × 553** | **iPhone SE with Safari chrome** | Everything visible, no scroll, logo absent |
 | 393 × 553 | design width at the floor | Same |

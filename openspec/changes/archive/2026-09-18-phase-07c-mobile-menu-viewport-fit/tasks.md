@@ -39,7 +39,7 @@
 - [x] 6.3 **393×740, both locales** — the in-between case. Nothing clipped, nothing overlapping.
 - [x] 6.4 **375×480, both locales** — below the floor. Confirm it scrolls cleanly rather than clipping, and that the locale bar is reachable.
 - [x] 6.5 Confirm the logo does not pop in or out while scrolling the page behind the menu at any size — that is the failure a `dvh`-driven collapse would have caused (D-C).
-- [ ] 6.6 **Verify on a real device.** — **NOT DONE.** Cannot be done from this session; handed to the user and recorded in `roadmap.md` → deferred work.
+- [ ] 6.6 **Verify on a real device.** — **NOT DONE, archived unchecked.** Inherited by the user; recorded in `roadmap.md` → deferred work. Especially load-bearing now: the 666px threshold (D064) means short phones keep the mark and scroll, which is exactly the behaviour headless Chrome cannot reproduce. Cannot be done from this session; handed to the user and recorded in `roadmap.md` → deferred work.
   Original task: `h-dvh` and browser-chrome behaviour cannot be reproduced in headless Chrome; the arithmetic can be checked there, the chrome behaviour cannot.
 - [x] 6.7 Check `next-devtools-mcp` for framework errors or warnings.
 - [x] 6.8 Run `npm run lint` and `npx tsc --noEmit`.
