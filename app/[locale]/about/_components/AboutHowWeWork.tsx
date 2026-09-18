@@ -1,3 +1,4 @@
+import Eyebrow from "../../../_components/Eyebrow";
 import { getDictionary, type Locale } from "../../../_lib/i18n";
 
 // Source: desktop Section 12610:6253 (635px); mobile Section 12219:948 (929.6px,
@@ -7,19 +8,6 @@ import { getDictionary, type Locale } from "../../../_lib/i18n";
 // `Button` children, this is static — all three points render open with no
 // variant set, icon affordance, or reaction on any Button node. Not the same
 // interaction as Home's `HomeServices` accordion (D-E in design.md).
-function Eyebrow({ label, className }: { label: string; className: string }) {
-  return (
-    <div className={`flex items-center justify-center ${className} lg:translate-y-1 translate-y-3`}>
-      <div className="rotate-90">
-        <div className="flex items-center gap-[10px]">
-          <div className="size-[7px] shrink-0 bg-(--color-brand-primary-green)" />
-          <p className="font-body text-label-m text-center whitespace-nowrap text-white uppercase">{label}</p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 export default function AboutHowWeWork({ locale }: { locale: Locale }) {
   const { howWeWork } = getDictionary(locale).about;
 
@@ -30,7 +18,11 @@ export default function AboutHowWeWork({ locale }: { locale: Locale }) {
       {/* ---------------------------------------------------------------- */}
       <section className="flex flex-col items-start bg-(--color-basic-accent) py-[25px] lg:hidden">
         <div className="flex w-full items-start gap-[5px] pr-[15px]">
-          <Eyebrow label={howWeWork.eyebrow} className="h-[99px] w-[17px] shrink-0" />
+          <Eyebrow
+            label={howWeWork.eyebrow}
+            tone="light"
+            className="flex h-[99px] w-[17px] shrink-0 items-center justify-center translate-y-3 lg:translate-y-1"
+          />
           <h2 className="font-display text-display-h2 w-full flex-1 pt-[20px] text-white uppercase">
             {howWeWork.heading}
           </h2>
@@ -55,7 +47,11 @@ export default function AboutHowWeWork({ locale }: { locale: Locale }) {
       {/* ---------------------------------------------------------------- */}
       <section className="hidden bg-(--color-basic-accent) px-[32px] py-[64px] lg:block">
         <div className="flex items-start gap-[5px]">
-          <Eyebrow label={howWeWork.eyebrow} className="h-[74px] w-[27px] shrink-0" />
+          <Eyebrow
+            label={howWeWork.eyebrow}
+            tone="light"
+            className="flex h-[74px] w-[27px] shrink-0 items-center justify-center translate-y-3 lg:translate-y-1"
+          />
           <div className="flex min-w-px flex-1 flex-col items-end justify-center gap-[80px]">
             <h2 className="font-display text-display-h2 w-full text-white uppercase">{howWeWork.heading}</h2>
 

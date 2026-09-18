@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Cta from "../../_components/Cta";
+import Eyebrow from "../../_components/Eyebrow";
 import { getDictionary, type Locale } from "../../_lib/i18n";
 import { localizedHref } from "../../_lib/routes";
 
@@ -23,24 +24,6 @@ const HEADING_GRADIENT_DESKTOP =
 const HEADING_GRADIENT_MOBILE =
   "linear-gradient(210.43759505737597deg, rgb(8, 196, 84) 16.127%, rgb(82, 200, 80) 54.764%, rgb(39, 166, 90) 95.835%)";
 
-// Green dot + rotated label. Built inline rather than as a component: the
-// standalone `TaglineWrapper` primitive was removed after Phase 3 for having a
-// single consumer, and `TitleGroup` carries the same treatment inline.
-function Eyebrow({ label, className }: { label: string; className: string }) {
-  return (
-    <div className={`flex items-center justify-center ${className} lg:translate-y-0 translate-y-2`}>
-      <div className="rotate-90">
-        <div className="flex items-center gap-[10px]">
-          <div className="size-[7px] shrink-0 bg-(--color-brand-primary-green)" />
-          <p className="font-body text-label-m text-center whitespace-nowrap uppercase text-(--color-basic-accent)">
-            {label}
-          </p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 export default function HomeIntro({ locale }: { locale: Locale }) {
   const { intro } = getDictionary(locale).home;
   const aboutHref = localizedHref("about", locale);
@@ -58,7 +41,10 @@ export default function HomeIntro({ locale }: { locale: Locale }) {
       {/* ---------------------------------------------------------------- */}
       <section className="flex flex-col items-center gap-[41px] bg-(--color-basic-background) pt-[30px] pb-[60px] lg:hidden">
         <div className="flex w-full items-start gap-[5px] pr-[15px]">
-          <Eyebrow label={intro.eyebrow} className="h-[92px] w-[17px] shrink-0" />
+          <Eyebrow
+            label={intro.eyebrow}
+            className="flex h-[92px] w-[17px] shrink-0 items-center justify-center translate-y-2 lg:translate-y-0"
+          />
           <div className="flex w-[346px] max-w-full flex-col justify-center pt-[20px]">
             <h2
               className="font-display text-display-h2 w-full bg-clip-text whitespace-pre-line uppercase text-transparent"
@@ -99,7 +85,10 @@ export default function HomeIntro({ locale }: { locale: Locale }) {
               value that would squeeze the heading column as the page narrows.
               The left gutter stays 32px — it is the page gutter the NAV uses. */}
           <div className="relative flex items-start pr-[16.042%] pl-[32px]">
-            <Eyebrow label={intro.eyebrow} className="h-[97px] w-[27px] shrink-0 py-[15px]" />
+            <Eyebrow
+              label={intro.eyebrow}
+              className="flex h-[97px] w-[27px] shrink-0 items-center justify-center py-[15px] translate-y-2 lg:translate-y-0"
+            />
             <h2
               className="font-display text-display-h2 min-w-px flex-1 bg-clip-text whitespace-pre-line uppercase text-transparent"
               style={{ backgroundImage: HEADING_GRADIENT_DESKTOP }}

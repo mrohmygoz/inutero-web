@@ -8,6 +8,7 @@
 - [D-D: `ServiceCard`'s numbered tag stays inline](#d-d-servicecards-numbered-tag-stays-inline)
 - [D-E: The two-subtree pattern is not duplication](#d-e-the-two-subtree-pattern-is-not-duplication)
 - [D-F: i18n split preserves the public signature](#d-f-i18n-split-preserves-the-public-signature)
+- [Audit results (task 2)](#audit-results-task-2)
 - [Risks](#risks)
 
 ## D-A: Why `TitleGroup` failed, and what shape replaces it
@@ -150,6 +151,72 @@ a misspelled key reads as one addition plus one omission, and only the omission 
 CLAUDE.md promises missing translations "fail loudly at build time"; today that is half true.
 An explicit `const zh: typeof en = {...}` annotation in each `zh/*.ts` module makes it true in
 both directions.
+
+## Audit results (task 2)
+
+Nine eyebrow sites, thirteen call sites (five local `Eyebrow` functions serve two breakpoints
+each except `AboutIntro`'s, which serves none). `AboutIntro:18` is **dead code** — the function
+is defined, ESLint already flags it as unused, and the section renders no eyebrow at all.
+
+| # | Site | Reserved box | Positioning | Nudge | Tone | Wrapper around it | Heading |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| 1 | `HomeIntro` mobile | `h-[92px] w-[17px] shrink-0` | in-flow | `translate-y-2` | dark (`basic-accent`) | `flex w-full items-start gap-[5px] pr-[15px]` | `h2` `text-display-h2`, inside a `w-[346px] ... pt-[20px]` column |
+| 2 | `HomeIntro` desktop | `h-[97px] w-[27px] shrink-0 py-[15px]` | in-flow | `lg:translate-y-0` | dark | `relative flex items-start pr-[16.042%] pl-[32px]` (also parents an absolute image) | `h2` `text-display-h2` `flex-1`, no `pt` |
+| 3 | `HomeFeaturedProjects` mobile | `h-[106px] w-[17px]` | **absolute** `top-1` | `translate-y-2` | dark | sticky header, heading is a sibling not a flex row | `h2` `ml-[32px] w-[346px]` |
+| 4 | `HomeFeaturedProjects` desktop | `h-[112px] w-[27px] shrink-0` | in-flow | `lg:translate-y-0` | dark | `flex items-start` (no `gap`, no `pr`) | `h2` `flex-1` |
+| 5 | `HomeServices` mobile | `h-[99px] w-[17px]` | **absolute** `top-0 left-0` | — (inner `pl-[25px]`) | light (`basic-background`) | left gutter, heading is a sibling with `ml-[32px]` | `h2` |
+| 6 | `HomeServices` desktop | `h-[74px]` inside `w-[27px] shrink-0 py-[15px]` | in-flow, **two nested boxes** | — | light | `flex items-start`, heading inside a `flex-1` column with `gap-[80px]` | `h2` |
+| 7 | `AboutIntro` | — | — | — | dark (`basic-text-primary`) | — | **no call site — dead code** |
+| 8 | `AboutTeam` mobile | `h-[99px] w-[17px] shrink-0` | in-flow | `translate-y-[-2px]` | dark | `flex w-full items-start gap-[5px] pr-[15px]` | `h2` `flex-1 pt-[20px]` |
+| 9 | `AboutTeam` desktop | `h-[77px] w-[27px] shrink-0` | in-flow | `lg:translate-y-[-12px]` | dark | `flex items-start gap-[5px]` | `h2` `flex-1`, no `pt` |
+| 10 | `AboutHowWeWork` mobile | `h-[99px] w-[17px] shrink-0` | in-flow | `translate-y-3` | light (`text-white`) | `flex w-full items-start gap-[5px] pr-[15px]` | `h2` `flex-1 pt-[20px]` |
+| 11 | `AboutHowWeWork` desktop | `h-[74px] w-[27px] shrink-0` | in-flow | `lg:translate-y-1` | light | `flex items-start gap-[5px]` | heading inside a `flex-1` column with `gap-[80px]` |
+| 12 | `AboutHero` mobile | `h-[99px] w-[17px] shrink-0` | in-flow | `translate-y-4` | light | `flex w-full items-start gap-[5px] pt-[74px] pr-[15px]` | `h1`, inside a `flex-1 flex-col justify-center pt-[20px]` column |
+| 13 | `AboutHero` desktop | `h-[64px] w-[17px] shrink-0` **`items-start`** | in-flow, `mt-12` | — | light | `relative flex items-start px-[32px] py-[68px] mt-24` | `h1` `flex-1` |
+
+### `SectionHeader` gate (D-C): **failed — 2 of 9**
+
+Only `AboutTeam` and `AboutHowWeWork` present the candidate shell (`flex w-full items-start
+gap-[5px] pr-[15px]` + `h-[99px] w-[17px]` box + `pt-[20px]` heading) unchanged at mobile, and
+even those two diverge at desktop — different box heights (`77px` vs `74px`), different nudges,
+and `AboutHowWeWork` puts its heading inside a nested `gap-[80px]` column. Of the rest:
+`AboutHero` needs `pt-[74px]` added to the shell and a heading column; `HomeIntro` has a
+different box height plus a heading column; `HomeFeaturedProjects` and `HomeServices` are not a
+flex row at all at mobile (absolutely positioned eyebrow, heading as a sibling).
+
+Two of nine is well below the five-of-nine gate. **`SectionHeader` is not built.** Task group 4
+is skipped. Making it fit would require a box-size prop, a nudge prop, a wrapper-padding prop
+and an optional heading column — i.e. `TitleGroup` again.
+
+### Alignment is caller-owned
+
+`AboutHero` desktop uses `items-start`; every other site uses `items-center`. Rather than
+resolve that with a prop or rely on Tailwind's class-conflict ordering, `Eyebrow`'s root carries
+**only** the caller's `className`. The shared markup is the rotated square-plus-label content,
+exactly as task 3.1 specifies. Each call site therefore keeps its box classes verbatim, which is
+also what makes this phase's no-pixel-change requirement checkable by inspection.
+
+### `HomeServices` mobile `pl-[25px]` — measured, not reasoned
+
+That padding sits on the flex row **inside** the `rotate-90` wrapper, so it is not a class that
+moves to the caller's box unchanged. The arithmetic says it should: pre-rotation it widens the
+rotated element by 25px while leaving its centre fixed, shifting the content's centre by +12.5px
+along the pre-rotation x axis, which `rotate-90` maps to +12.5px downward. That was implemented
+as `translate-y-[12.5px]` on the caller's box and **screenshot-diffed against the baseline**.
+
+The vertical position came back exact. The horizontal position did not: the rotated element's
+pre-rotation width changes by 25px, its layout box's left edge lands on a different device-pixel
+boundary, and the 7px green square's antialiasing shifts about half a pixel across — 28 pixels
+differing at delta 98, in both locales, against a run-to-run noise floor of delta 2. Restoring
+the inset dropped both pages back to the noise floor, which attributes the difference to this
+substitution alone and confirms the other twelve call sites are exact.
+
+So the inset stays inside the rotation, behind a `gutterInset` prop (D061). That is a prop
+existing for one caller, which D-C's gate exists to prevent — but the gate is about generalizing
+a *layout shell* on speculation, and this is the opposite: reproducing one site's existing markup
+because the phase's success criterion is that nothing moves. A rasterization-dependent magic
+offset is the worse trade; it would also drift differently at other device pixel ratios.
+User-confirmed 2026-09-18.
 
 ## Risks
 

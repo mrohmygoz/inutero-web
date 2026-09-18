@@ -42,3 +42,6 @@ next-env.d.ts
 
 # claude code worktrees (scratch; never commit — they stage as gitlinks)
 .claude/worktrees/
+
+# playwright-cli session scratch (verification runs; never commit)
+.playwright-cli/

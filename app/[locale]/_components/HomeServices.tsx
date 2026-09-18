@@ -3,6 +3,7 @@
 import { useState, type ReactNode } from "react";
 import Image from "next/image";
 import Cta from "../../_components/Cta";
+import Eyebrow from "../../_components/Eyebrow";
 import { getDictionary, type Locale } from "../../_lib/i18n";
 import { localizedHref } from "../../_lib/routes";
 
@@ -120,17 +121,15 @@ export default function HomeServices({ locale }: { locale: Locale }) {
       {/* ------------------------------------------------------------------ */}
       <div className="lg:hidden">
         <div className="relative pt-[25px] pb-[77px]">
-          {/* Eyebrow sits in the left gutter, outside the 32px heading inset. */}
-          <div className="absolute top-0 left-0 flex h-[99px] w-[17px] items-center justify-center">
-            <div className="rotate-90">
-              <div className="flex items-center gap-[10px] pl-[25px]">
-                <div className="size-[7px] shrink-0 bg-(--color-brand-primary-green)" />
-                <p className="font-body text-label-m text-center whitespace-nowrap text-(--color-basic-background) uppercase">
-                  {services.eyebrow}
-                </p>
-              </div>
-            </div>
-          </div>
+          {/* Eyebrow sits in the left gutter, outside the 32px heading inset;
+              `gutterInset` is the 25px that inset costs, applied inside the
+              rotation where it renders (D061). */}
+          <Eyebrow
+            label={services.eyebrow}
+            tone="light"
+            className="absolute top-0 left-0 flex h-[99px] w-[17px] items-center justify-center"
+            gutterInset
+          />
 
           {/* 346px is the Figma text box's own width, so it must be the content
               box — pairing it with pl-[32px] under border-box would leave 314px
@@ -215,16 +214,11 @@ export default function HomeServices({ locale }: { locale: Locale }) {
       <div className="hidden lg:block">
         <div className="mx-auto flex w-full max-w-[1440px] items-start px-[32px] py-[68px]">
           <div className="w-[27px] shrink-0 py-[15px]">
-            <div className="flex h-[74px] items-center justify-center">
-              <div className="rotate-90">
-                <div className="flex items-center gap-[10px]">
-                  <div className="size-[7px] shrink-0 bg-(--color-brand-primary-green)" />
-                  <p className="font-body text-label-m text-center whitespace-nowrap text-(--color-basic-background) uppercase">
-                    {services.eyebrow}
-                  </p>
-                </div>
-              </div>
-            </div>
+            <Eyebrow
+              label={services.eyebrow}
+              tone="light"
+              className="flex h-[74px] items-center justify-center"
+            />
           </div>
 
           <div className="flex min-w-px flex-1 flex-col items-end gap-[80px]">

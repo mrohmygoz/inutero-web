@@ -15,21 +15,6 @@ const HEADING_GRADIENT_DESKTOP =
 const HEADING_GRADIENT_MOBILE =
   "linear-gradient(210.43759505737597deg, rgb(8, 196, 84) 16.127%, rgb(82, 200, 80) 54.764%, rgb(39, 166, 90) 95.835%)";
 
-function Eyebrow({ label, className }: { label: string; className: string }) {
-  return (
-    <div className={`flex items-center justify-center ${className}`}>
-      <div className="rotate-90">
-        <div className="flex items-center gap-[10px]">
-          <div className="size-[7px] shrink-0 bg-(--color-brand-primary-green)" />
-          <p className="font-body text-label-m text-center whitespace-nowrap text-(--color-basic-text-primary) uppercase">
-            {label}
-          </p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 export default function AboutIntro({ locale }: { locale: Locale }) {
   const { intro } = getDictionary(locale).about;
 

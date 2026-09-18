@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import Cta from "@/app/_components/Cta";
 import SecondaryCta from "@/app/_components/SecondaryCta";
 import Tag from "@/app/_components/Tag";
-import TitleGroup from "@/app/_components/TitleGroup";
+import Eyebrow from "@/app/_components/Eyebrow";
 import ProjectCard from "@/app/_components/ProjectCard";
 import type { Locale } from "@/app/_lib/i18n";
 
@@ -109,27 +109,22 @@ export default function PrimitiveSpecimens({ locale = "en" }: { locale?: Locale 
         </Tag>
       </Row>
 
-      <Row label="TitleGroup — tone=dark, headingSize=h1 (page header default)">
+      <Row label="Eyebrow — tone=dark (light section)">
         <div className="w-full bg-(--color-basic-background) p-4">
-          <TitleGroup eyebrow={t.headerEyebrow} heading={t.headerHeading} headingSize="h1" />
+          <Eyebrow
+            label={t.headerEyebrow}
+            className="flex h-[99px] w-[17px] items-center justify-center"
+          />
         </div>
       </Row>
 
-      <Row label="TitleGroup — tone=dark, headingSize=h1 (page header default), w/ description">
-        <div className="w-full bg-(--color-basic-background) p-4">
-          <TitleGroup eyebrow={t.headerEyebrow} heading={t.headerHeading} headingSize="h1" description="Updates on artists, collaborations, and what we're building." />
-        </div>
-      </Row>
-
-      <Row label="TitleGroup — tone=light, headingSize=h2 (dark section)">
+      <Row label="Eyebrow — tone=light (dark section)">
         <div className="w-full bg-(--color-basic-accent) p-4">
-          <TitleGroup eyebrow={t.eyebrow} heading={t.heading} tone="light" headingSize="h2" />
-        </div>
-      </Row>
-
-      <Row label="TitleGroup — tone=light, headingSize=h2 (dark section), w/ description">
-        <div className="w-full bg-(--color-basic-accent) p-4">
-          <TitleGroup eyebrow={t.eyebrow} heading={t.heading} tone="light" headingSize="h2" description="Updates on artists, collaborations, and what we're building." />
+          <Eyebrow
+            label={t.eyebrow}
+            tone="light"
+            className="flex h-[99px] w-[17px] items-center justify-center"
+          />
         </div>
       </Row>
 

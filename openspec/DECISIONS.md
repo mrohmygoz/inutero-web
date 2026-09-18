@@ -63,6 +63,13 @@ Do **not** record things readable from the code or the design itself.
 - [D052 — NAV theme for `/about` goes through `darkNavRoutes`, not a per-page prop](#d052--nav-theme-for-about-goes-through-darknavroutes-not-a-per-page-prop)
 - [D053 — `openspec/specs/` covers behavior only; pages are not capabilities](#d053--openspecspecs-covers-behavior-only-pages-are-not-capabilities)
 - [D054 — One canonical label per route; the Footer's Figma "Contacts" is knowingly ignored](#d054--one-canonical-label-per-route-the-footers-figma-contacts-is-knowingly-ignored)
+- [D055 — The eyebrow abstraction is the atom, not the section header](#d055--the-eyebrow-abstraction-is-the-atom-not-the-section-header)
+- [D056 — `Eyebrow` has two tones, not four colour names](#d056--eyebrow-has-two-tones-not-four-colour-names)
+- [D057 — `SectionHeader` was audited and rejected: 2 of 9](#d057--sectionheader-was-audited-and-rejected-2-of-9)
+- [D058 — `ServiceCard`'s numbered tag stays inline](#d058--servicecards-numbered-tag-stays-inline)
+- [D059 — The two-subtree `lg:hidden` pattern is not duplication](#d059--the-two-subtree-lghidden-pattern-is-not-duplication)
+- [D060 — `zh` dictionary modules are explicitly annotated, not only `satisfies`-checked](#d060--zh-dictionary-modules-are-explicitly-annotated-not-only-satisfies-checked)
+- [D061 — `Eyebrow.gutterInset` is a one-caller prop, kept on measured evidence](#d061--eyebrowgutterinset-is-a-one-caller-prop-kept-on-measured-evidence)
 
 ## D001 — Locale strategy
 
@@ -1162,3 +1169,141 @@ history. User-confirmed 2026-09-18.
 
 **How to apply:** Do not add a Footer-specific label. If the client later wants "Contacts"
 site-wide, change the `contact` entry in `routes.ts` and both surfaces follow.
+
+## D055 — The eyebrow abstraction is the atom, not the section header
+
+**Decision:** `app/_components/Eyebrow.tsx` owns the rotated green-square-plus-label content and
+nothing else. The reserved box around it — size, positioning, alignment, nudge — is the caller's
+`className`. The composite `TitleGroup` is deleted.
+
+**Why:** Phase 2 built `TitleGroup` (eyebrow + heading + optional description) from the Figma
+mobile symbol `12219:946`. Phase 3 then found that no corresponding symbol exists at 1440px —
+`12220:1079` and `12405:6424`, previously cited as desktop occurrences, are **393px mobile-frame
+instances** (confirmed via `get_metadata`: width 393), and real desktop pages compose the eyebrow
+and heading inline per page. That left `TitleGroup`'s desktop half a derived approximation no page
+could adopt, and it ended Phase 7 with **zero consumers outside the styleguide** while nine
+hand-rolled copies accumulated across seven files. The same Phase 3 deleted `TaglineWrapper`, the
+standalone eyebrow primitive, for having one consumer — just before it would have acquired nine.
+Both calls were locally reasonable and jointly wrong.
+
+The box genuinely differs per site (`h-[99px] w-[17px]` in most section headers, `h-[112px]
+w-[27px]` at desktop, absolutely positioned in the Home services gutter, `items-start` in the Our
+Story hero), which is why it is not built in. The box must nevertheless exist: rotating without
+a reserved box pushes the visual footprint outside the element's flex-allocated space and an
+ancestor's `overflow-hidden` clips it away entirely — found by inspecting a screenshot where
+`ServiceCard`'s tag was fully invisible.
+
+**How to apply:** Share the atom, not the composition. A new section's eyebrow is
+`<Eyebrow label tone className="flex h-[..] w-[..] items-center justify-center ..." />`. Do not
+re-introduce a heading-owning wrapper without re-running the D057 audit. The Figma archaeology
+above is the reason: it cost a phase to learn and is preserved here because the file that held
+it is gone.
+
+## D056 — `Eyebrow` has two tones, not four colour names
+
+**Decision:** `tone: 'dark' | 'light'`, defaulting to `'dark'`. `dark` →
+`text-(--color-basic-accent)`, `light` → `text-(--color-basic-background)`.
+
+**Why:** The nine copies used four different classes — `--color-basic-accent`,
+`--color-basic-text-primary`, `--color-basic-background`, and a raw `text-white` — that
+`globals.css` resolves to exactly two values: `--color-basic-accent` and
+`--color-basic-text-primary` are both `--primitive-neutral-darkest` (`#131417`), and
+`--color-basic-background` is `--primitive-white`. The drift was in which name each phase reached
+for, not in the design. The two-name mapping follows the precedent `Cta`, `SecondaryCta` and
+`ArtistCard` already set (D013), and every substitution is a rendered no-op, which Phase 07b
+required. `text-white` is a raw value and CLAUDE.md forbids those in components.
+
+**How to apply:** Pass `tone="light"` on a dark section, nothing on a light one. If a third
+rendered colour ever appears, add a tone — do not reach past the prop with a `className` colour.
+
+## D057 — `SectionHeader` was audited and rejected: 2 of 9
+
+**Decision:** No `SectionHeader` component. The audit is recorded so a later phase does not
+re-run it.
+
+**Why:** Three sites independently arrived at the same shell — `flex w-full items-start
+gap-[5px] pr-[15px]`, a `h-[99px] w-[17px]` eyebrow box, a `pt-[20px]` heading — which is the
+Figma mobile section-header geometry reached three times without a shared component. Phase 07b
+set a gate before writing any code: build it only if **five or more of the nine sites fit
+unchanged**. The audit (full table in the phase's `design.md`) found **two** — `AboutTeam` and
+`AboutHowWeWork`, and even those diverge at desktop (box heights `77px` vs `74px`, different
+nudges, `AboutHowWeWork`'s heading nested in a `gap-[80px]` column). `AboutHero` needs
+`pt-[74px]` and a heading column; `HomeIntro` has a different box height plus a heading column;
+`HomeFeaturedProjects` and `HomeServices` are not a flex row at all at mobile — their eyebrow is
+absolutely positioned and the heading is a sibling. Making all nine fit would need a box-size
+prop, a nudge prop, a wrapper-padding prop and an optional heading column: `TitleGroup` again.
+
+**How to apply:** Phases 8–15 compose `Eyebrow` directly. If a later phase adds sections that
+push the count past five, re-audit against this table rather than assuming the answer flipped.
+
+## D058 — `ServiceCard`'s numbered tag stays inline
+
+**Decision:** `ServiceCard`'s green-square-plus-rotated-label index badge is not folded into
+`Eyebrow`.
+
+**Why:** It rotates the **opposite direction** — verified in both breakpoint exports and recorded
+in the component's own header comment as a genuine per-instance difference, not a mistake to
+reconcile by sharing a primitive. It is also not an eyebrow: its label is `"01"`, a card index,
+not a section name. Sharing it would need a `direction` prop existing for exactly one caller —
+the same over-generalization D057 rejected, at smaller scale. `Footer:61` and `HomeHero:101,202`
+are likewise not eyebrows: rotated text with no green square.
+
+**How to apply:** Leave them. A future "finish the consolidation" pass should stop here.
+
+## D059 — The two-subtree `lg:hidden` pattern is not duplication
+
+**Decision:** The `lg:hidden` tree beside a `hidden lg:*` tree, in eight components, stays. Phase
+07b's diff removed no such pair, deliberately.
+
+**Why:** It reads as copy-paste and is not. D040 establishes that placed compositions and flow
+sections behave differently across the 1024px switch, and `ServiceCard`'s comment documents a
+concrete case where the two breakpoints put the same content in *different flex containers
+entirely*, so no single repositioned element can express both. Merging them would silently break
+a breakpoint that nobody is looking at while reviewing the other one.
+
+**How to apply:** An instruction to "reduce duplication" does not reach these. Treat the pair as
+two designs that happen to share copy.
+
+## D060 — `zh` dictionary modules are explicitly annotated, not only `satisfies`-checked
+
+**Decision:** Each `app/_lib/i18n/zh/*.ts` module declares `const x: typeof enX = {...}`. The
+dictionaries are split per page — `{en,zh}/{home,about,common}.ts` composed by `index.ts` —
+with `getDictionary(locale)`'s signature and return shape unchanged.
+
+**Why:** `index.ts` used `{ en, zh } satisfies Record<Locale, typeof en>`. That catches a
+*missing* `zh` key, but `{ en, zh }` is shorthand, not a fresh object literal, so excess-property
+checking never applied and **extra or misspelled `zh` keys passed silently** — a misspelling reads
+as one addition plus one omission, and only the omission was caught. CLAUDE.md promises missing
+translations "fail loudly at build time"; that was half true. The explicit annotation makes it
+true in both directions, verified by temporarily adding a bogus key and confirming `tsc --noEmit`
+fails (TS2353). The split itself is pre-emptive: `en.ts` was 224 lines covering two of nine pages,
+with seven page phases still to come.
+
+**How to apply:** A new page phase adds `en/<page>.ts` and `zh/<page>.ts` with the annotation, and
+one line each in the two `index.ts` files. Shared chrome copy goes in `common.ts`. Never widen a
+`zh` module's type to silence an error — the error is the point.
+
+## D061 — `Eyebrow.gutterInset` is a one-caller prop, kept on measured evidence
+
+**Decision:** `Eyebrow` carries a `gutterInset` boolean that applies `pl-[25px]` to the row inside
+the rotation. Only `HomeServices`'s mobile eyebrow passes it.
+
+**Why:** That inset is what puts the Home services eyebrow in the left gutter, and it has always
+lived inside the `rotate-90` wrapper. Expressed from outside the component it is
+`translate-y-[12.5px]` — the padding widens the rotated element by 25px while its centre stays
+put, moving the content's centre +12.5px pre-rotation in x, which the rotation maps to +12.5px
+down. That version was built and screenshot-diffed: vertically exact, but the rotated element's
+pre-rotation width changed parity, its left edge landed on a different device-pixel boundary, and
+the 7px green square's antialiasing moved about half a pixel horizontally (28 px at delta 98 in
+both locales, against a run-to-run noise floor of delta 2). Restoring the inset returned both
+pages to the noise floor, which also proved the other twelve call sites exact.
+
+D055 and D057 warn against props invented for one caller, and this is one. The distinction is
+that those warnings are about generalizing a *layout shell* on speculation — `TitleGroup`'s
+mistake — whereas this reproduces a single site's existing markup because Phase 07b's success
+criterion is that nothing moves. The alternative encodes a rasterization artifact as a layout
+value, which would drift again at a different device pixel ratio. User-confirmed 2026-09-18.
+
+**How to apply:** Do not pass `gutterInset` anywhere else; a new gutter eyebrow should get its
+offset from its own box unless a diff proves otherwise. If `HomeServices` mobile is ever
+redesigned, delete the prop with it.

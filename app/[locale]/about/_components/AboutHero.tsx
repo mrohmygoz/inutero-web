@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Eyebrow from "../../../_components/Eyebrow";
 import { getDictionary, type Locale } from "../../../_lib/i18n";
 
 // Source: desktop Section 12573:6372 (960px, TC 0:222 desktop); mobile Hero
@@ -36,16 +37,11 @@ export default function AboutHero({ locale }: { locale: Locale }) {
             than overlapping the headline. */}
         <div className="relative flex min-h-dvh flex-col justify-between">
           <div className="flex w-full items-start gap-[5px] pt-[74px] pr-[15px]">
-            <div className="flex h-[99px] w-[17px] shrink-0 items-center justify-center translate-y-4">
-              <div className="rotate-90">
-                <div className="flex items-center gap-[10px]">
-                  <div className="size-[7px] shrink-0 bg-(--color-brand-primary-green)" />
-                  <p className="font-body text-label-m text-center whitespace-nowrap text-white uppercase">
-                    {hero.eyebrow}
-                  </p>
-                </div>
-              </div>
-            </div>
+            <Eyebrow
+              label={hero.eyebrow}
+              tone="light"
+              className="flex h-[99px] w-[17px] shrink-0 items-center justify-center translate-y-4"
+            />
             <div className="flex flex-1 flex-col justify-center pt-[20px]">
               <h1 className={`font-display ${mobileHeroTextDisplay} w-full text-white uppercase`}>
                 <span className="block">{hero.headlineLine1}</span>
@@ -70,16 +66,11 @@ export default function AboutHero({ locale }: { locale: Locale }) {
         </div>
 
         <div className="relative flex items-start px-[32px] py-[68px] mt-24">
-          <div className="flex h-[64px] w-[17px] shrink-0 items-start justify-center mt-12">
-            <div className="rotate-90">
-              <div className="flex items-center gap-[10px]">
-                <div className="size-[7px] shrink-0 bg-(--color-brand-primary-green)" />
-                <p className="font-body text-label-m text-center whitespace-nowrap text-white uppercase">
-                  {hero.eyebrow}
-                </p>
-              </div>
-            </div>
-          </div>
+          <Eyebrow
+            label={hero.eyebrow}
+            tone="light"
+            className="flex h-[64px] w-[17px] shrink-0 items-start justify-center mt-12"
+          />
           <h1 className="font-display text-display-h1 min-w-px flex-1 text-white uppercase">
             <span className="block">{hero.headlineLine1} {hero.headlineLine2}</span>
             <span className="block">{hero.headlineLine3} {hero.headlineLine4}</span>

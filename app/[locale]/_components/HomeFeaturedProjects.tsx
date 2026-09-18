@@ -1,5 +1,6 @@
 import ProjectCard, { type ProjectCardTag } from "../../_components/ProjectCard";
 import Cta from "../../_components/Cta";
+import Eyebrow from "../../_components/Eyebrow";
 import { getDictionary, type Locale } from "../../_lib/i18n";
 import { localizedHref } from "../../_lib/routes";
 
@@ -26,22 +27,6 @@ function tagsFor(labels: readonly string[]): ProjectCardTag[] {
   // A two-tag card is Tour Planning + PR & Marketing, i.e. the last two colours.
   const offset = TAG_COLORS.length - labels.length;
   return labels.map((label, i) => ({ label, color: TAG_COLORS[i + offset] }));
-}
-
-// Green dot + rotated label, inline for the same reason as HomeIntro's.
-function Eyebrow({ label, className }: { label: string; className: string }) {
-  return (
-    <div className={`flex items-center justify-center ${className} lg:translate-y-0 translate-y-2`}>
-      <div className="rotate-90">
-        <div className="flex items-center gap-[10px]">
-          <div className="size-[7px] shrink-0 bg-(--color-brand-primary-green)" />
-          <p className="font-body text-label-m text-center whitespace-nowrap text-(--color-basic-accent) uppercase">
-            {label}
-          </p>
-        </div>
-      </div>
-    </div>
-  );
 }
 
 export default function HomeFeaturedProjects({ locale }: { locale: Locale }) {
@@ -79,7 +64,7 @@ export default function HomeFeaturedProjects({ locale }: { locale: Locale }) {
           <div className="sticky top-0 z-10 bg-(--color-basic-background) pt-[25px] pb-[12px]">
             <Eyebrow
               label={featuredProjects.eyebrow}
-              className="absolute top-1 h-[106px] w-[17px]"
+              className="absolute top-1 flex h-[106px] w-[17px] items-center justify-center translate-y-2 lg:translate-y-0"
             />
             {/* 346px is the Figma text box's own width — a margin, not padding. */}
             <h2 className="font-display text-display-h2 ml-[32px] w-[346px] text-(--color-basic-accent) uppercase">
@@ -131,7 +116,10 @@ export default function HomeFeaturedProjects({ locale }: { locale: Locale }) {
       <div className="hidden lg:block">
         <div className="mx-auto w-full max-w-[1440px] px-[32px] py-[68px]">
           <div className="flex items-start">
-            <Eyebrow label={featuredProjects.eyebrow} className="h-[112px] w-[27px] shrink-0" />
+            <Eyebrow
+              label={featuredProjects.eyebrow}
+              className="flex h-[112px] w-[27px] shrink-0 items-center justify-center translate-y-2 lg:translate-y-0"
+            />
             <h2 className="font-display text-display-h2 min-w-px flex-1 text-(--color-basic-accent) uppercase">
               {featuredProjects.heading}
             </h2>

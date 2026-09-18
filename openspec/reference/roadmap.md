@@ -39,7 +39,7 @@ changes, and Phase 7 grew a 7a/7b pair.
 | 6 | Home part 2 | ✅ Done | `2026-08-03-phase-06-home-part-2` | 專案精選, 核心服務, 行動呼籲 |
 | 7 | Our Story | ✅ Done | `2026-08-04-phase-07-our-story` | `/[locale]/about`, both breakpoints |
 | 7a | OpenSpec hygiene | ✅ Done | `2026-09-18-phase-07a-openspec-hygiene` | Reference docs corrected; this roadmap promoted out of the archive. Docs only. |
-| 7b | Component consolidation | ⬜ Planned | `phase-07b-component-consolidation` | Shared `Eyebrow`; `TitleGroup` deleted; i18n dictionaries split per page |
+| 7b | Component consolidation | ✅ Done | `phase-07b-component-consolidation` | Shared `Eyebrow` (12 call sites, 6 components); `TitleGroup` deleted; i18n split into `{en,zh}/{home,about,common}.ts` with explicit `typeof en*` annotations. `SectionHeader` audited and **not** built — 2 of 9 sites fit, gate was 5 (D057). Refactor only, no pixels changed. |
 | 8 | Services part 1 | ⬜ Planned | — | 首圖, 服務部分 (the frame is 6260px, which is why it splits) |
 | 9 | Services part 2 | ⬜ Planned | — | 常見問題部分, 行動呼籲 |
 | 10 | Portfolio | ⬜ Planned | — | `/[locale]/portfolio` |

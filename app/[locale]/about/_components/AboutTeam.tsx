@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState, type ReactNode } from "react";
+import Eyebrow from "../../../_components/Eyebrow";
 import TeamCard from "../../../_components/TeamCard";
 import { getDictionary, type Locale } from "../../../_lib/i18n";
 import { teamMembers, teamMemberDisplay, teamMemberImageSrc } from "../../../_lib/team";
@@ -15,21 +16,6 @@ import { teamMembers, teamMemberDisplay, teamMemberImageSrc } from "../../../_li
 // the mobile five-dot indicator becomes one dot per member, tracking scroll
 // position. No frame draws a second scroll position — this is Derived (D005),
 // per D-B in design.md.
-function Eyebrow({ label, className }: { label: string; className: string }) {
-  return (
-    <div className={`flex items-center justify-center ${className} lg:translate-y-[-12px] translate-y-[-2px]`}>
-      <div className="rotate-90">
-        <div className="flex items-center gap-[10px]">
-          <div className="size-[7px] shrink-0 bg-(--color-brand-primary-green)" />
-          <p className="font-body text-label-m text-center whitespace-nowrap text-(--color-basic-text-primary) uppercase">
-            {label}
-          </p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 function TeamScroller({
   className,
   showDots,
@@ -102,7 +88,10 @@ export default function AboutTeam({ locale }: { locale: Locale }) {
       {/* ---------------------------------------------------------------- */}
       <section className="flex flex-col items-start bg-(--color-basic-background) py-[25px] lg:hidden">
         <div className="flex w-full items-start gap-[5px] pr-[15px]">
-          <Eyebrow label={team.eyebrow} className="h-[99px] w-[17px] shrink-0" />
+          <Eyebrow
+            label={team.eyebrow}
+            className="flex h-[99px] w-[17px] shrink-0 items-center justify-center translate-y-[-2px] lg:translate-y-[-12px]"
+          />
           <h2 className="font-display text-display-h2 w-full flex-1 pt-[20px] text-(--color-basic-text-primary) uppercase">
             {team.heading}
           </h2>
@@ -120,7 +109,10 @@ export default function AboutTeam({ locale }: { locale: Locale }) {
       {/* ---------------------------------------------------------------- */}
       <section className="hidden border-b border-(--color-basic-accent) bg-(--color-basic-background) px-[32px] py-[64px] lg:block">
         <div className="flex items-start gap-[5px]">
-          <Eyebrow label={team.eyebrow} className="h-[77px] w-[27px] shrink-0" />
+          <Eyebrow
+            label={team.eyebrow}
+            className="flex h-[77px] w-[27px] shrink-0 items-center justify-center translate-y-[-2px] lg:translate-y-[-12px]"
+          />
           <h2 className="font-display text-display-h2 min-w-px flex-1 text-(--color-basic-text-primary) uppercase">
             {team.heading}
           </h2>
