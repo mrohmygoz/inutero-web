@@ -7,8 +7,14 @@ Transcription of the client's copy deck, **子皿網站_內容矩陣**.
 | Google Sheet ID | `1DMrnb5xxDZoMlt1TxX372Z_BvMn__0-vtYqwMSWLRv0` |
 | Owner | `gagatzan@gmail.com` |
 | Shared with us | 2026-08-02 |
-| Sheet `modifiedTime` at transcription | **2026-07-31T18:43:46Z** |
+| Sheet `modifiedTime` at transcription | 2026-07-31T18:43:46Z |
 | Transcribed | 2026-08-02 |
+| Sheet `modifiedTime` at last re-check | **2026-09-03T11:19:30Z** |
+| Last re-checked against the live sheet | **2026-09-18** (during Phase 8) |
+
+The 2026-09-18 re-check found the client had revised **two Home Chinese rows** since
+transcription — Hero body and Intro headline, both updated in place above. Everything
+else in the deck, including all of Services, still matches the sheet exactly.
 
 **Before using this doc in a later phase, re-check the sheet in one call** —
 `get_file_metadata` with the ID above, `excludeContentSnippets: true`. If `modifiedTime`
@@ -135,11 +141,11 @@ Figma frames; they are now sourced.
 | Element | Final EN | Final ZH | Node ID |
 | :--- | :--- | :--- | :--- |
 | Hero — headline | Creative Souls<br>Global Visions | `keep EN` | `10275:3088,3089,3090,3091` |
-| Hero — body | We work with artists, brands, and cultural partners to develop meaningful music projects, from management to international touring and promotion. | 扎根於台灣獨立音樂環境茁壯的文化品牌，與來自世界傑出的音樂人攜手，用新世代手法創造影響力，用音樂打破文化疆界。 | — |
+| Hero — body | We work with artists, brands, and cultural partners to develop meaningful music projects, from management to international touring and promotion. | 子皿是扎根於台灣獨立音樂環境下的文化品牌，我們期待與傑出的創作人攜手，用新世代手法創造影響力，用音樂打破文化疆界。 | — |
 | Hero — button 1 | VIEW OUR WORK | 過往案例 | — |
 | Hero — button 2 | Work with us | 跟我們聊聊 | — |
 | Intro — tagline | Mission | `keep EN` | `10270:2095` |
-| Intro — headline | Connecting Taiwan's music ecosystem to the global stage. | 根植本土，前進世界。 | `10270:2097` |
+| Intro — headline | Connecting Taiwan's music ecosystem to the global stage. | 根植台灣，前進世界。 | `10270:2097` |
 | Intro — body | We work with artists who create from real experience, not formulas.<br>We believe music is a cultural language - shaped by where it comes from and where it can go. | 在分眾市場林立、聽眾追求私人化敘事的時代，真誠的創作成為每個人播放器中最親密的語言。無論風格與人氣，子皿期望所有音樂故事能找到契合它的聽眾，創造文化共鳴，同時帶來經濟價值。 | `10270:2098` |
 | Intro — button | Our story | 關於子皿 | `I10270:2105;10268:2054` |
 | Services — tagline | Services | `keep EN` | `I10275:2585;10275:2471;10270:2095` |

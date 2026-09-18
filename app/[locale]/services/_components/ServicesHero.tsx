@@ -38,7 +38,7 @@ export default function ServicesHero({ locale }: { locale: Locale }) {
         <Eyebrow
           label={hero.eyebrow}
           tone="light"
-          className="hidden h-[105px] w-[27px] shrink-0 items-start justify-center py-[15px] lg:flex"
+          className="hidden h-[105px] w-[27px] shrink-0 items-start justify-center py-[15px] lg:flex lg:translate-y-8"
         />
         <div className="flex min-w-px flex-1 flex-col items-start gap-[30px] pt-[20px] lg:pt-0">
           <h1

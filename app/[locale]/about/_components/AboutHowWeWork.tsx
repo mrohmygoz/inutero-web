@@ -21,7 +21,7 @@ export default function AboutHowWeWork({ locale }: { locale: Locale }) {
           <Eyebrow
             label={howWeWork.eyebrow}
             tone="light"
-            className="flex h-[99px] w-[17px] shrink-0 items-center justify-center translate-y-3 lg:translate-y-1"
+            className="flex h-[99px] w-[17px] shrink-0 items-center justify-center translate-y-6 lg:translate-y-5"
           />
           <h2 className="font-display text-display-h2 w-full flex-1 pt-[20px] text-white uppercase">
             {howWeWork.heading}
@@ -50,7 +50,7 @@ export default function AboutHowWeWork({ locale }: { locale: Locale }) {
           <Eyebrow
             label={howWeWork.eyebrow}
             tone="light"
-            className="flex h-[74px] w-[27px] shrink-0 items-center justify-center translate-y-3 lg:translate-y-1"
+            className="flex h-[74px] w-[27px] shrink-0 items-center justify-center translate-y-6 lg:translate-y-5"
           />
           <div className="flex min-w-px flex-1 flex-col items-end justify-center gap-[80px]">
             <h2 className="font-display text-display-h2 w-full text-white uppercase">{howWeWork.heading}</h2>

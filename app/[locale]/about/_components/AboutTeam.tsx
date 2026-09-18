@@ -90,7 +90,7 @@ export default function AboutTeam({ locale }: { locale: Locale }) {
         <div className="flex w-full items-start gap-[5px] pr-[15px]">
           <Eyebrow
             label={team.eyebrow}
-            className="flex h-[99px] w-[17px] shrink-0 items-center justify-center translate-y-[-2px] lg:translate-y-[-12px]"
+            className="flex h-[99px] w-[17px] shrink-0 items-center justify-center translate-y-3 lg:translate-y-1"
           />
           <h2 className="font-display text-display-h2 w-full flex-1 pt-[20px] text-(--color-basic-text-primary) uppercase">
             {team.heading}
@@ -111,7 +111,7 @@ export default function AboutTeam({ locale }: { locale: Locale }) {
         <div className="flex items-start gap-[5px]">
           <Eyebrow
             label={team.eyebrow}
-            className="flex h-[77px] w-[27px] shrink-0 items-center justify-center translate-y-[-2px] lg:translate-y-[-12px]"
+            className="flex h-[77px] w-[27px] shrink-0 items-center justify-center translate-y-3 lg:translate-y-1"
           />
           <h2 className="font-display text-display-h2 min-w-px flex-1 text-(--color-basic-text-primary) uppercase">
             {team.heading}

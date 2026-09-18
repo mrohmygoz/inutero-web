@@ -6,7 +6,7 @@ import type enHome from "../en/home";
 const home: typeof enHome = {
   title: "首頁",
   metaDescription:
-    "扎根於台灣獨立音樂環境茁壯的文化品牌，與來自世界傑出的音樂人攜手，用新世代手法創造影響力，用音樂打破文化疆界。",
+    "子皿是扎根於台灣獨立音樂環境下的文化品牌，我們期待與傑出的創作人攜手，用新世代手法創造影響力，用音樂打破文化疆界。",
   hero: {
     // `keep EN` in the matrix, and the TC frames (0:191-0:194) draw the same four
     // English words. These are literals in both dictionaries, NOT a fallback —
@@ -15,7 +15,7 @@ const home: typeof enHome = {
     headlineWord2: "Souls",
     headlineWord3: "Global",
     headlineWord4: "Visions",
-    body: "扎根於台灣獨立音樂環境茁壯的文化品牌，與來自世界傑出的音樂人攜手，用新世代手法創造影響力，用音樂打破文化疆界。",
+    body: "子皿是扎根於台灣獨立音樂環境下的文化品牌，我們期待與傑出的創作人攜手，用新世代手法創造影響力，用音樂打破文化疆界。",
     ctaPrimary: "過往案例",
     ctaSecondary: "跟我們聊聊",
     // English in the TC frames too — not an untranslated string.
@@ -31,7 +31,7 @@ const home: typeof enHome = {
     // honoured by `whitespace-pre-line` on the heading. It overrides D038's
     // "wraps naturally" for this one string; `en` has no newline, so the English
     // heading still wraps on its own.
-    headline: "根植本土，\n前進世界。",
+    headline: "根植台灣，\n前進世界。",
     bodyParagraphs: [
       "在分眾市場林立、聽眾追求私人化敘事的時代，真誠的創作成為每個人播放器中最親密的語言。無論風格與人氣，子皿期望所有音樂故事能找到契合它的聽眾，創造文化共鳴，同時帶來經濟價值。",
     ],
