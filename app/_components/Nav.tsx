@@ -13,25 +13,27 @@ import {
 import Logo from "./Logo";
 import LogoMark from "./LogoMark";
 
-// Source: Desktop NAV 12653:5366 (light) / Desktop NAV/DARK 12653:5259 (dark),
-// EN 12573:10177/12573:10140, CN 12653:5367/12653:5260. Mobile NAV 12219:1100
-// carries both Light/Dark as a real component property (light symbol
-// 12212:6237). Expanded/menu overlay: mobile 10270:2118 (EN) / 12368:2386 (TC);
-// the desktop expanded frame (12612:8541) is a stray documentation duplicate
-// with no real trigger in the compact desktop bar — not built (see design.md
-// Derived Sources).
-//
-// The two breakpoints use *different logo lockups*, which is deliberate in the
-// design, not drift: desktop is the 97x89 `Logo` including the "IN UTERO"
-// wordmark; mobile is the 48x48 square `LogoMark` (wordmark-less seal) paired
-// with a 225px rule that runs off the left edge through the mark.
-//
-// theme is a static per-page prop (D-A) — no scroll-driven switching. Client
-// component (D-C) for the locale switcher and mobile menu state; nav collapses
-// to the mobile menu below 1024px (D-E).
+// Figma: desktop NAV 12653:5366 / DARK 12653:5259, mobile NAV 12219:1100,
+// menu overlay 10270:2118 (EN) / 12368:2386 (TC). Desktop 12612:8541 is a stray
+// duplicate with no trigger — not built (design.md Derived Sources).
+// The differing desktop/mobile logo lockups are deliberate, not drift.
 export type NavTheme = "light" | "dark";
 
 const navRoutes: RouteKey[] = ["about", "services", "portfolio", "artists", "news", "contact"];
+
+// Affine ramps through (553dvh -> min, 838dvh -> max): the menu's natural height
+// down to an iPhone SE's usable height. Measurements, not tokens — see D063.
+// ZH needs no font ramp; its 38px box already fits at the floor.
+const MENU_LINK_PADDING_Y = "clamp(3px, 1.05dvh - 2.8px, 6px)";
+const MENU_LINK_FONT_SIZE_EN = "clamp(65.4px, 4.4dvh + 41.1px, 78px)";
+// `--text-display-h3--line-height` is an absolute 54.6px, not a ratio — this is
+// what shrinks the box; the font ramp alone would not.
+const MENU_LINK_LINE_HEIGHT_EN = "clamp(45.8px, 3.09dvh + 28.7px, 54.6px)";
+// Home's 81px italic emphasis needs its own ramp or it flattens into the list.
+const MENU_HOME_FONT_SIZE_EN = "clamp(67.9px, 4.6dvh + 42.4px, 81px)";
+// Layout viewport, not dvh, on purpose: a media query cannot see the URL bar
+// collapse, so the logo can't pop in and out mid-scroll (D064).
+const MENU_LOGO_HIDDEN = "[@media(max-height:666px)]:hidden";
 
 const themeClassName: Record<
   NavTheme,
@@ -40,7 +42,6 @@ const themeClassName: Record<
   light: {
     border: "border-(--color-basic-accent)",
     text: "text-(--color-basic-accent)",
-    // Mobile light: mark + rule are brand green, not black (12212:6237).
     mark: "text-(--color-brand-primary-green)",
     localePill: "bg-(--color-basic-accent) border-(--color-basic-accent) text-(--color-basic-background)",
     localeOutline: "border-(--opacity-neutral-darkest-20) text-(--color-basic-accent)",
@@ -57,9 +58,7 @@ const themeClassName: Record<
 export default function Nav({ locale, theme }: { locale: Locale; theme?: NavTheme }) {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
-  // An explicit prop still wins (the styleguide passes both variants); otherwise
-  // the route table decides, since the layout renders this and pages cannot pass
-  // props upward. Static per page either way — never scroll-driven.
+  // Explicit prop wins (the styleguide passes both); otherwise the route table.
   const resolvedTheme: NavTheme = theme ?? navThemeForPath(pathname);
   const otherLocale: Locale = locale === "en" ? "zh" : "en";
   const otherLocaleLabel = locale === "en" ? "繁中" : "EN";
@@ -75,13 +74,31 @@ export default function Nav({ locale, theme }: { locale: Locale; theme?: NavThem
     return () => document.removeEventListener("keydown", onKeyDown);
   }, [menuOpen]);
 
+  // Pin the page behind; cleanup covers every exit path and restores position.
+  useEffect(() => {
+    if (!menuOpen) return;
+    const { body } = document;
+    const scrollY = window.scrollY;
+    const previous = {
+      position: body.style.position,
+      top: body.style.top,
+      width: body.style.width,
+    };
+    body.style.position = "fixed";
+    body.style.top = `-${scrollY}px`;
+    body.style.width = "100%";
+    return () => {
+      body.style.position = previous.position;
+      body.style.top = previous.top;
+      body.style.width = previous.width;
+      window.scrollTo(0, scrollY);
+    };
+  }, [menuOpen]);
+
   return (
     <>
-      {/* Mobile bar is a fixed 64px row (12212:6237); desktop drops the bottom
-          hairline and grows to fit the 89px logo box. */}
-      {/* On dark-nav pages the bar is *inside* the hero frame in Figma (e.g.
-          12612:11873 sits at y=0 within Hero 12405:6947), so it overlays the
-          page rather than pushing it down. Light pages keep it in normal flow. */}
+      {/* Dark-nav pages draw the bar inside the hero frame, so it overlays
+          rather than pushes down; light pages keep it in flow. */}
       <div
         className={`flex h-16 items-center justify-between border-b-[0.542px] px-3 lg:h-auto lg:justify-start lg:border-b-0 lg:px-8 lg:pt-[30px] lg:pb-[10px] ${
           resolvedTheme === "dark" ? "absolute inset-x-0 top-0 z-40" : "relative"
@@ -96,22 +113,15 @@ export default function Nav({ locale, theme }: { locale: Locale; theme?: NavThem
           <Logo className={`hidden aspect-[97/89] h-[89px] lg:block ${tone.text}`} />
         </a>
 
-        {/* Mobile rule (Line 1, 12563:4300): crosses the mark at y=31 and runs
-            flush off the left edge. Figma draws it to a fixed 225px; here it's
-            a flex item that grows to meet the locale pill instead, so the bar
-            stays balanced at widths other than the designed 393px. It sits
-            after the mark in source order and the negative left margin (48px
-            mark + the 12px px-3 gutter) pulls it back under the mark to x=0. */}
+        {/* -ml-[60px] = 48px mark + 12px gutter, pulling the rule back to x=0.
+            Figma fixes it at 225px; flex-1 keeps it balanced off 393px. */}
         <span
           aria-hidden
           className={`pointer-events-none relative mt-[31px] mr-8 -ml-[60px] h-[2px] flex-1 self-start bg-current lg:hidden ${tone.mark}`}
         />
 
-        {/* Desktop only. The pt-10/pb-48 wrapper reproduces the exact Figma
-            vertical rhythm (12653:5366) — it's what makes the links row's
-            border-bottom cross through the logo mark rather than sit below
-            it, since this whole group is centered against the 89px-tall logo
-            box but is itself taller once its own padding is included. */}
+        {/* The asymmetric padding is what crosses the links' border through the
+            logo mark rather than sitting it below (12653:5366). */}
         <div className="hidden flex-1 items-center justify-end gap-[23px] pt-[10px] pb-[48px] lg:flex">
           <nav
             aria-label="Primary"
@@ -138,9 +148,7 @@ export default function Nav({ locale, theme }: { locale: Locale; theme?: NavThem
           </a>
         </div>
 
-        {/* Mobile only — outline-style locale pill (matches mobile NAV
-            12219:1100, not the desktop solid-fill pill) + menu trigger.
-            Both sit in a 33px-tall row ending 12px from the right edge. */}
+        {/* Mobile's locale pill is outline, not the desktop solid fill. */}
         <div className="relative z-10 flex h-[33px] items-stretch gap-2 lg:hidden">
           <a
             href={swapLocale(pathname, otherLocale)}
@@ -163,11 +171,12 @@ export default function Nav({ locale, theme }: { locale: Locale; theme?: NavThem
       {menuOpen && (
         <div
           id="nav-mobile-menu"
-          className="fixed inset-0 z-50 flex flex-col overflow-y-auto bg-(--color-brand-primary-green) lg:hidden"
+          // h-dvh tracks the visible viewport; overflow-y-auto is the
+          // below-553px safety net, not dead code (D063).
+          className="fixed inset-x-0 top-0 z-50 flex h-dvh flex-col overflow-y-auto bg-(--color-brand-primary-green) lg:hidden"
         >
-          {/* CLOSE is flush to the right edge in both locales — no gutter
-              (10270:2154 ends at x=393.8, 12368:2402 at x=393). */}
-          <div className="flex shrink-0 justify-end pt-[25.81px]">
+          {/* Flush right in both locales — no gutter. */}
+          <div className="flex shrink-0 justify-end">
             <button
               type="button"
               aria-label={closeLabel}
@@ -178,37 +187,57 @@ export default function Nav({ locale, theme }: { locale: Locale; theme?: NavThem
             </button>
           </div>
 
-          <LogoMark className="mx-auto mt-[10.19px] size-[115px] shrink-0 text-(--color-basic-background)" />
+          {/* my-auto splits the slack evenly, centring this between the pinned
+              close row and footer. Diverges from Figma by request (D065). */}
+          <div className="my-auto shrink-0">
+            {/* Decorative, so it is the first thing to drop. mb lives here, not
+                on the nav, so the gap leaves with it. */}
+            <div className={`shrink-0 ${MENU_LOGO_HIDDEN}`}>
+              <LogoMark className="mx-auto size-[100px] text-(--color-basic-background)" />
+            </div>
 
-          <nav aria-label="Mobile" className="mt-[56px] flex flex-col">
-            <a
-              href={localizedHref("home", locale)}
-              onClick={() => setMenuOpen(false)}
-              className={`font-display w-full border-b border-(--color-basic-background) px-[13px] py-[6px] text-center font-bold text-(--color-basic-accent) uppercase focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-brand-primary-green) ${
-                locale === "en"
-                  ? "text-[81px] leading-[0.7] tracking-[-0.81px] italic"
-                  : "text-display-h3"
-              }`}
-            >
-              {locale === "en" ? "Home" : "首頁"}
-            </a>
-            {navRoutes.map((key) => {
-              const route = routes.find((r) => r.key === key)!;
-              return (
-                <a
-                  key={key}
-                  href={localizedHref(key, locale)}
-                  onClick={() => setMenuOpen(false)}
-                  className="font-display text-display-h3 w-full border-b border-(--color-basic-background) px-[13px] py-[6px] text-center font-bold text-(--color-basic-background) uppercase last:border-b-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-brand-primary-green)"
-                >
-                  {route.label[locale]}
-                </a>
-              );
-            })}
-          </nav>
+            <nav aria-label="Mobile" className="flex flex-col">
+              <a
+                href={localizedHref("home", locale)}
+                onClick={() => setMenuOpen(false)}
+                style={{
+                  paddingBlock: MENU_LINK_PADDING_Y,
+                  ...(locale === "en" ? { fontSize: MENU_HOME_FONT_SIZE_EN } : null),
+                }}
+                className={`font-display w-full border-b border-(--color-basic-background) px-[13px] text-center font-bold text-(--color-basic-accent) uppercase focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-brand-primary-green) ${
+                  locale === "en" ? "leading-[0.7] tracking-[-0.81px] italic" : "text-display-h3"
+                }`}
+              >
+                {locale === "en" ? "Home" : "首頁"}
+              </a>
+              {navRoutes.map((key) => {
+                const route = routes.find((r) => r.key === key)!;
+                return (
+                  <a
+                    key={key}
+                    href={localizedHref(key, locale)}
+                    onClick={() => setMenuOpen(false)}
+                    style={{
+                      paddingBlock: MENU_LINK_PADDING_Y,
+                      ...(locale === "en"
+                        ? {
+                            fontSize: MENU_LINK_FONT_SIZE_EN,
+                            lineHeight: MENU_LINK_LINE_HEIGHT_EN,
+                          }
+                        : null),
+                    }}
+                    className="font-display text-display-h3 w-full border-b border-(--color-basic-background) px-[13px] text-center font-bold text-(--color-basic-background) uppercase last:border-b-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-brand-primary-green)"
+                  >
+                    {route.label[locale]}
+                  </a>
+                );
+              })}
+            </nav>
+          </div>
 
-          <div className="mt-auto shrink-0">
-            <div className="flex h-[72px] items-center justify-center gap-8">
+          {/* No mt-auto — it would split the slack three ways. */}
+          <div className="shrink-0">
+            <div className="flex h-[56px] items-center justify-center gap-5">
               {(["facebook", "instagram", "x", "youtube"] as const).map((platform) => (
                 <a
                   key={platform}

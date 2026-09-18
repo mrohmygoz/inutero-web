@@ -91,8 +91,26 @@ query cannot see the URL bar collapsing — which is exactly what stops the logo
 out while the user scrolls. It keys off device class, which is the stable property this
 decision actually wants. A `dvh`-driven collapse would flicker.
 
-The threshold is a task, not a guess: it must be checked against a real device list before it
-is fixed, and it needs to fire on the SE (667) while leaving 393×852 alone.
+**The threshold is `max-height: 820px`.** Device list it was chosen against — layout-viewport
+heights, which is what the query sees (D-A):
+
+| Device | Layout viewport | ≈ usable with chrome | Logo |
+| :--- | ---: | ---: | :--- |
+| iPhone SE 2/3, iPhone 8 | 375×667 | 553 | **dropped** |
+| Galaxy S8 / S9 | 360×740 | 626 | **dropped** |
+| Pixel 5 / 6a class | 360×800 | 686 | **dropped** |
+| iPhone 13 mini | 375×812 | 698 | **dropped** |
+| iPhone 12/13/14 | 390×844 | 730 | kept |
+| iPhone 14/15 Pro | 393×852 | 738 | kept |
+| Pixel 7 / 8 | 412×915 | 801 | kept |
+
+With the logo present and the link clamp at its minimum the menu needs **733.6px**
+(363.99 fixed + 7×52.8 links). Every device at or above the threshold clears that; every
+device below it does not, which is why 812 drops the logo and 844 does not.
+
+820 sits in the dead space between 812 and 844 — no common phone reports a height in that
+band, so the choice is robust to ±8px of disagreement about chrome height. It fires on the SE
+(667) and leaves 393×852 untouched, which is the pixel-identity requirement.
 
 The logo's own margin and the nav's `mt-[56px]` collapse **with** it, as one unit. That is
 what makes it 181px rather than 125px, and it is also why the nav's top spacing does not need

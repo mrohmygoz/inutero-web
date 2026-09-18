@@ -25,7 +25,7 @@ The loop and the per-phase requirements live in `CLAUDE.md` → "How This Projec
 ## Phase Plan
 
 Phases 8–15 may still split; this is a plan, not a contract. Phase 4 already split into two
-changes, and Phase 7 grew a 7a/7b pair.
+changes, and Phase 7 grew a 7a/7b/7c trio.
 
 | Phase | Name | Status | Change id | Output |
 | :--- | :--- | :--- | :--- | :--- |
@@ -40,6 +40,7 @@ changes, and Phase 7 grew a 7a/7b pair.
 | 7 | Our Story | ✅ Done | `2026-08-04-phase-07-our-story` | `/[locale]/about`, both breakpoints |
 | 7a | OpenSpec hygiene | ✅ Done | `2026-09-18-phase-07a-openspec-hygiene` | Reference docs corrected; this roadmap promoted out of the archive. Docs only. |
 | 7b | Component consolidation | ✅ Done | `phase-07b-component-consolidation` | Shared `Eyebrow` (12 call sites, 6 components); `TitleGroup` deleted; i18n split into `{en,zh}/{home,about,common}.ts` with explicit `typeof en*` annotations. `SectionHeader` audited and **not** built — 2 of 9 sites fit, gate was 5 (D057). Refactor only, no pixels changed. |
+| 7c | Mobile menu viewport fit | ✅ Done | `phase-07c-mobile-menu-viewport-fit` | The open mobile menu was a fixed 838px box (EN; 773px ZH) that scrolled on anything shorter. Overlay moved to `h-dvh`, body scroll lock added, seven link boxes clamped and the logo block dropped below `max-height: 820px` — fits without scrolling down to 553px. 393×852 is byte-identical to before in both locales. Decisions D062–D064. |
 | 8 | Services part 1 | ⬜ Planned | — | 首圖, 服務部分 (the frame is 6260px, which is why it splits) |
 | 9 | Services part 2 | ⬜ Planned | — | 常見問題部分, 行動呼籲 |
 | 10 | Portfolio | ⬜ Planned | — | `/[locale]/portfolio` |
@@ -62,6 +63,8 @@ notes in `INVENTORY.md`, which is not where a phase looks.
 | Phase 11 | Replace `ProjectCard`'s neutral image placeholder with real project imagery from MDX content. | `INVENTORY.md` → `ProjectCard` |
 | Phase 11 | Repoint Home's three project cards from `/[locale]/portfolio` at their real detail routes. The prototype targets Portfolio Details (`12612:8706`); the index was a deliberate stand-in until a slug exists. | D043 |
 | Phase 11 / 14 | Build the desktop-only left share rail. `ShareRow` (the bottom row) shipped in Phase 4; the rail did not. | `INVENTORY.md` → `Cms`, `ShareRow`; D031 |
+| Phase 8 | **Re-measure the mobile menu's clamp minima.** Phase 8 adds nothing to `navRoutes`, but any phase that does invalidates the 553px floor arithmetic — it is sized for exactly seven links. Take the room from the links or the logo, never the exempt close/social/locale rows (D062). | D062, D063 |
+| User | **Verify the mobile menu on a real phone.** Phase 7c could not: `h-dvh` and browser-chrome behaviour are not reproducible in headless Chrome, which checks the arithmetic but not the chrome. The specific thing to watch is the logo staying put while the URL bar collapses mid-scroll. | D064; phase-07c task 6.6 |
 | Phase F | Build the Our Story **Credits** section. The matrix marks it `新增段落` (a section Figma does not draw); Phase 7 deferred it by user decision, partly because the Web Design credit is still `待補`. Recorded only in `2026-08-04-phase-07-our-story/proposal.md` until now. | `content-matrix.md` → Our Story; phase-07 proposal |
 | Before Phase F | **Revisit D039.** The floating desktop `MENU` square `12423:8613` carries a real prototype reaction — `ON_CLICK` → `OVERLAY` to `12612:8541`. D039 deferred it on the premise that frame was a stray duplicate; the prototype contradicts that. Needs its own change: it touches `Nav` and every page rendering it. | D045 |
 

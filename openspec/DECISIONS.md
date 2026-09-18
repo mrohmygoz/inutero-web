@@ -70,6 +70,9 @@ Do **not** record things readable from the code or the design itself.
 - [D059 — The two-subtree `lg:hidden` pattern is not duplication](#d059--the-two-subtree-lghidden-pattern-is-not-duplication)
 - [D060 — `zh` dictionary modules are explicitly annotated, not only `satisfies`-checked](#d060--zh-dictionary-modules-are-explicitly-annotated-not-only-satisfies-checked)
 - [D061 — `Eyebrow.gutterInset` is a one-caller prop, kept on measured evidence](#d061--eyebrowgutterinset-is-a-one-caller-prop-kept-on-measured-evidence)
+- [D062 — The mobile menu's viewport fit is two knobs, and the logo is the one that goes](#d062--the-mobile-menus-viewport-fit-is-two-knobs-and-the-logo-is-the-one-that-goes)
+- [D063 — 553px is the menu's floor and it is the same number as the link clamp's minimum](#d063--553px-is-the-menus-floor-and-it-is-the-same-number-as-the-link-clamps-minimum)
+- [D064 — `dvh` for lengths, `max-height` for the logo — the split is deliberate](#d064--dvh-for-lengths-max-height-for-the-logo--the-split-is-deliberate)
 
 ## D001 — Locale strategy
 
@@ -1307,3 +1310,100 @@ value, which would drift again at a different device pixel ratio. User-confirmed
 **How to apply:** Do not pass `gutterInset` anywhere else; a new gutter eyebrow should get its
 offset from its own box unless a diff proves otherwise. If `HomeServices` mobile is ever
 redesigned, delete the prop with it.
+
+## D062 — The mobile menu's viewport fit is two knobs, and the logo is the one that goes
+
+**Decision:** Only two things in the open mobile menu respond to viewport height — the seven
+link boxes (a `clamp()` on padding, font size and line height) and the logo block, which is
+**binary: present at full size, or absent**. The close row, social row and locale bar keep
+their current fixed px values at every height and are not clamped, scaled or touched.
+
+Dropping the logo is **Derived (D005)** in the strongest sense: no Figma frame shows the menu
+at any height but the designed one, so there is no design behind the collapsed state at all.
+It must never be reported as design-matching.
+
+**Why:** The logo is the only element in the menu with no interactive function — it is a bare
+`<LogoMark />`, not a link; the close button is the way out and the page behind carries the
+logo. That is what makes it the first thing to drop rather than the last, and taking its own
+`mt-[10.19px]` and the nav's 56px gap with it removes 181px in one move.
+
+Binary rather than continuous because a logo that scales smoothly passes through sizes (20px,
+30px) where it reads as a rendering bug rather than a design.
+
+The bottom rows are exempt not because they are small but because they are **already below the
+44px WCAG 2.5.8 / HIG tap-target minimum** — the close button is a 29px target, the social
+icons 37.4px. Shrinking them to buy room for the 68px links would make the menu's weakest
+targets worse to protect its strongest.
+
+A single uniform scale (`--menu-scale`, or `transform: scale()` on the content) was the leading
+candidate and is genuinely one number, but at the floor it is 553/838 = 0.66, which takes the
+close button to 19px and the social icons to 25px. It regresses the two elements already under
+44px to buy headroom for the one with plenty. The menu's proportions are not load-bearing the
+way its tap targets are. `transform: scale()` carries two further costs worth recording so this
+is not revisited: fractional scale factors soften text rendering, and the locale bar's
+full-bleed background needs width compensation to stay edge-to-edge.
+
+**How to apply:** If the menu ever needs more vertical room, take it from the links or the logo,
+never from the close row, social row or locale bar. If a later phase adds an item to the menu's
+link list, re-measure and re-derive the clamp minima — do not shrink the exempt rows instead.
+
+## D063 — 553px is the menu's floor and it is the same number as the link clamp's minimum
+
+**Decision:** The menu is guaranteed to fit without scrolling down to **553px of visible
+height** — an iPhone SE's usable height once Safari's chrome is showing. Below that it scrolls,
+and `overflow-y-auto` stays on the container as the accepted degradation, not dead code. The
+link clamp's minimum *is* the floor: the minima were sized so the whole composition lands on
+553 exactly, rather than set independently and checked afterwards.
+
+**Why:** The alternative was per-element minimums at 44px each, letting the floor fall out of
+the arithmetic at ~466px. That is ~15 numbers to maintain against 3, it leaves the links at
+exactly the 44px limit rather than a comfortable 52.8, and the floor and the minimums can drift
+apart across phases because nothing ties them together. One anchor cannot drift from itself.
+
+Measured at the floor with the logo absent: fixed cost 182.8px (54.8 close row + 128 footer),
+leaving 370.2px for seven links — **52.8px each in EN, 52.6px in ZH**, both clear of 44px.
+
+ZH keeps `text-display-h3` untouched. Its 38px/45.6px line box already lands at 52.6px per link
+once the padding clamp bottoms out, so only EN needs the font and line-height ramps. Chinese is
+a different type scale, not a translation, and the budgets are genuinely different — 773px of
+content against EN's 838.
+
+**The non-obvious part: `--text-display-h3--line-height` is an absolute 54.6px, not a ratio.**
+Clamping font size alone changes nothing about the box height. The line-height clamp is what
+actually shrinks the link; the font clamp only keeps the type filling the line at the same
+proportion. EN's Home link is the exception — it is `leading-[0.7]`, a real ratio, so its box
+follows its font size and it gets its own bound. That 81px italic against the other six at 78px
+is deliberate emphasis and a shared clamp would flatten it into the list.
+
+**How to apply:** Change the floor in one place or not at all. If a future reader sees
+`clamp(45.8px, 3.09dvh + 28.7px, 54.6px)` and wants to know where 45.8 came from, it is 553
+minus the fixed cost, divided by seven, minus padding and border — the comment in `Nav.tsx`
+says so inline.
+
+## D064 — `dvh` for lengths, `max-height` for the logo — the split is deliberate
+
+**Decision:** The overlay's height and the link clamps are `dvh`-based lengths in the style
+layer. The logo's disappearance is a `@media (max-height: 820px)` query. The two are driven by
+different things on purpose.
+
+**Why:** `@media (max-height: …)` reads the **layout** viewport, the same thing `vh` reads —
+there is no `dvh` media feature, and a media query cannot read a custom property. On an iPhone
+SE the query sees 667px and never learns that only 553px are visible. So anything that must
+respond to the *visible* area has to be a length, not a query. The overlay moved from
+`fixed inset-0` to `h-dvh` for exactly this reason, matching what `d6d2ab3` did for the heroes.
+
+For the logo that blindness is a **feature**. A `dvh`-driven collapse would fire and unfire as
+the URL bar collapses and reappears during scrolling, popping the logo in and out mid-gesture.
+The media query keys off device class, which is the stable property the decision actually wants.
+
+The threshold is 820px because with the logo present and the link clamp at its minimum the menu
+needs 733.6px of visible height. Every phone at or above 820px of layout viewport clears that
+(iPhone 12/13/14 at 844, 14/15 Pro at 852, Pixel 7/8 at 915); everything below does not (iPhone
+SE/8 at 667, Galaxy S8 at 740, Pixel 5/6a at 800, iPhone 13 mini at 812). 820 sits in the dead
+band between 812 and 844 where no common phone reports a height, so it tolerates ±8px of
+disagreement about chrome height, and it leaves the designed 393×852 untouched.
+
+**How to apply:** This is the one a later phase will otherwise get wrong. If something in the
+menu must track what the user can actually see, give it a `dvh` length. If it must be stable
+across a chrome collapse, give it a media query. Do not convert one into the other for
+consistency's sake.
