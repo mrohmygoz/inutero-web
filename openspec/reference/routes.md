@@ -66,9 +66,9 @@ renders it agrees on **"Artists"**: desktop NAV `12573:10189`, mobile expanded m
 `12573:9181`. Corrected 2026-08-02 — "Featured Artists" wrapped to two lines in the
 393px menu and broke that frame's fixed 852px vertical layout.
 
-One unresolved drift remains in the Footer, not the NAV: its page-links column reads
-**"Contacts"** where the NAV reads "Contact Us". Not changed here — the NAV is the
-canonical link label and `Footer.tsx` currently renders from the same `routes.ts` entry.
+The Footer's Figma page-links column reads **"Contacts"** (node `12573:9123`) where the NAV
+reads "Contact Us". The site renders "Contact Us" in both places, from the one `routes.ts`
+entry — a deliberate divergence from that text layer, settled in **D054**.
 
 ## Shared Sections by Page
 

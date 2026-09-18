@@ -19,6 +19,7 @@ Do not re-derive what has already been established. Before any implementation wo
 | `openspec/reference/design-inventory.md` | Figma canvas map, every page/component node ID, do-not-implement list |
 | `openspec/reference/design-tokens.md` | All 124 design tokens, all modes. **Source of truth for `@theme`.** |
 | `openspec/reference/content-matrix.md` | Every string on the site, both locales. **Source of truth for copy — outranks the Figma text layers.** Also lists what the client still owes. |
+| `openspec/reference/roadmap.md` | The live phase plan — what is done, what this phase is, and work earlier phases deferred to yours |
 | `openspec/DECISIONS.md` | Decisions the design does not make for us — read before inventing one |
 | `app/_components/INVENTORY.md` | What components already exist. **Read before building any component.** |
 
@@ -242,7 +243,9 @@ export async function generateMetadata({ params }: PageProps<'/[locale]/about'>)
 
 The site is built in ~16 numbered phases. **Each phase is one OpenSpec change, one session,
 and ends at a human approval gate.** The full phase table is in
-`openspec/changes/bootstrap-site-build-process/design.md`.
+`openspec/reference/roadmap.md`, which also records work earlier phases deferred to later
+ones. (The archived `bootstrap-site-build-process` change holds the original version of that
+table as history — it is not the live plan.)
 
 ### The rule
 
@@ -274,12 +277,13 @@ graph LR
 | Cover both locales | `/en` and `/zh` |
 | Update `app/_components/INVENTORY.md` | Any new shared component gets an entry. This is a task line, not a courtesy. |
 | Append to `openspec/DECISIONS.md` | Any choice the design did not make for you |
+| Update `openspec/reference/roadmap.md` | Tick your phase; record anything you deferred to a later one. Also a task line. |
 | Pass checks | `npm run lint` and `npx tsc --noEmit` |
 | Report honestly | If a task was skipped, blocked, or only partly done, say so plainly. A phase reported as complete will not be re-checked. |
 
 ### Starting a phase
 
-1. Read `openspec/reference/routes.md`, `openspec/reference/design-inventory.md`, `openspec/DECISIONS.md`, and `app/_components/INVENTORY.md`.
+1. Read `openspec/reference/roadmap.md`, `openspec/reference/routes.md`, `openspec/reference/design-inventory.md`, `openspec/DECISIONS.md`, and `app/_components/INVENTORY.md`.
 2. Read the phase's `proposal.md` and `tasks.md`.
 3. Look up the node IDs for this phase's frames in `design-inventory.md`.
 4. `/figma-design-to-code`, then fetch all four frames (desktop/mobile × EN/TC).

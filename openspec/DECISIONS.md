@@ -21,7 +21,7 @@ Do **not** record things readable from the code or the design itself.
 - [D010 — i18n via hand-rolled typed dictionaries](#d010--i18n-via-hand-rolled-typed-dictionaries)
 - [D011 — Root redirect via next.config.ts, not a root page](#d011--root-redirect-via-nextconfigts-not-a-root-page)
 - [D012 — Desktop primitives are drawn locally, not instanced](#d012--desktop-primitives-are-drawn-locally-not-instanced)
-- [D013 — Cta and SecondaryCta carry a background-adaptive `tone` prop](#d013--cta-and-secondaryCta-carry-a-background-adaptive-tone-prop)
+- [D013 — Cta and SecondaryCta carry a background-adaptive `tone` prop](#d013--cta-and-secondarycta-carry-a-background-adaptive-tone-prop)
 - [D014 — Interaction states for primitives are derived, not designed](#d014--interaction-states-for-primitives-are-derived-not-designed)
 - [D015 — Fill→hug width switch for buttons at 1024px](#d015--fillhug-width-switch-for-buttons-at-1024px)
 - [D016 — Styleguide Chinese specimens need `data-locale="zh"`, not just `lang="zh"`](#d016--styleguide-chinese-specimens-need-data-localezh-not-just-langzh)
@@ -57,6 +57,12 @@ Do **not** record things readable from the code or the design itself.
 - [D046 — `get_motion_context` is not sufficient to answer "does this animate?"](#d046--get_motion_context-is-not-sufficient-to-answer-does-this-animate)
 - [D047 — Home's Featured Projects cards stack on scroll; the card's own order is breakpoint-dependent](#d047--homes-featured-projects-cards-stack-on-scroll-the-cards-own-order-is-breakpoint-dependent)
 - [D048 — "Our Story" is the site-wide spelling; the matrix's "Our story" is overridden](#d048--our-story-is-the-site-wide-spelling-the-matrixs-our-story-is-overridden)
+- [D049 — Our Story hero headline comes from Figma, not the matrix](#d049--our-story-hero-headline-comes-from-figma-not-the-matrix)
+- [D050 — Our Story Intro body paragraph is built; the matrix's REMOVE cited the wrong node](#d050--our-story-intro-body-paragraph-is-built-the-matrixs-remove-cited-the-wrong-node)
+- [D051 — Our Story team roster: real photos over Figma's 5-card Lorem-ipsum sample](#d051--our-story-team-roster-real-photos-over-figmas-5-card-lorem-ipsum-sample)
+- [D052 — NAV theme for `/about` goes through `darkNavRoutes`, not a per-page prop](#d052--nav-theme-for-about-goes-through-darknavroutes-not-a-per-page-prop)
+- [D053 — `openspec/specs/` covers behavior only; pages are not capabilities](#d053--openspecspecs-covers-behavior-only-pages-are-not-capabilities)
+- [D054 — One canonical label per route; the Footer's Figma "Contacts" is knowingly ignored](#d054--one-canonical-label-per-route-the-footers-figma-contacts-is-knowingly-ignored)
 
 ## D001 — Locale strategy
 
@@ -1118,3 +1124,41 @@ a `theme` prop from `AboutPage`.
 page cannot hand it a prop — this was already noted as an open correction in `routes.ts` (see the
 comment above `darkNavRoutes`, referencing D017). `/about`'s hero frame draws the dark NAV
 instance, exactly like Home's.
+
+## D053 — `openspec/specs/` covers behavior only; pages are not capabilities
+
+**Decision:** `openspec/specs/` holds capabilities with real behavior — today
+`localized-routing`, `mdx-content`, `design-primitives`. **Page phases add no spec and set
+`skip_specs: true`.** This is the standing rule, not a per-phase judgment call.
+
+**Why:** Phases 5, 6 and 7 shipped Home and Our Story in full and contributed nothing to
+`specs/`, which looked like drift and was not. `config.yaml` already states the rule —
+*"Behavioral requirements only… Visual appearance is not a spec; the Figma file is its source of
+truth"* — and page phases produce visual appearance. They correctly have nothing to say. The
+alternative considered was a `page-composition` capability asserting each page renders at both
+breakpoints in both locales, but that restates the phase process rather than a requirement, and
+a spec that cannot fail is ceremony. User-confirmed 2026-09-18.
+
+**How to apply:** A phase adds a spec when it introduces behavior that can be wrong at runtime
+or at build time — routing, locale resolution, content loading, form submission, build-time
+failures. Phase 15 (contact form submission) and Phase F are the next phases expected to. A page
+phase that feels it needs a spec should check whether what it is describing is actually behavior;
+if it is layout, the Figma frame is the spec.
+
+## D054 — One canonical label per route; the Footer's Figma "Contacts" is knowingly ignored
+
+**Decision:** Every link label comes from `app/_lib/routes.ts` (D018). The Footer's page-links
+column therefore renders **"Contact Us"**, matching the NAV, and the Figma Footer's **"Contacts"**
+is a deliberate divergence from the design rather than an open question.
+
+**Why:** Verified 2026-09-18 — Figma node `12573:9123` inside the Footer frame `12573:9181` is
+named "Contacts", while the NAV and `routes.ts` say "Contact Us". `Footer.tsx` renders
+`route.label[locale]`, so the site has been consistent since Phase 3; only the documentation
+treated this as unresolved, and it stayed that way for five phases. Two names for one page in
+the site's own chrome is a worse outcome than diverging from a single text layer, and giving the
+Footer its own label would break D018's single source of truth. The precedent is D004, which
+resolved the same class of drift by naming one canonical value and keeping the sources as
+history. User-confirmed 2026-09-18.
+
+**How to apply:** Do not add a Footer-specific label. If the client later wants "Contacts"
+site-wide, change the `contact` entry in `routes.ts` and both surfaces follow.

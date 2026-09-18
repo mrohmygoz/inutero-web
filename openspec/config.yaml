@@ -36,6 +36,8 @@ context: |
   breakpoints and in both locales.
 
   SOURCES OF TRUTH — read before planning or implementing, do not re-derive
+  - openspec/reference/roadmap.md — the live phase plan; what is done, and work earlier
+    phases deferred to this one
   - openspec/reference/routes.md — canonical routes, locale strategy, resolved naming drift
   - openspec/reference/design-inventory.md — Figma canvas map, node IDs, do-not-implement list
   - openspec/DECISIONS.md — decisions the design does not make for us

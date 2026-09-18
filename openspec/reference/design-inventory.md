@@ -122,9 +122,10 @@ Section `COMP` `12612:8830`.
 | TeamCard | `12610:6405` | — |
 | CMS | `12610:7361` | — (long-form article body renderer; pairs with MDX) |
 
-The NAV has **light and dark themes**. Pages with a full-bleed hero use the dark
-variant over the hero and switch on scroll — confirm the exact trigger per page
-against the design before implementing.
+The NAV has **light and dark themes**. Pages with a full-bleed hero use the dark variant.
+The theme is **static per page, not scroll-driven** (D017), resolved through `darkNavRoutes`
+in `app/_lib/routes.ts` rather than a per-page prop (D052) — `Nav` is rendered by
+`[locale]/layout.tsx`, one level above every page component, so a page cannot hand it a prop.
 
 ## Shared Components — Mobile
 
@@ -194,15 +195,24 @@ Asset export is a real work item, not incidental.
 
 ## Open Questions
 
-| Question | Status |
+Phase 0 wrote this section. Everything it asked has since been answered except one item —
+answers live in `openspec/DECISIONS.md` and are cited below rather than restated, so there is
+one home per fact.
+
+### Still open
+
+| Question | Needed by |
 | :--- | :--- |
-| **Figma MCP quota** | **RESOLVED 2026-08-01.** The file was copied into "Test Team" (Pro + Full seat) = 200 calls/day, 15/min. Use file key `zSq5F5v3UrVAdIjuSipe3H`. |
-| Do Figma **variables** exist? | **RESOLVED — yes.** See [Design Tokens](#design-tokens) below. Tokens can be pulled mechanically via `get_variable_defs`; no derivation by inspection needed. |
-| ~~Full variable export~~ | **DONE.** All 124 variables across all modes in `design-tokens.md`. |
-| **Chinese body/label text has no CJK font** | **CONFIRMED PROBLEM.** `Body/*` and `Label/*` are `Chivo Mono` in all four modes, and Chivo Mono has no CJK coverage. Half the site's body copy has no specified typeface and will fall back to an OS font. See design-tokens.md → Known Problems. |
-| **Mochiy Pop One has no Bold on Google Fonts** | **CONFIRMED PROBLEM.** The design specifies "Bold" for most Chinese display tokens; only Regular 400 exists. Figma is faux-bolding. |
-| **Noto Serif TC has no italic** | **CONFIRMED PROBLEM.** Desktop Chinese `Accent/Display` specifies "Bold Italic". |
-| Is Mochiy Pop One intended for Traditional Chinese? | **OPEN — ask the designer.** It is a *Japanese* font; some glyphs take Japanese forms and TC coverage is not guaranteed. |
-| Desktop/Mobile breakpoint width | **OPEN.** Spacing and text modes switch between Desktop and Mobile, but the switch width is not a design value. Phase 1 picks it and records it in `DECISIONS.md`. |
-| NAV light/dark switch trigger | Unverified per page. |
-| Contact form submit target | Undecided. Design shows the form; delivery mechanism is not a design concern. |
+| Contact form submit target — a Route Handler that emails, or a third-party form service? The design shows the form; delivery is not a design concern. | Phase 15 |
+
+### Settled
+
+| Was asked | Answer |
+| :--- | :--- |
+| Figma MCP quota | The file was copied into "Test Team" (Pro + Full seat) — 200 calls/day, 15/min, file key `zSq5F5v3UrVAdIjuSipe3H`. Never the original `7uC2EQp61AsMp8ebZQcI7w`. |
+| Do Figma variables exist? | Yes — all 124 are exported to `design-tokens.md`. **Extract them with `use_figma` (Plugin API), never `get_variable_defs`**, which returns only what a node consumes, resolved per-consumer mode, and mislabels values. See [Design Tokens](#design-tokens) above. |
+| Full variable export | Done. All 124 across all modes, in `design-tokens.md`. |
+| Desktop/Mobile breakpoint width | **1024px** — D009 picked it, D040 established that it is the site's single layout breakpoint. |
+| NAV light/dark switch trigger | Static per page, not scroll-driven (D017); routed through `darkNavRoutes` in `app/_lib/routes.ts` rather than a per-page prop (D052). |
+| Is Mochiy Pop One intended for Traditional Chinese? | It is a *Japanese* font and some glyphs take Japanese forms, but designer confirmation was **waived** — the variables are implemented as declared (D008). |
+| The three font problems (no CJK face for body/label, no Mochiy Bold, no Noto Serif TC italic) | Accepted as-is under D008. They are catalogued in `design-tokens.md` → Known Problems; they are not bugs to fix and not questions to reopen. |

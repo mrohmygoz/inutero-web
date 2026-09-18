@@ -87,8 +87,8 @@ below cannot ship more than a shell without them.
 | Featured Artists | Card content beyond the 8 artists listed below (design has 16 slots) | Phase 12 |
 | News | Featured-banner content; all article card copy | Phase 13 |
 | News Details | All article bodies; the 3 related-post cards | Phase 14 |
-| Our Story | Team member bios (currently Lorem ipsum); 2nd team card | Phase 7 |
-| Our Story | Web Design credit name + IG handle (`待補庭嘉露出名稱＆IG`) | Phase 7 |
+| ~~Our Story~~ **delivered** | ~~Team member bios; 2nd team card~~ — the client supplied 9 real members with photos and Chinese descriptions; transcribed into `app/_lib/team.ts` (D051). Figma's 5-card Lorem-ipsum sample was a drawn sample, not a count. | ~~Phase 7~~ — done |
+| Our Story | Web Design credit name + IG handle (`待補庭嘉露出名稱＆IG`) | Phase F — the Credits section itself was deferred out of Phase 7 by user decision; see `roadmap.md` → Inherited Work |
 | Services | One further FAQ answer marked `（待補，向子皿搜集）` | Phase 9 |
 | Portfolio / Artists | Filter tag names beyond the 4 given | Phases 10, 12 |
 
@@ -229,13 +229,14 @@ into the English column. Treated as an editing artefact and dropped from the Eng
 
 | Instruction | Element | Meaning |
 | :--- | :--- | :--- |
-| `REMOVE` | Intro body paragraph, node `12212:6370` | Marked `直接拿掉` in **both** the 備註 column and the trailing column. The long "We believe that authentic music carries a cultural energy…" paragraph and its Chinese counterpart are **not** built. |
+| ~~`REMOVE`~~ **overridden** | Intro body paragraph, node `12212:6370` | The sheet marks this `直接拿掉` in both the 備註 and trailing columns, but **the paragraph is built**, in both locales and at both breakpoints — see **D050**. The cited node resolves to the whole `Intro` instance, not a paragraph, and live design context on `12573:6107` (desktop) and `12212:6370` (mobile) draws the text in full. One of the few places the design outranks this document; user-confirmed 2026-08-03. |
 | `NEW` | Credits section | Marked `新增段落` — a section that does not exist in Figma. Content below. |
 
-The removed Intro paragraph is transcribed here **only** so a later phase can recognise it
-and confirm it is the one being dropped — do not build it:
+The paragraph the sheet meant to remove, kept here so the override stays traceable:
 *EN:* "We believe that authentic music carries a cultural energy capable of transcending
 borders…" / *ZH:* 「我們深信真誠創作的音樂具備跨越疆界的文化能量…」
+**It ships.** The EN frame draws one paragraph and the TC frame draws two — that asymmetry is
+in the design, not a bug (D050).
 
 ### Our Story — Credits (NEW section)
 
