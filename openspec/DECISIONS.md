@@ -74,6 +74,14 @@ Do **not** record things readable from the code or the design itself.
 - [D063 — 553px is the menu's floor and it is the same number as the link clamp's minimum](#d063--553px-is-the-menus-floor-and-it-is-the-same-number-as-the-link-clamps-minimum)
 - [D064 — `dvh` for lengths, `max-height` for the logo — the split is deliberate](#d064--dvh-for-lengths-max-height-for-the-logo--the-split-is-deliberate)
 - [D065 — The open mobile menu is pinned top and bottom with a centred middle](#d065--the-open-mobile-menu-is-pinned-top-and-bottom-with-a-centred-middle)
+- [D066 — The service cards carry three feature rows, not the desktop frame's four](#d066--the-service-cards-carry-three-feature-rows-not-the-desktop-frames-four)
+- [D067 — The service card CTA points at Portfolio, not Contact](#d067--the-service-card-cta-points-at-portfolio-not-contact)
+- [D068 — The Services TC heading is the matrix's 以真實故事, not Figma's 以創作故事](#d068--the-services-tc-heading-is-the-matrixs-以真實故事-not-figmas-以創作故事)
+- [D069 — Service card feature rows stack at desktop and pair up at mobile](#d069--service-card-feature-rows-stack-at-desktop-and-pair-up-at-mobile)
+- [D070 — `ServicesHero` reserves the dark NAV's height instead of being overlaid by it](#d070--serviceshero-reserves-the-dark-navs-height-instead-of-being-overlaid-by-it)
+- [D071 — The Services heading is Display/H1 at both breakpoints, in both locales](#d071--the-services-heading-is-displayh1-at-both-breakpoints-in-both-locales)
+- [D072 — Services tablet snaps at `lg`; there is no intermediate layout to derive](#d072--services-tablet-snaps-at-lg-there-is-no-intermediate-layout-to-derive)
+- [D073 — The Services TC heading's line breaks are natural wrap, not authored](#d073--the-services-tc-headings-line-breaks-are-natural-wrap-not-authored)
 
 ## D001 — Locale strategy
 
@@ -1455,3 +1463,146 @@ of the device — the close row is 29px and the footer 128px, so the group's mid
 50px above true viewport centre. If a later phase wants true optical centring against the
 viewport, that is a different change and needs its own decision; do not silently reinterpret
 this one.
+
+
+## D066 — The service cards carry three feature rows, not the desktop frame's four
+
+**Decision:** Each of the four services renders exactly **three** feature rows, from
+`content-matrix.md` → Services. The desktop frame draws four, and the fourth is a verbatim
+duplicate of the third — in card 01 both read "Creative Partnership / We work alongside artists,
+not above them…".
+
+This is a **Figma defect, not a design choice**, and three independent sources agree: the matrix
+gives three features per service in both locales, the mobile EN card `12220:2696` draws three,
+and the duplicate pair is byte-identical rather than merely similar. The mobile TC card
+`12389:5643` also draws four, but there the extra row duplicates the card's own *description*,
+which is the same copy-paste artifact wearing a different hat.
+
+**What this costs:** the desktop card's drawn height. Figma fixes it at 647px, which is the
+height four rows happen to produce; three rows come out at **584px**. The card is content-driven
+(`min-h-[520px]` on the image panel, no fixed height), so it simply ends earlier. Do not chase
+the 647px number — it is an artifact of the duplicate row, not a designed dimension.
+
+**How to apply:** If a later phase finds a Figma row duplicated verbatim, check the matrix before
+building it. The matrix is the delivered copy (D032); a repeated row is a designer's copy-paste,
+not a request for the same sentence twice.
+
+## D067 — The service card CTA points at Portfolio, not Contact
+
+**Decision:** All four service cards' `SecondaryCta` links to `localizedHref("portfolio", locale)`.
+
+Neither the design nor the matrix states a destination — but both locales' **labels** do:
+`View case studies` (EN) and `相關案例` (TC). Case studies are the Portfolio page. The proposal
+had provisionally sent these to Contact on the reasoning that no per-service route exists; the
+labels, read at implementation time, overrule that. Contact would have been a link whose text
+promised one thing and whose target delivered another.
+
+**How to apply:** When the design supplies a button with no prototype link, read the label before
+picking a destination. This supersedes D-C in `phase-08-services-part-1/design.md`, which was
+written before the labels had been fetched.
+
+## D068 — The Services TC heading is the matrix's 以真實故事, not Figma's 以創作故事
+
+**Decision:** The TC hero heading reads **以真實故事為基石，用新時代手法創造影響力。** Both TC
+frames (desktop `12635:12925`, mobile `12368:2817`) draw 以**創作**故事為基石; the matrix says
+以**真實**故事為基石.
+
+This is the plain D032 default rather than an exception: the matrix is the copy source of truth
+and it does not contradict itself here. The two TC frames agreeing is not corroboration — the
+mobile frame is a copy of the desktop one, so they are one source, not two.
+
+Two other Figma strings on this page lose the same way and for the same reason: the card 01 title
+(Figma 藝人經紀整合, matrix 藝人經紀) and every service description and feature row, which are the
+designer's placeholder pass throughout.
+
+**How to apply:** Do not treat "both breakpoints show it" as independent confirmation when one
+frame is an instance of the other. Check the relationship first.
+
+## D069 — Service card feature rows stack at desktop and pair up at mobile
+
+**Decision:** A feature row renders as a **fixed 118px green title beside a flex-1 description**
+at mobile, and as a **full-width green title above its description** at desktop.
+
+This corrects `ServiceCard`, which shipped in Phase 2 and was amended in Phase 3 to be
+side-by-side at *both* breakpoints. That amendment was wrong: desktop `12573:6500` is a
+`flex-col` whose two Paragraphs are both `w-full` with an 8px lead-in on the second, and the
+frame's screenshot shows the green title alone on its line. The error survived three phases
+because `ServiceCard` had no real consumer — `/styleguide` renders one sample card with short
+strings, where a stacked and a side-by-side row look nearly the same.
+
+Phase 8 is that first real consumer, which is how it surfaced. The same pass corrected the
+mobile description-to-list spacing, which had collapsed Figma's 30px + 24px into a single 32px
+gap.
+
+**How to apply:** A component with no page consumer has not been verified, whatever the
+INVENTORY row says. When a phase first composes a shelf component for real, re-read its source
+frames rather than trusting the accumulated notes.
+
+## D070 — `ServicesHero` reserves the dark NAV's height instead of being overlaid by it
+
+**Decision:** `ServicesHero` carries `pt-[64px] lg:pt-[138px]` — the mobile and desktop NAV
+heights — so the heading starts below the NAV rather than under it.
+
+The dark `Nav` is `absolute inset-x-0 top-0` (D052 wiring, D017 policy). That is right for Home
+and Our Story, which open on a full-bleed photograph the NAV is *meant* to float over. The
+Services header is not a photograph: Figma stacks the NAV and the heading block inside one dark
+`Header` frame, with the Container starting at y=138. Overlaid, the heading collided with the
+logo and the eyebrow disappeared behind it.
+
+Reserving the height in the page section was chosen over making `Nav` conditionally relative,
+which would change a shared component for one page's benefit, and over moving `services` to the
+light NAV, which contradicts the frame.
+
+**Verification:** with the padding in place the hero measures **1334px** at desktop EN and
+**1528px** at desktop TC — Figma's own frame heights, to the pixel.
+
+**How to apply:** Every later page whose frame stacks the NAV above content rather than behind it
+needs this same reservation. `darkNavRoutes` membership answers "what colour", not "in flow or
+not" — those are separate questions and only the first has a table.
+
+## D071 — The Services heading is Display/H1 at both breakpoints, in both locales
+
+**Decision:** The hero `h1` uses `text-display-h1` everywhere. No locale-keyed switch.
+
+Figma's export labels the mobile EN Title Group **Display/H2**, which would suggest copying
+`AboutHero`'s `locale === "zh" ? h1 : h2`. It is a red herring: the MCP resolves a variable in
+one mode, and the name came back resolved against *Desktop English*. The frame's own geometry
+settles it — the mobile EN Title Group is 337px tall for four lines, i.e. 79.1px of leading,
+which is Display/H1 in the mobile ramp (H2 there is 60.9px).
+
+**How to apply:** A token *name* in a Figma export is resolved in one mode and is not reliable
+across the four Text Styles modes. When a name and the frame's measured geometry disagree,
+the geometry wins. This is the same class of trap that makes `get_variable_defs` unusable for
+building the token set.
+
+## D072 — Services tablet snaps at `lg`; there is no intermediate layout to derive
+
+**Decision:** Between 768px and 1439px the Services page uses the mobile tree below 1024px and
+the desktop tree at and above it, with nothing in between.
+
+This is **Derived (D005)**, and it is the trivial case the "stop and ask" rule exempts. The
+service card is full-bleed at *both* designed breakpoints — 1440×647 at desktop, 393-wide at
+mobile — so `ServicesList` is a stack at every width. No grid changes column count and no
+scroller changes axis, which are the two cases that actually need a decision.
+
+**What was verified:** 393 / 768 / 1023 / 1024 / 1440px in both locales, no horizontal overflow
+at any of them. The one visible artifact is the mobile hero body's fixed 354px box leaving space
+to its right on a wide tablet — inherited from the mobile design, not introduced here.
+
+**How to apply:** Phase F audits this with the rest. Do not "improve" the 768–1023px band in
+isolation; it is deliberately the mobile design at a wider viewport.
+
+## D073 — The Services TC heading's line breaks are natural wrap, not authored
+
+**Decision:** The TC heading is stored as two segments split at its comma
+(`以真實故事為基石，` / `用新時代手法創造影響力。`) and allowed to wrap.
+
+Figma authors different breaks per breakpoint — three lines at desktop
+(`用新時代手法` / `創造影響力。`) and two segments at mobile — which cannot be expressed as one
+array without a responsive `<br>`. The natural wrap lands one character later than Figma's at
+desktop and produces the same three visual lines; both hero frames still measure their Figma
+heights exactly (1528px desktop, 880px mobile).
+
+**How to apply:** Store authored breaks only where they change the line *count*. Where they only
+move the break point within the same count, let the browser wrap — a hard break at 1440px becomes
+a wrong break at 1200px, and this site has no design for 1200px.

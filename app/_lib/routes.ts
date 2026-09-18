@@ -43,7 +43,7 @@ export const routes: readonly RouteDef[] = [
  * a child to its layout. This table is the same decision expressed where the
  * layout can actually reach it: still static per page, still not scroll-driven.
  */
-const darkNavRoutes: readonly RouteKey[] = ["home", "about"];
+const darkNavRoutes: readonly RouteKey[] = ["home", "about", "services"];
 
 /** Resolves the NAV theme for a pathname, e.g. "/zh" -> "dark", "/en/news" -> "light". */
 export function navThemeForPath(pathname: string): "light" | "dark" {

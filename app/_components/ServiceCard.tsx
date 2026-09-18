@@ -10,8 +10,9 @@ import SecondaryCta from "./SecondaryCta";
 //     renders as two `hidden`/`lg:hidden` copies rather than one repositioned
 //     element (the two live in different flex containers entirely).
 //   - Feature rows are side-by-side (fixed 118px title + flex-1 description) at
-//     BOTH breakpoints — this was previously stacking at mobile, which doesn't
-//     match either frame.
+//     MOBILE and STACKED (full-width title, description below) at desktop. The
+//     Phase 3 note claiming both breakpoints were side-by-side was wrong, and
+//     survived until Phase 8 gave the card its first real consumer (D069).
 //   - Feature row divider: translucent white (`--opacity-white-15`) at mobile,
 //     solid white at desktop.
 //   - The numbered tag rotates the OPPOSITE direction from the eyebrow tag in
@@ -111,24 +112,33 @@ export default function ServiceCard({
             </div>
           </div>
         </div>
-        <div className="flex w-full flex-col items-start gap-8 bg-(--color-basic-accent) pt-[46px] lg:w-[656px] lg:shrink-0 lg:p-8">
+        <div className="flex w-full flex-col items-start bg-(--color-basic-accent) pt-[46px] lg:w-[656px] lg:shrink-0 lg:p-8">
           <p className="font-body text-body-l text-(--color-basic-background) lg:hidden">{description}</p>
-          <div className="flex w-full flex-col items-stretch gap-4 lg:gap-0">
+          {/* Mobile: 30px from the description, then the list's own 24px lead-in
+              (mobile Container gap-30 + List pt-24). Desktop has no description
+              in this panel, so the list starts flush against the p-8. */}
+          <div className="mt-[30px] flex w-full flex-col items-stretch gap-4 pt-[24px] lg:mt-0 lg:gap-0 lg:pt-0">
             {features.map((feature) => (
+              // Feature rows are side-by-side at MOBILE (fixed 118px title +
+              // flex-1 description, 12px gap) and STACKED at desktop (h7 title
+              // full-width, description below it with an 8px lead-in). The
+              // earlier "side-by-side at both breakpoints" read was wrong —
+              // desktop 12573:6500 is a `flex-col` and its screenshot shows the
+              // green title on its own line (D069).
               <div
                 key={feature.title}
-                className="flex items-start gap-3 border-t border-(--opacity-white-15) pt-[10px] lg:border-(--color-basic-background) lg:py-[20px]"
+                className="flex items-start gap-3 border-t border-(--opacity-white-15) pt-[10px] lg:flex-col lg:gap-0 lg:border-(--color-basic-background) lg:py-[20px]"
               >
-                <p className="font-display text-display-h7 w-[118px] shrink-0 font-bold uppercase text-(--color-brand-primary-green)">
+                <p className="font-display text-display-h7 w-[118px] shrink-0 font-bold uppercase text-(--color-brand-primary-green) lg:w-full">
                   {feature.title}
                 </p>
-                <p className="font-body text-body-xs flex-1 text-(--color-basic-background)">
+                <p className="font-body text-body-xs flex-1 text-(--color-basic-background) lg:w-full lg:flex-none lg:pt-[8px]">
                   {feature.description}
                 </p>
               </div>
             ))}
           </div>
-          <SecondaryCta href={ctaHref} tone="light" className="self-center">
+          <SecondaryCta href={ctaHref} tone="light" className="mt-[32px] self-center lg:self-start">
             {ctaLabel}
           </SecondaryCta>
         </div>
