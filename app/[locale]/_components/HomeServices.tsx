@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useState } from "react";
 import Image from "next/image";
+import AccordionPanel from "../../_components/AccordionPanel";
 import Cta from "../../_components/Cta";
 import Eyebrow from "../../_components/Eyebrow";
 import { getDictionary, type Locale } from "../../_lib/i18n";
@@ -23,10 +24,10 @@ import { localizedHref } from "../../_lib/routes";
 // easing EASE_OUT, duration 0.3s. Exactly one item is open at a time, and the
 // open/close is a 300ms ease-out height animation, not a snap.
 //
-// Smart-animate is reproduced with a `grid-template-rows: 0fr -> 1fr` transition: it
-// animates to the content's natural height without hardcoding one, and the rows below
-// slide as the panel grows. Panels stay mounted (so there is something to animate) and
-// are `inert` while closed, which keeps their copy out of the a11y tree and tab order.
+// Smart-animate is reproduced by the shared `AccordionPanel`, promoted out of this
+// file in Phase 9 when the Services FAQ became the second consumer (D041). Only the
+// panel moved — the icons, borders, type scale and `openIndex` state below are this
+// section's own, because the two accordions share mechanics and nothing else.
 //
 // Figma draws both icon glyphs — a green "×" on the open row, a green "+" on the
 // closed ones. They are NOT one glyph rotated (the × sits at inset 33.13%, the + at
@@ -64,34 +65,6 @@ function AccordionIcon({ open }: { open: boolean }) {
         className={`absolute inset-0 block size-full transition-opacity duration-300 ease-out motion-reduce:transition-none ${open ? "opacity-100" : "opacity-0"}`}
       />
     </span>
-  );
-}
-
-// The animating panel wrapper, shared by both breakpoints. `grid-template-rows`
-// animates to the content's own height; the inner element must clip.
-function AccordionPanel({
-  id,
-  labelledBy,
-  open,
-  children,
-}: {
-  id: string;
-  labelledBy: string;
-  open: boolean;
-  children: ReactNode;
-}) {
-  return (
-    <div
-      id={id}
-      role="region"
-      aria-labelledby={labelledBy}
-      inert={!open}
-      className={`grid transition-[grid-template-rows] duration-300 ease-out motion-reduce:transition-none ${
-        open ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
-      }`}
-    >
-      <div className="overflow-hidden">{children}</div>
-    </div>
   );
 }
 

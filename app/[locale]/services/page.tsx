@@ -1,9 +1,12 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { isLocale } from "../../_lib/i18n";
+import { localizedHref } from "../../_lib/routes";
 import { buildRouteMetadata } from "../../_lib/metadata";
 import ServicesHero from "./_components/ServicesHero";
 import ServicesList from "./_components/ServicesList";
+import ServicesFaq from "./_components/ServicesFaq";
+import UniversalCTA from "../../_components/UniversalCTA";
 
 export async function generateMetadata({
   params,
@@ -13,9 +16,6 @@ export async function generateMetadata({
   return buildRouteMetadata("services", locale);
 }
 
-// Phase 8 builds the header and the four service cards only. The FAQ section
-// (12573:6686 / 12220:2269) and UniversalCTA (12573:9015 / 12220:2432) are
-// Phase 9 and append here, in that order, below ServicesList.
 export default async function ServicesPage({ params }: PageProps<"/[locale]/services">) {
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
@@ -24,6 +24,11 @@ export default async function ServicesPage({ params }: PageProps<"/[locale]/serv
     <main>
       <ServicesHero locale={locale} />
       <ServicesList locale={locale} />
+      <ServicesFaq locale={locale} />
+      {/* Same instance Home places — component set 12653:5649, Default at
+          desktop EN and CN at desktop TC, symbol 12212:5282 at mobile.
+          Verified unmodified against Home's, so no prop was added. */}
+      <UniversalCTA locale={locale} href={localizedHref("contact", locale)} />
     </main>
   );
 }

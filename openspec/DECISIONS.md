@@ -82,6 +82,12 @@ Do **not** record things readable from the code or the design itself.
 - [D071 — The Services heading is Display/H1 at both breakpoints, in both locales](#d071--the-services-heading-is-displayh1-at-both-breakpoints-in-both-locales)
 - [D072 — Services tablet snaps at `lg`; there is no intermediate layout to derive](#d072--services-tablet-snaps-at-lg-there-is-no-intermediate-layout-to-derive)
 - [D073 — The Services TC heading's line breaks are natural wrap, not authored](#d073--the-services-tc-headings-line-breaks-are-natural-wrap-not-authored)
+- [D074 — The Services FAQ is an interactive accordion; the frames say so, the timing is inherited](#d074--the-services-faq-is-an-interactive-accordion-the-frames-say-so-the-timing-is-inherited)
+- [D075 — Only the accordion's panel mechanics were promoted; the two accordions share no design](#d075--only-the-accordions-panel-mechanics-were-promoted-the-two-accordions-share-no-design)
+- [D076 — Five FAQ items ship; the sixth is omitted, not placeheld](#d076--five-faq-items-ship-the-sixth-is-omitted-not-placeheld)
+- [D077 — The Footer's Services sub-links deep-link to anchors on the Services page](#d077--the-footers-services-sub-links-deep-link-to-anchors-on-the-services-page)
+- [D078 — The FAQ icons are their own exports, not the Home pair recoloured](#d078--the-faq-icons-are-their-own-exports-not-the-home-pair-recoloured)
+- [D079 — `Label/M` in Mobile Chinese is wrong in `globals.css` — reported, deliberately not fixed](#d079--labelm-in-mobile-chinese-is-wrong-in-globalscss--reported-deliberately-not-fixed)
 
 ## D001 — Locale strategy
 
@@ -1606,3 +1612,130 @@ heights exactly (1528px desktop, 880px mobile).
 **How to apply:** Store authored breaks only where they change the line *count*. Where they only
 move the break point within the same count, let the browser wrap — a hard break at 1440px becomes
 a wrong break at 1200px, and this site has no design for 1200px.
+
+## D074 — The Services FAQ is an interactive accordion; the frames say so, the timing is inherited
+
+**Decision:** Five rows, exactly one open, row 1 open on load. Each header is a real `<button>`
+with `aria-expanded` / `aria-controls`; the panel is the shared `AccordionPanel`. Open/close is
+the same 300ms ease-out D041 established for Home.
+
+**Why the behaviour is designed, not derived:** all four frames draw row 1 with an answer
+paragraph and a green `×`, and rows 2–5 with a black `+` and no paragraph. That is a
+single-open accordion drawn in its default state.
+
+**Why the timing is inherited rather than measured:** a deep `node.reactions` sweep of all four
+FAQ subtrees — the exact sweep D046 exists to mandate, and the one whose omission made D041
+wrong on its first pass — returned **nothing**. There is no FAQ row component set and no
+prototype reaction anywhere on this section, unlike Home's mobile Services component set. So
+the frames genuinely do not specify timing here. Reusing D041's rather than deriving a second
+one gives the site one accordion motion instead of two.
+
+**How to apply:** "The sweep found nothing" is a result worth recording, not a gap to fill with
+invention. Where a later section needs motion the frames do not specify, inherit from the
+nearest decided precedent and say that is what you did.
+
+## D075 — Only the accordion's panel mechanics were promoted; the two accordions share no design
+
+**Decision:** `AccordionPanel` — the headless `grid-rows-[0fr]`/`grid-rows-[1fr]` wrapper with its
+`inert`, `role="region"` and `aria-labelledby` wiring — now lives in `app/_components/`.
+`HomeServices` imports it. Nothing else moved: not the icons, not the row borders, not the
+`openIndex` state, not the triggers.
+
+**Why:** D041 pre-committed that a second consumer with a verified design is the bar for
+promoting this. The bar was met; the audit of *what* to promote found the overlap is one row
+wide.
+
+| Aspect | `HomeServices` | Services FAQ |
+| :--- | :--- | :--- |
+| Surface | Dark | Light |
+| Icon side | Left of the label | Right, at the row's far edge |
+| Icon colour | Neon `+` and `×` | Black `+`, green `×` |
+| Label type | Display, uppercase | Body |
+| Row rules | Variable-weight, open row heavier | Uniform hairline |
+| Desktop layout | Accordion under a heading | Two-column split, heading beside the rows |
+| Panel mechanics | `grid-rows` 0fr→1fr, inert, 300ms | Identical |
+
+A full shared `Accordion` would need tone, icon-position, type-scale and border-weight props to
+fit two call sites — the `TitleGroup` failure mode D055 and D057 warn about. Promoting nothing
+would duplicate ~20 lines of a11y wiring that is easy to get subtly wrong twice.
+
+**How to apply:** "Second consumer" answers *whether* to promote, never *what*. Audit the two
+call sites property by property first; promote the intersection, not the component.
+
+## D076 — Five FAQ items ship; the sixth is omitted, not placeheld
+
+**Decision:** `services.faq.items` has five entries in both locales. No sixth row and no `待補`
+string in the UI.
+
+**Why:** the matrix's sixth row is unwritten copy the client still owes, and Figma draws exactly
+five rows. A visible placeholder would ship obviously-unfinished text to a marketing site *and*
+add a row the design does not have. Appending the sixth later is a data change with no layout
+consequence, so deferring costs nothing. User decision at the Phase 9 gate.
+
+The obligation stays in `content-matrix.md`'s outstanding-copy table and was deliberately **not**
+added to the roadmap's Inherited Work, which is for work with a known owning phase. This one is
+blocked on the client.
+
+**How to apply:** `待補` in the matrix means the row does not render. Do not invent placeholder
+copy, and do not add a client-blocked item to a phase's inherited work.
+
+## D077 — The Footer's Services sub-links deep-link to anchors on the Services page
+
+**Decision:** `serviceAnchors` in `app/_lib/routes.ts` pairs each service's Footer label key with
+an anchor id. `ServicesList` renders the id on a wrapper around each card; `Footer` renders the
+label and links to `/{locale}/services#{id}`. Ids are English in both locales, the same rule
+`routes.md` applies to slugs.
+
+**Why one array:** labels and anchors were previously two independent lists, and D-G's
+whole-page links existed only because the page had no sections to link into. Pairing them in one
+exported constant makes drift impossible — a service cannot gain a label without an anchor.
+
+**Why a wrapper, not a `ServiceCard` prop:** the anchor is page routing, not card design, and
+`ServiceCard` is shared. The wrapper carries `scroll-mt-[64px] lg:scroll-mt-[138px]` — the two
+NAV heights D070 already names — because the dark NAV is `absolute` at the top of the page and
+would otherwise cover a card scrolled to. **Verified:** the target card lands at exactly 64px
+(mobile) and 138px (desktop) from the viewport top, both from another route and same-page.
+
+This supersedes D-G **for this column only**. The legal links still render as inert text, and the
+Footer's other links are unchanged.
+
+**How to apply:** when a page finally grows the sections a Footer column names, pair the labels
+and anchors in one constant rather than repointing hrefs by hand. The `scroll-mt` belongs on the
+target, never on `Nav`.
+
+## D078 — The FAQ icons are their own exports, not the Home pair recoloured
+
+**Decision:** `public/icons/faq-open.svg` (`+`, `#131417`) and `faq-close.svg` (`×`, `#08C454`),
+exported from the FAQ frames, cross-faded exactly as Home's pair is.
+
+**Why not reuse `accordion-{open,close}.svg`:** both are hardcoded `#38FF88`, correct on Home's
+dark surface and wrong on this light one. `currentColor` cannot rescue it either — the `+` and
+the `×` are **different colours within the same row set**, so no single `text-*` class serves
+both. Note the `×` is brand `#08C454`, not the neon `#38FF88`.
+
+D041's shape finding still holds and was not re-litigated: the two glyphs are different shapes,
+not one rotated 45°, so both are exported and cross-faded.
+
+**How to apply:** a two-tone icon pair rules out `currentColor`. Check the *colours* as well as
+the shapes before assuming an existing icon asset can be reused on a new surface.
+
+## D079 — `Label/M` in Mobile Chinese is wrong in `globals.css` — reported, deliberately not fixed
+
+**Finding, not a decision to change anything.** `openspec/reference/design-tokens.md` — the token
+source of truth — gives `Label/M` as **`14 / 14 / 0.55` in Mobile Chinese** and `11 / 11 / 0.55`
+in the other three modes, and bolds it as the single exception in an otherwise uniform row.
+`app/globals.css` declares `11 / 11` in its Mobile Chinese block, so every eyebrow and label on
+`/zh` below 1024px renders 3px small. Figma corroborates 14px: the TC FAQ eyebrow label measures
+36px wide against 29px at 11px.
+
+No DECISIONS entry covers it and Phase 1 left no note, so it reads as a transcription miss —
+but **the user's instruction at the Phase 9 gate was to report only and not touch it**, since
+they may change it deliberately themselves. `globals.css` is therefore unmodified.
+
+Phase 9 did not need the fix: `ServicesFaq`'s mobile eyebrow box is `h-[78px]`, which is correct
+whichever value the token ends up holding, because the heading column (142px) dominates in EN
+and the eyebrow dominates in TC at exactly 78px either way.
+
+**How to apply:** do not "fix" this in passing. It repaints every zh mobile eyebrow site-wide
+across already-approved pages and needs its own change with its own before/after review.
+

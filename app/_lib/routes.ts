@@ -65,6 +65,26 @@ export function localizedHref(key: RouteKey, locale: Locale): string {
 }
 
 /**
+ * The four service lines, in the order both the Services page stacks them and
+ * the Footer lists them. One array so the anchors and the Footer's labels
+ * cannot drift apart (D-D): `ServicesList` renders `id`, `Footer` renders the
+ * label at the same index and links to it.
+ *
+ * Ids are English in both locales, the same rule `routes.md` applies to slugs.
+ */
+export const serviceAnchors = [
+  { labelKey: "artistManagement", id: "artist-management" },
+  { labelKey: "internationalTourPlanning", id: "international-booking" },
+  { labelKey: "prMarketing", id: "pr-marketing" },
+  { labelKey: "eventProduction", id: "event-production" },
+] as const;
+
+/** Builds an href to a service section, e.g. ("pr-marketing", "zh") -> "/zh/services#pr-marketing". */
+export function serviceAnchorHref(id: string, locale: Locale): string {
+  return `${localizedHref("services", locale)}#${id}`;
+}
+
+/**
  * Swaps the locale segment of a path while preserving the rest, e.g.
  * ("/en/portfolio", "zh") -> "/zh/portfolio". Assumes `pathname` already
  * starts with a valid locale prefix (true for every route under `[locale]/`).

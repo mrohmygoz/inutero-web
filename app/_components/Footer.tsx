@@ -1,6 +1,12 @@
 import type { Locale } from "../_lib/i18n";
 import { getDictionary } from "../_lib/i18n";
-import { localizedHref, routes, type RouteKey } from "../_lib/routes";
+import {
+  localizedHref,
+  routes,
+  serviceAnchorHref,
+  serviceAnchors,
+  type RouteKey,
+} from "../_lib/routes";
 import Logo from "./Logo";
 
 // Source: desktop Footer Default 12573:9181 / TC 12635:16558; mobile
@@ -29,12 +35,10 @@ import Logo from "./Logo";
 // text per D-G — no page exists for any of them yet.
 const footerPageRoutes: RouteKey[] = ["about", "portfolio", "artists", "news", "contact"];
 
-const serviceLabelKeys = [
-  "artistManagement",
-  "internationalTourPlanning",
-  "prMarketing",
-  "eventProduction",
-] as const;
+// Labels and anchor targets both come from `serviceAnchors` so they cannot
+// drift from the four sections `ServicesList` renders (D-D). Phase 9 repointed
+// these from the whole /services route, which is what D-G left them at while
+// the page had no sections to link into.
 
 const legalKeys = ["privacyPolicy", "termsOfService", "cookiesSettings"] as const;
 
@@ -80,13 +84,13 @@ export default function Footer({ locale }: { locale: Locale }) {
             <div className="flex items-start gap-4 lg:flex-1">
               <VerticalLabel>{f.servicesHeading}</VerticalLabel>
               <div className="flex flex-1 flex-col">
-                {serviceLabelKeys.map((key, i) => (
+                {serviceAnchors.map(({ labelKey, id }, i) => (
                   <a
-                    key={key}
-                    href={localizedHref("services", locale)}
-                    className={`font-display text-display-h5 border-(--color-basic-accent) py-2 font-bold text-(--color-basic-accent) uppercase focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-brand-primary-green) ${i < serviceLabelKeys.length - 1 ? "border-b" : ""}`}
+                    key={labelKey}
+                    href={serviceAnchorHref(id, locale)}
+                    className={`font-display text-display-h5 border-(--color-basic-accent) py-2 font-bold text-(--color-basic-accent) uppercase focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-brand-primary-green) ${i < serviceAnchors.length - 1 ? "border-b" : ""}`}
                   >
-                    {f[key]}
+                    {f[labelKey]}
                   </a>
                 ))}
               </div>

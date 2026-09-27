@@ -1,6 +1,6 @@
 import ServiceCard from "../../../_components/ServiceCard";
 import { getDictionary, type Locale } from "../../../_lib/i18n";
-import { localizedHref } from "../../../_lib/routes";
+import { localizedHref, serviceAnchors } from "../../../_lib/routes";
 
 // Source: desktop "Frame 60" 12600:7551 — four full-bleed 1440x647 ServiceCard
 // instances with a 64px lead-in; mobile 12220:2696 / 2666 / 2786 / 2816, four
@@ -24,16 +24,25 @@ export default function ServicesList({ locale }: { locale: Locale }) {
   return (
     <section className="w-full bg-(--color-basic-accent) lg:pt-[64px]">
       {items.map((service, i) => (
-        <ServiceCard
+        // The anchor target is a wrapper, not a ServiceCard prop — the card is
+        // a shared component and this is page routing, not card design.
+        // scroll-mt clears the dark NAV, which is absolute at the top of the
+        // page and would otherwise cover a card scrolled to (D-D).
+        <div
           key={service.index}
-          index={service.index}
-          title={service.title}
-          description={service.description}
-          features={service.features}
-          ctaLabel={ctaLabel}
-          ctaHref={localizedHref("portfolio", locale)}
-          image={{ src: images[i], alt: service.imageAlt }}
-        />
+          id={serviceAnchors[i].id}
+          className="scroll-mt-[64px] lg:scroll-mt-[138px]"
+        >
+          <ServiceCard
+            index={service.index}
+            title={service.title}
+            description={service.description}
+            features={service.features}
+            ctaLabel={ctaLabel}
+            ctaHref={localizedHref("portfolio", locale)}
+            image={{ src: images[i], alt: service.imageAlt }}
+          />
+        </div>
       ))}
     </section>
   );

@@ -107,6 +107,41 @@ const services: typeof enServices = {
       ],
     },
   ],
+  // See en/services.ts for why the Figma question set is not the source (D032).
+  // The TC frames draw an earlier, longer draft of the Q1 answer; the matrix
+  // line below is the delivered copy, so this section renders shorter than the
+  // 793px the mobile TC frame measures.
+  faq: {
+    eyebrow: "FAQs", // English in the TC frames too (matrix: `keep EN`)
+    heading: "常見問題",
+    items: [
+      {
+        question: "你們跟一般的經紀或公關公司有什麼不一樣？",
+        answer:
+          "子皿不拘泥於跟單一藝人或品牌合作，以成熟的運作模式與多個單位並行合作，精準與不同分眾市場溝通。此外，子皿從文化產業視角切入市場，著重幫助創作者與品牌講好故事，接觸到真正契合的聽眾，並成為一個能夠隨時溝通、相互信賴的戰略夥伴。",
+      },
+      {
+        question: "你們有跟台灣以外的海外藝人合作嗎？",
+        answer:
+          "子皿曾與來自日本、韓國、中國、香港、泰國等地的藝人合作，除了協助在台灣從0到1創造聲量、籌辦演出活動，也協助佈局整個東亞地區的宣傳規劃，歡迎聯繫洽談詳情。",
+      },
+      {
+        question: "我可以只針對單一活動或專案聘請子皿嗎？",
+        answer:
+          "可以的。我們會根據客戶需求與發展階段規劃合作項目，也包含階段性的專案合作。無論單場活動合作、發行作品的宣傳規劃、一檔巡演的站點規劃等，我們都能提供最精準的專業支援。",
+      },
+      {
+        question: "如果預算有限，也有機會找你們合作嗎？",
+        answer:
+          "當然沒問題，不同成本有不同成本的做法。子皿可以協助你收斂身邊有用的資源，用最小的投入儘可能達到成效，歡迎直接分享你的預算與困難，一起討論如何推進。",
+      },
+      {
+        question: "我們該如何開始與子皿合作？",
+        answer:
+          "可以直接點擊下方的聯絡區域，依照需求（商務合作、藝人經紀或行銷宣傳）發信給特定的窗口，並在信中分享想合作的專案、作品或初步想法。",
+      },
+    ],
+  },
 };
 
 export default services;

@@ -12,7 +12,7 @@
 //   - The desktop cards draw FOUR feature rows, the fourth a verbatim duplicate
 //     of the third. Three is the real count (mobile EN draws three). See D066.
 //
-// The FAQ copy is deliberately absent — that section is Phase 9.
+// The FAQ copy was deliberately absent in Phase 8; Phase 9 added it below.
 const services = {
   hero: {
     eyebrow: "Services", // stays English in both locales (matrix: `keep EN`)
@@ -123,6 +123,55 @@ const services = {
       ],
     },
   ],
+  // FAQ (Phase 9). Desktop 12573:6686, mobile 12220:2269.
+  //
+  // The matrix REPLACES the Figma question set wholesale — the client sheet
+  // shifted each answer up one row against the Figma question beside it and
+  // dropped one, and the sheet's 備註 on Figma's Q3 reads 直接刪掉. Do not
+  // reconcile against the Figma text layers or layer names (D032):
+  //   - Desktop EN rows 3 and 4 are near-duplicates, and row 4 is a question
+  //     the sheet deleted.
+  //   - The mobile TC frame is the one that already renders the final five
+  //     questions verbatim, which is what corroborates this set.
+  //   - The TC answer to Q1 is a longer earlier draft in every frame; the
+  //     matrix line below is the delivered copy.
+  //
+  // FIVE items, not six. The sheet's sixth row is still 待補 and is omitted
+  // rather than placeheld, which also matches Figma's five drawn rows. The
+  // obligation lives in content-matrix.md's outstanding-copy table — it is
+  // blocked on the client, not on a phase.
+  faq: {
+    eyebrow: "FAQs", // stays English in both locales (matrix: `keep EN`)
+    heading: "Common questions", // uppercased in CSS, as every other heading is
+    items: [
+      {
+        question:
+          "What makes In Utero different from traditional management or PR agencies?",
+        answer:
+          "We don't confine ourselves to a single artist or brand; instead, we have built a mature operational ecosystem that allows us to collaborate across various genres and styles, precisely engaging niche markets to create true impact. Most importantly, In Utero approaches the market through the lens of independent music and culture. Commercial success is rarely our sole priority. What we care about most is empowering creators and brands to tell their stories authentically, connecting them with the right audiences, and serving as an ever-accessible strategic partner.",
+      },
+      {
+        question: "Do you work with artists outside of Taiwan?",
+        answer:
+          "Absolutely. We have collaborated with artists from Hong Kong, Japan, South Korea, Thailand, and beyond. Beyond on-site local execution and press campaigns within Taiwan, our services encompass strategic promotional rollouts across the entire East Asian region. Please feel free to reach out to discuss how we can work together.",
+      },
+      {
+        question: "Can I hire In Utero for a single event or specific project?",
+        answer:
+          "Yes. We tailor our collaborations to fit each client's specific needs and current developmental stage, which includes phased project-based partnerships. Whether it's production for a single event, a tailored PR campaign for a new release, or routing a specific leg of a tour, we provide precise, professional support where it matters most.",
+      },
+      {
+        question: "Is it still possible to work with you if I have a limited budget?",
+        answer:
+          "Definitely. Lean budgets simply require a different approach. We can help you audit and streamline your available resources to maximize impact with minimal investment. Please feel free to be direct about your budget and challenges—let's talk and find a viable way to keep your project moving forward.",
+      },
+      {
+        question: "How do we start working with In Utero?",
+        answer:
+          "Drop us a line anytime! Head over to our Contact section below and reach out to the relevant department (Business, Management, or PR & Marketing). Share a brief overview of your current project, music, or preliminary ideas, and we'll set up a time to chat and find our rhythm together.",
+      },
+    ],
+  },
 };
 
 export default services;
