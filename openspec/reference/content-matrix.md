@@ -90,7 +90,7 @@ below cannot ship more than a shell without them.
 | :--- | :--- | :--- |
 | ~~Portfolio~~ **delivered** | ~~All project card content (5 cards)~~ — Figma's slot counts are drawn samples and disagree with each other (11 desktop, 5 mobile). The three real projects on the Project Details tab were the whole supplied set, and Phase 6 had already transcribed their EN and ZH copy into `home.ts`. They now live as MDX under `content/portfolio/{en,zh}/`. **No AI-generated copy was needed.** A fourth project needs a fourth MDX pair. | ~~Phase 10~~ — done |
 | Project Details | All per-project article bodies and client quotes | Phase 11 |
-| Featured Artists | Card content beyond the 8 artists listed below (design has 16 slots) | Phase 12 |
+| ~~Featured Artists~~ **delivered** | ~~Card content beyond the 8 artists listed below (design has 16 slots)~~ — the 8 supplied are the whole set; Figma's 16 slots are a drawn sample, same finding as Portfolio's 11-vs-5 disagreement. English bios are **not supplied** (`待補` for all 8) — AI-generated from the Chinese and shipped flagged non-final, in `app/_lib/artists.ts`. All 8 now have a real photo — only 4 were resolvable from the Figma file itself (its desktop card grid cycles 4 real photos across 12 sample slots); the other 4 came from the client's Dropbox folder directly, supplied mid-review. | ~~Phase 12~~ — done |
 | News | Featured-banner content; all article card copy | Phase 13 |
 | News Details | All article bodies; the 3 related-post cards | Phase 14 |
 | ~~Our Story~~ **delivered** | ~~Team member bios; 2nd team card~~ — the client supplied 9 real members with photos and Chinese descriptions; transcribed into `app/_lib/team.ts` (D051). Figma's 5-card Lorem-ipsum sample was a drawn sample, not a count. | ~~Phase 7~~ — done |
@@ -601,7 +601,7 @@ Dropbox links, recorded for the phases that need them. **Not downloaded** by thi
 | Project Details | Vol.1 press release (`Band Show.docx`) + photo folder | 11 |
 | Project Details | Vol.3 press release (`In Utero Huan Huan.docx`) + photo folder | 11 |
 | Our Story | Team photo folder | 7 |
-| Featured Artists | 8 press photos, one per artist | 12 |
+| ~~Featured Artists~~ | ~~8 press photos, one per artist~~ — **all 8 delivered.** The Figma file itself only embeds photos for 4 (Panai, Huan Huan, Come on! BayBay!, Elephant Gym); the client's linked Dropbox folder supplied the other 4 (Bugs of Phonon, JPBS, Flesh Juicer, Zhaolin) directly, fetched mid-review. All 8 exported into `public/images/artists/`. | ~~12~~ — done |
 
 The full URLs are in the sheet. They are not copied here because Dropbox share links are
 long-lived credentials of a sort — fetch them from the sheet at the point of use.

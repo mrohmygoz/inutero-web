@@ -98,6 +98,9 @@ Do **not** record things readable from the code or the design itself.
 - [D087 — Project card tags come from the sheet's 職責, not Figma's sample triple](#d087--project-card-tags-come-from-the-sheets-職責-not-figmas-sample-triple)
 - [D088 — The Portfolio page heading is 過往專案, against both TC frames](#d088--the-portfolio-page-heading-is-過往專案-against-both-tc-frames)
 - [D089 — Project tag colors are fixed per service identity, site-wide](#d089--project-tag-colors-are-fixed-per-service-identity-site-wide)
+- [D092 — Featured Artists: only 4 of 8 real artists have a photo resolvable from the Figma file itself; `ArtistCard.image` becomes optional; the mobile bio gains a clamp](#d092-featured-artists-only-4-of-8-real-artists-have-a-photo-resolvable-from-the-figma-file-itself-artistcardimage-becomes-optional-the-mobile-bio-gains-a-clamp)
+- [D093 — Featured Artists: the filter rail is light-polarity and built locally, not via the shared `Tag` component](#d093-featured-artists-the-filter-rail-is-light-polarity-and-built-locally-not-via-the-shared-tag-component)
+- [D094 — Featured Artists: the filter label, empty-state copy, and grid geometry are page-owned; the tag ids and mechanism are Portfolio's, reused verbatim](#d094-featured-artists-the-filter-label-empty-state-copy-and-filter-rail-geometry-are-page-owned-the-tag-ids-and-single-selectall-defaultno-prototype-behaviour-are-portfolios-reused-verbatim)
 
 ## D001 — Locale strategy
 
@@ -2054,3 +2057,85 @@ capped grid.
 its article should add a `gallery` list rather than stretching the body with photos that don't
 belong in the prose. Do not treat `bottoms-up`'s thinner 2-image gallery as a bug to fix by
 padding — this is an accepted Close-tier gap (see design.md's Risks section), not a mismatch.
+
+## D092: Featured Artists — only 4 of 8 real artists have a photo resolvable from the Figma file itself; `ArtistCard.image` becomes optional; the mobile bio gains a clamp
+
+**Decision:** `ArtistCard`'s `image` prop is now optional. The desktop card grid (`12591:6196`)
+draws 12 sample slots but cycles through exactly 4 real photos — matched to their artist by the
+text override rendered in the same card instance as each image constant (`imgContainer` =
+Panai, `imgContainer1` = Huan Huan, `imgContainer2` = Come on! BayBay!, `imgContainer3` =
+Elephant Gym). **Superseded within the same phase:** the client's own Dropbox photo folder
+(content-matrix.md → Assets) was supplied mid-review with one press photo per artist for all
+8, so every artist ships a real photo — `photo` stays optional on the `Artist` type and
+`ArtistCard`'s placeholder path stays built, but as a fallback for a future artist shipped
+without one, not a state any of today's 8 are in.
+
+**Why the optional prop and placeholder stayed even after all 8 resolved:** same reasoning D090
+already established for Portfolio Details — do not assume every future record will always ship
+a complete asset. `ArtistCard` had no placeholder path at all before this phase (Phase 3 built
+it against a single, fully-populated Figma sample); this is a real gap Phase 3 could not have
+found, and it is cheaper to keep the fallback than to remove it and re-add it the next time a
+record is missing one.
+
+**A second real defect surfaced once all 8 real (non-Lorem-ipsum) bios were reviewed at both
+breakpoints:** the mobile bio was unclamped (`line-clamp-none`), correct against Phase 3's
+short Lorem-ipsum sample but not against real AI-generated bios roughly a sentence and a half
+long — those overflowed past the card's fixed 200px mobile content box, visually colliding with
+the row below. First fixed by clamping the mobile bio to 4 lines to match the desktop's
+existing 3-line/65px clamp — **then reversed by explicit user decision**: no bio is truncated at
+either breakpoint, full text always shows. The real fix is structural, not a bigger clamp: the
+content block (name/genre/bio/social row) is now auto-height at both breakpoints — it grows
+with the bio instead of being boxed into a fixed 200px (mobile) or a `flex-1` remainder chasing
+a nominal 550px card (desktop) — so a longer bio simply makes that card, and its CSS grid row,
+taller. `ArtistsGrid`'s CSS grid already tolerates uneven row heights (2-up mobile, 3-up
+desktop) with no changes needed there.
+
+**How to apply:** the placeholder is tinted `--opacity-neutral-darkest-10`, not `ProjectCard`'s
+`--opacity-white-10` — `ArtistCard` has exactly one page consumer (Artists) and that page has a
+light surface, where a white-on-white tint renders invisible rather than as a visible neutral
+box. If `ArtistCard` ever gains a dark-surface consumer, the tint would need to become a prop
+rather than assuming one polarity site-wide. Any future page composing `ArtistCard` with
+longer-than-sample bio copy should verify against real text at both breakpoints, not the
+Figma sample — that is exactly what this phase's own gate (design.md D-C) was written to catch,
+and what caught this.
+
+## D093: Featured Artists — the filter rail is light-polarity and built locally, not via the shared `Tag` component
+
+**Decision:** `ArtistsGrid`'s filter chips are plain buttons styled inline, not `Tag`'s
+`variant="outline"`. Portfolio's filter rail sits on a dark surface (`bg-(--color-basic-
+accent)`) and `Tag`'s outline variant was built for exactly that — white text on a
+white-opacity border. The design.md sweep found Artists' header and filter rail are the
+opposite polarity: white background, dark text and border (confirmed on both breakpoints,
+both by `get_design_context` and by the mobile TC metadata sweep). Reusing `Tag` unmodified
+would render invisible white-on-white text.
+
+**Why:** The proposal explicitly scoped this phase to wiring Portfolio's existing tag ids and
+mechanism, not changing `Tag` itself (`Any change to ... Tag ... beyond wiring this page's tag
+set` is listed out of scope). Adding a `tone` prop to `Tag` for a single caller would be the
+same speculative-generalization risk D-B's non-goals section already flagged for a shared
+`<FilterableGrid>` — extract only once a second real need proves the shape.
+
+**How to apply:** if a future light-surface page needs the same filter-tag look, promote the
+inline chip in `ArtistsGrid.tsx` to `Tag` (as a second variant or a `tone` prop) at that point,
+not before.
+
+## D094: Featured Artists — the filter label, empty-state copy, and filter rail geometry are page-owned; the tag ids and single-select/`All`-default/no-prototype behaviour are Portfolio's, reused verbatim
+
+**Decision:** `serviceAnchors` (ids) and the single-select/`All`-default/empty-state mechanism
+are the same code path Portfolio's `PortfolioGrid` uses (design.md D-B) — this phase did not
+re-derive that interaction. A `node.reactions` sweep of all four Artists frames found no
+prototype on any filter tag, the same finding D083 recorded for Portfolio. What is page-owned:
+the filter label text (`Filter` / TC `專案種類` — confirmed by the TC mobile metadata, byte-
+identical to Portfolio's own TC label, not a coincidence worth a shared constant), the
+empty-state copy (`No artists in this category yet.` / `此分類目前尚無藝人。`), and the grid's own
+geometry (2-up at mobile vs. Portfolio's 1-up, 3-up at desktop matching Portfolio).
+
+**Why:** A `<FilterableGrid>` abstraction spanning both pages was explicitly a non-goal
+(design.md) until a second occurrence proves the shape identical — this phase found the tag
+*ids* and *mechanism* identical but the *visual polarity* (D093) and *grid column count*
+different, which is itself the evidence that extraction is still premature.
+
+**No paginator was built.** Figma instances a `Pagination (V3)` on this page too, but 8 real
+artists is under any page size a real listing needs — Portfolio's own derived `PAGE_SIZE` is 9
+(D-A in design.md). The instance is the same drawn sample chrome D084 already found on
+Portfolio's frames, not a second real page of artists.
