@@ -98,7 +98,7 @@ paragraph — user-specified placement, since it's the only photo for that proje
 
 - [x] 5.1 `next-devtools-mcp`: check for framework errors/warnings on `/en/portfolio/[slug]` and
       `/zh/portfolio/[slug]` for all three real slugs.
-- [ ] 5.2 `playwright-cli`: screenshot Portfolio Details at 393px and 1440px, in `/en` and `/zh`,
+- [x] 5.2 `playwright-cli`: screenshot Portfolio Details at 393px and 1440px, in `/en` and `/zh`,
       for at least one project with a `client` value and the one without; compare against the
       Figma screenshots from task 1.1.
 - [x] 5.3 Verify Home's three cards and the Portfolio grid's cards both land on their real
