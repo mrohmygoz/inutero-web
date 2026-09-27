@@ -20,8 +20,9 @@ import type { ServiceId } from "../_lib/content";
 //
 // Phase 10 amended the earlier reading that these differ only in child order.
 // They also differ in the card-vs-content padding split and in the image box
-// (fixed 352.386px full-bleed vs `aspect-[333/445]` inset). Type deltas between
-// them are <=1px and are deliberately not reconciled.
+// (full-bleed vs inset), but both now lock the same `aspect-[333/445]` ratio
+// rather than one of them using a fixed height. Type deltas between them are
+// <=1px and are deliberately not reconciled.
 //
 // Presentational shell only (D-C) — caller supplies content and, for a real
 // project image, a `next/image`-compatible src; otherwise a neutral placeholder
@@ -185,10 +186,11 @@ function PortfolioCard({
     <div
       className={`flex h-full w-full flex-col items-start overflow-clip border-[0.542px] border-(--opacity-white-10) bg-(--color-basic-accent) p-[0.542px] ${className ?? ""}`.trim()}
     >
-      {/* A FIXED height, not an aspect ratio — unlike the home variant. The
-          frame draws 352.386px on both the 325.33px desktop card and the 363px
-          mobile one, so the box does not scale with the card's width. */}
-      <div className="relative h-[352.386px] w-full shrink-0 bg-(--opacity-white-10)">
+      {/* Same 333/445 ratio as the home variant, locked across breakpoints
+          instead of the frame's own fixed 352.386px (which produced a
+          different ratio at the 325.33px desktop width vs the 363px mobile
+          one). */}
+      <div className="relative aspect-[333/445] w-full shrink-0 bg-(--opacity-white-10)">
         {image ? (
           <Image
             src={image.src}
