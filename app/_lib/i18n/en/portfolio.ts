@@ -46,6 +46,7 @@ const portfolio = {
     metaClient: "Client",
     metaDate: "Date",
     metaRole: "Role",
+    gallery: "Gallery",
     prev: "Previous project",
     next: "Next project",
   },

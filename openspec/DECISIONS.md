@@ -2024,3 +2024,33 @@ corresponding real content (a gallery of N images, a "page 1 of 12" counter, a L
 no supplied URL), do not fill it with placeholder or duplicated content to match the frame's
 shape. Render only what real content justifies, and record the gap here rather than silently
 matching or silently dropping it.
+
+## D091: Portfolio Details — Gallery built from body/hero photos + a new `gallery` frontmatter field, superseding D090's "not built" clause
+
+**Context.** Phase 11a built the Gallery section D090 deferred (desktop `12573:7449` / mobile
+`12211:3462`), after client review flagged it as missing rather than as an accepted gap.
+
+**This supersedes D090's "not built" clause, not its reasoning about fabrication.** D090 ruled
+out two things: reusing body photos as gallery filler, and inventing placeholder images. This
+phase does the first on purpose — the images are real, already part of the project's own
+supplied content, only their presentation (a dedicated gallery strip) is new — and adds a
+second, explicit path for photos the client supplies beyond the body, via a new optional
+`gallery: string[]` frontmatter field (portfolio-only, same optional-but-typed shape as
+`heroImage`). Neither path fabricates or pads.
+
+**`ContentEntry.galleryImages` combines, in order: `heroImage ?? image` → body images (parsed
+from the raw `.mdx` source in document order, since `getEntry`'s compiled import only exposes
+`Body`/`frontmatter`) → `gallery` entries, deduplicated by `src`.** No project uses `gallery`
+yet; today's counts are `bottoms-up` 2 (hero + 1 body photo), the other two 4 each (hero + 3).
+
+**No minimum, no maximum, no padding is enforced.** Figma's sample draws 4 images; the real
+range starts below 4 (`bottoms-up`) and may run well past it once a project supplies a
+`gallery` list. `Gallery.tsx` renders it as a horizontal scroller (fixed-size cards, `overflow-
+x-auto`) rather than a fixed grid — the Figma frame's own 4-image sample already overflows its
+section's width at both breakpoints, confirming a scroller is what the design draws, not a
+capped grid.
+
+**How to apply:** a future project with more supplied photography than reads well inline in
+its article should add a `gallery` list rather than stretching the body with photos that don't
+belong in the prose. Do not treat `bottoms-up`'s thinner 2-image gallery as a bug to fix by
+padding — this is an accepted Close-tier gap (see design.md's Risks section), not a mismatch.

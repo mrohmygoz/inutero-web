@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Cms from "../../../../_components/Cms";
 import ShareRow from "../../../../_components/ShareRow";
+import Gallery from "./Gallery";
 import ShareRail from "./ShareRail";
 import type { ContentEntry } from "../../../../_lib/content";
 import { getDictionary, type Locale } from "../../../../_lib/i18n";
@@ -11,10 +12,8 @@ import { localizedHref } from "../../../../_lib/routes";
 //
 // Scope, per design.md/content-matrix.md ("Project Details" row): breadcrumb, meta row
 // (Client / Date / Role — Link is never rendered, no project supplies one), the MDX body,
-// and a prev/next footer. The Figma frame also draws a bottom "Gallery" section (4 sample
-// images) with no data of its own anywhere in the supplied content or the content matrix —
-// same reasoning as the omitted Link field, it is not built rather than reusing the body's
-// own photos a second time or fabricating a fourth. See DECISIONS.md.
+// a Gallery section (Phase 11a — see Gallery.tsx and DECISIONS.md D091), and a
+// prev/next footer.
 //
 // Role reuses the same `services` frontmatter Portfolio's grid/filter already renders
 // (design.md: 職責 = `services`, already captured by Phase 10) — joined into one string
@@ -199,6 +198,8 @@ export default function PortfolioDetail({
         <Cms body={entry.Body} className="lg:flex-1" />
       </div>
       <ShareRow locale={locale} title={frontmatter.title} />
+
+      <Gallery images={entry.galleryImages} label={detail.gallery} />
 
       <PortfolioPagination locale={locale} prev={prev} next={next} labels={detail} />
     </article>

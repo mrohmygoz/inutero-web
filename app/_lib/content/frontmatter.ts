@@ -54,6 +54,12 @@ export type Frontmatter = {
    * real supplied photo for its hero distinct from its listing-card poster.
    */
   heroImage: string;
+  /**
+   * Additional gallery photos, paths under `public/`, beyond what the article body
+   * already embeds — for projects with more supplied photography than reads well
+   * inline. Portfolio only; `[]` on news and when absent.
+   */
+  gallery: readonly string[];
 };
 
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
@@ -119,7 +125,28 @@ export function parseFrontmatter(
     image: parsePortfolioString(record.image, "image", file, type),
     client: parseOptionalPortfolioString(record.client, "client", file, type),
     heroImage: parseOptionalPortfolioString(record.heroImage, "heroImage", file, type),
+    gallery: parseGallery(record.gallery, file, type),
   };
+}
+
+/** Optional list of image paths. Absent or `[]` on portfolio; forbidden on news. */
+function parseGallery(
+  raw: unknown,
+  file: string,
+  type: "news" | "portfolio",
+): readonly string[] {
+  if (type === "news") {
+    if (raw !== undefined) {
+      throw new FrontmatterError(file, "gallery", "is only valid on portfolio entries");
+    }
+    return [];
+  }
+
+  if (raw === undefined) return [];
+  if (!Array.isArray(raw) || raw.some((value) => typeof value !== "string")) {
+    throw new FrontmatterError(file, "gallery", "must be a list of image path strings");
+  }
+  return raw as string[];
 }
 
 /** Required and non-empty on portfolio, forbidden on news. */

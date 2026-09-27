@@ -1,4 +1,4 @@
-import { readdirSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import type { ComponentType } from "react";
 import { locales, type Locale } from "../i18n";
@@ -24,6 +24,12 @@ export type ContentEntry = {
   frontmatter: Frontmatter;
   /** The compiled MDX body. Render it inside `<Cms>`, never bare. */
   Body: ComponentType;
+  /**
+   * Hero + body + `gallery` frontmatter images, combined and deduplicated by `src`,
+   * in that order. Empty `alt` for bare `gallery` paths (decorative). Portfolio-only
+   * in practice — news entries just get whatever their body embeds.
+   */
+  galleryImages: { src: string; alt: string }[];
 };
 
 export class ContentParityError extends Error {
@@ -84,6 +90,21 @@ const loaders: Record<ContentType, (locale: Locale, slug: string) => Promise<unk
   portfolio: (locale, slug) => import(`../../../content/portfolio/${locale}/${slug}.mdx`),
 };
 
+const MDX_IMAGE = /!\[([^\]]*)\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g;
+
+/**
+ * Images embedded in an `.mdx` file's body (markdown `![alt](src "title")` syntax),
+ * in document order. Reads the raw source directly — `getEntry`'s dynamic `import()`
+ * only yields the compiled `Body` and `frontmatter` exports, not the markdown text.
+ */
+function getBodyImages(type: ContentType, locale: Locale, slug: string): { src: string; alt: string }[] {
+  const file = path.join(CONTENT_ROOT, type, locale, `${slug}.mdx`);
+  const raw = readFileSync(file, "utf-8");
+  const body = raw.startsWith("---") ? raw.slice(raw.indexOf("---", 3) + 3) : raw;
+
+  return [...body.matchAll(MDX_IMAGE)].map((match) => ({ src: match[2], alt: match[1] }));
+}
+
 /**
  * Loads one entry and validates its frontmatter. Returns `null` only when the file
  * does not exist — the caller turns that into a 404. A file that exists but is
@@ -102,12 +123,28 @@ export async function getEntry(
   };
 
   const file = `content/${type}/${locale}/${slug}.mdx`;
+  const frontmatter = parseFrontmatter(mod.frontmatter, file, type);
+
+  const heroSrc = frontmatter.heroImage || frontmatter.image;
+  const sources = [
+    ...(heroSrc ? [{ src: heroSrc, alt: "" }] : []),
+    ...getBodyImages(type, locale, slug),
+    ...frontmatter.gallery.map((src) => ({ src, alt: "" })),
+  ];
+  const seen = new Set<string>();
+  const galleryImages = sources.filter(({ src }) => {
+    if (seen.has(src)) return false;
+    seen.add(src);
+    return true;
+  });
+
   return {
     type,
     locale,
     slug,
-    frontmatter: parseFrontmatter(mod.frontmatter, file, type),
+    frontmatter,
     Body: mod.default,
+    galleryImages,
   };
 }
 

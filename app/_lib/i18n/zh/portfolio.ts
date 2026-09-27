@@ -33,6 +33,7 @@ const portfolio: typeof enPortfolio = {
     metaClient: "合作夥伴",
     metaDate: "時間",
     metaRole: "職責",
+    gallery: "Gallery",
     prev: "上一個專案",
     next: "下一個專案",
   },
