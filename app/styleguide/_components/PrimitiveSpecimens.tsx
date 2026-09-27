@@ -128,8 +128,24 @@ export default function PrimitiveSpecimens({ locale = "en" }: { locale?: Locale 
         </div>
       </Row>
 
-      <Row label="ProjectCard">
+      {/* Both variants side by side. They are two page-level designs, not a
+          breakpoint pair — see ProjectCard.tsx. */}
+      <Row label="ProjectCard — variant=&quot;home&quot;">
         <ProjectCard
+          title={t.projectTitle}
+          dateLabel={t.projectDate}
+          description={t.projectDescription}
+          tags={[
+            { label: t.tagNeon, color: "neon" },
+            { label: t.tagYellow, color: "yellow" },
+            { label: t.tagOrange, color: "orange" },
+          ]}
+        />
+      </Row>
+
+      <Row label="ProjectCard — variant=&quot;portfolio&quot;">
+        <ProjectCard
+          variant="portfolio"
           title={t.projectTitle}
           dateLabel={t.projectDate}
           description={t.projectDescription}

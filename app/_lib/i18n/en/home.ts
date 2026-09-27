@@ -88,7 +88,7 @@ const home = {
         title: "Bottoms Up",
         description:
           "Bringing together L8ching, Giyu Tjuljaviya, and Erin Song, this tour transformed everyday encounters and musical rhythms into a shared live experience.",
-        tags: ["Artist Management", "Tour Planning", "PR & Marketing"],
+        tags: ["PR & Marketing", "Tour Planning", "Event Production"],
         image: "/images/projects/bottoms-up.jpg",
       },
       {
@@ -96,7 +96,7 @@ const home = {
         title: "Hotpot Band Show",
         description:
           'Hosted at Chan Chi Hot Pots Lab, Ximen, this event reimagined the classic "dinner show" concept, blending live performances with a hotpot dining experience.',
-        tags: ["Tour Planning", "PR & Marketing"],
+        tags: ["PR & Marketing", "Event Production"],
         image: "/images/projects/hotpot-band-show.jpg",
       },
       {
@@ -104,7 +104,7 @@ const home = {
         title: "Inner Voices of That Day",
         description:
           "Partnering with Huan Huan, we brought music directly to local communities, creating warm, cross-generational gatherings for seniors and neighbors alike around Mother's Day.",
-        tags: ["Tour Planning", "PR & Marketing"],
+        tags: ["PR & Marketing", "Tour Planning", "Event Production"],
         image: "/images/projects/inner-voices-of-that-day.jpg",
       },
     ],

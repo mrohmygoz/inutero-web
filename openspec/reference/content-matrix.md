@@ -88,7 +88,7 @@ below cannot ship more than a shell without them.
 
 | Page | Missing | Blocks |
 | :--- | :--- | :--- |
-| Portfolio | All project card content (5 cards) | Phase 10 |
+| ~~Portfolio~~ **delivered** | ~~All project card content (5 cards)~~ — Figma's slot counts are drawn samples and disagree with each other (11 desktop, 5 mobile). The three real projects on the Project Details tab were the whole supplied set, and Phase 6 had already transcribed their EN and ZH copy into `home.ts`. They now live as MDX under `content/portfolio/{en,zh}/`. **No AI-generated copy was needed.** A fourth project needs a fourth MDX pair. | ~~Phase 10~~ — done |
 | Project Details | All per-project article bodies and client quotes | Phase 11 |
 | Featured Artists | Card content beyond the 8 artists listed below (design has 16 slots) | Phase 12 |
 | News | Featured-banner content; all article card copy | Phase 13 |
@@ -96,7 +96,7 @@ below cannot ship more than a shell without them.
 | ~~Our Story~~ **delivered** | ~~Team member bios; 2nd team card~~ — the client supplied 9 real members with photos and Chinese descriptions; transcribed into `app/_lib/team.ts` (D051). Figma's 5-card Lorem-ipsum sample was a drawn sample, not a count. | ~~Phase 7~~ — done |
 | Our Story | Web Design credit name + IG handle (`待補庭嘉露出名稱＆IG`) | Phase F — the Credits section itself was deferred out of Phase 7 by user decision; see `roadmap.md` → Inherited Work |
 | Services | One further FAQ answer marked `（待補，向子皿搜集）` | Phase 9 |
-| Portfolio / Artists | Filter tag names beyond the 4 given | Phases 10, 12 |
+| ~~Portfolio~~ / Artists | ~~Filter tag names beyond the 4 given~~ — the five given ARE the full set for Portfolio; the sheet's 備註 says so and Figma draws exactly five. Still open for Artists. | ~~Phase 10~~ / Phase 12 |
 
 The Chinese columns for Portfolio, Project Details, Artists, News, and News Details cards
 carry the note *「可以先用AI製作中文內容提供中文版形示意」* — placeholder Chinese may be
@@ -370,7 +370,13 @@ from the Final column below, not from the Figma text layers.
 | :--- | :--- | :--- | :--- |
 | Hero — tagline | PORTFOLIO *(was `CASE STUDIES`)* | `keep EN` | — |
 | Hero — heading | ALL PROJECTS | 過往專案 | — |
+
+**Both TC frames draw `過往案例`** — the NAV's link label for this route — where this table gives
+`過往專案`. The matrix wins (D032, D088). The mobile frames also draw `CASE STUDIES` for the
+eyebrow, which this table renames to `PORTFOLIO`.
+| Filter label | Filter | **專案種類** *(both TC frames — not a translation of "Filter")* | `12368:2462` |
 | Filter tags (5) | All / Artist Management / Global Touring / PR & Marketing / Event Production | 全選／藝人經紀／巡演規劃／行銷宣傳／活動製作 | `12210:3091,3092` |
+| Empty state *(new)* | No projects in this category yet. | 此分類目前尚無專案。 | — *(derived, D085)* |
 
 **Note the filter tag names are the service lines**, and #4 is `活動製作` (conflict #1
 resolution). The sheet's 備註 says the remaining tag names were never expanded in Figma —
@@ -380,14 +386,29 @@ these five are the full set given.
 
 | Instruction | Element | Meaning |
 | :--- | :--- | :--- |
-| `REMOVE` | Header description paragraph, nodes `12219:1066`, `12210:3075` | `直接刪除段落` — the "A selection of projects connecting artists, audiences, and culture." line is dropped. |
+| `REMOVE` | Header description paragraph, nodes `12219:1066`, `12210:3075` | `直接刪除段落` — the "A selection of projects connecting artists, audiences, and culture." line is dropped. **Phase 10 found no such paragraph in any of the four frames** — the header is the eyebrow rail and the heading only. Nothing had to be removed; the instruction is already satisfied. |
 
 ### Portfolio — project cards
 
-All `待補`. Figma has 5 card slots (`12219:1187, 1258, 1279, 1234, 1300`), expandable. The
-sheet's 備註: *「元件未展開，需逐一提供各作品資訊」* — each project's information must be
-supplied individually. Three real projects are described on the Project Details tab (below)
-and can seed the first three cards.
+**Resolved in Phase 10.** The three projects on the Project Details tab (below) were the whole
+supplied set, and they seed the grid. Figma's slot counts are drawn samples and contradict each
+other — 11 at desktop, 5 at mobile — so neither was ever a project count.
+
+| Project | Slug | Tags (職責) |
+| :--- | :--- | :--- |
+| Vol.3 彼日的心內話 / Inner Voices of That Day | `inner-voices-of-that-day` | 行銷宣傳 / 巡演規劃 / 活動製作 |
+| Vol.2 一起喝酒的朋友 / Bottoms Up | `bottoms-up` | 行銷宣傳 / 巡演規劃 / 活動製作 |
+| Vol.1 鍋 Band Show / Hotpot Band Show | `hotpot-band-show` | 行銷宣傳 / 活動製作 |
+
+**The tags are the 職責 rows, not Figma's card tags** (D087). Figma repeats one placeholder
+triple on every sample slot, which is how Phase 6 acquired it for Home; Home was realigned to
+the sheet in Phase 10. **No project carries 藝人經紀**, so that filter shows the empty state.
+
+Both language columns were already delivered — Phase 6 transcribed the EN and ZH card copy into
+`home.ts` from this sheet, and Phase 10 moved it into MDX frontmatter. The
+*「可以先用AI製作中文內容提供中文版形示意」* allowance was **not** used for this page.
+
+Card bodies remain `待補` and are Phase 11's.
 
 ## Project Details
 

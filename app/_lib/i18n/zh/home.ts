@@ -76,9 +76,14 @@ const home: typeof enHome = {
   // See en.ts for the card-slot rationale. Card 3 replaces Figma's
   // 臥軌的火車：台灣巡迴【昨日重現】 with the matrix's Vol.3 (D032).
   //
-  // The card tags ARE translated here — the TC frames draw 藝人經紀 / 巡演規劃 /
-  // 行銷宣傳, matching the service item titles. The section eyebrow is not: the
-  // matrix marks `PORTFOLIO` as `keep EN`.
+  // The card tags ARE translated here — the TC frames draw the service item
+  // titles. The section eyebrow is not: the matrix marks `PORTFOLIO` as
+  // `keep EN`.
+  //
+  // Phase 10 corrected the tag SETS. Figma repeats one placeholder triple on
+  // every sample card; the real per-project 職責 is on the matrix's Project
+  // Details tab, and that is what both this section and the Portfolio grid now
+  // use. No project carries 藝人經紀.
   featuredProjects: {
     eyebrow: "Portfolio",
     heading: "代表案例",
@@ -89,7 +94,7 @@ const home: typeof enHome = {
         title: "一起喝酒的朋友",
         description:
           "集結雷擎 L8ching、張淦勛 Giyu Tjuljaviya、宋楚琳，將日常相遇與音樂節奏化為巡迴演出。",
-        tags: ["藝人經紀", "巡演規劃", "行銷宣傳"],
+        tags: ["行銷宣傳", "巡演規劃", "活動製作"],
         image: "/images/projects/bottoms-up.jpg",
       },
       {
@@ -97,7 +102,7 @@ const home: typeof enHome = {
         title: "鍋 Band Show",
         description:
           "於詹記西門大世界舉辦，結合的復古餐廳秀概念，帶聽眾一邊看表演、一邊大啖美味麻辣火鍋。",
-        tags: ["巡演規劃", "行銷宣傳"],
+        tags: ["行銷宣傳", "活動製作"],
         image: "/images/projects/hotpot-band-show.jpg",
       },
       {
@@ -105,7 +110,7 @@ const home: typeof enHome = {
         title: "彼日的心內話",
         description:
           "攜手緩緩 Huan Huan 先後走訪台北市中山老人住宅暨服務中心、彰化花壇安耆日照中心，以及彰化北斗有冊店，在母親節前後為長輩與在地社區帶來一場場跨世代的音樂相聚。",
-        tags: ["巡演規劃", "行銷宣傳"],
+        tags: ["行銷宣傳", "巡演規劃", "活動製作"],
         image: "/images/projects/inner-voices-of-that-day.jpg",
       },
     ],

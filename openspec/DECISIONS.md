@@ -88,6 +88,15 @@ Do **not** record things readable from the code or the design itself.
 - [D077 — The Footer's Services sub-links deep-link to anchors on the Services page](#d077--the-footers-services-sub-links-deep-link-to-anchors-on-the-services-page)
 - [D078 — The FAQ icons are their own exports, not the Home pair recoloured](#d078--the-faq-icons-are-their-own-exports-not-the-home-pair-recoloured)
 - [D079 — `Label/M` in Mobile Chinese is wrong in `globals.css` — reported, deliberately not fixed](#d079--labelm-in-mobile-chinese-is-wrong-in-globalscss--reported-deliberately-not-fixed)
+- [D080 — The Portfolio grid is driven by the MDX manifest, not a parallel data module](#d080--the-portfolio-grid-is-driven-by-the-mdx-manifest-not-a-parallel-data-module)
+- [D081 — `services` is validated per content type inside the one frontmatter guard](#d081--services-is-validated-per-content-type-inside-the-one-frontmatter-guard)
+- [D082 — `ProjectCard` takes a `variant`, and the variants differ by more than child order](#d082--projectcard-takes-a-variant-and-the-variants-differ-by-more-than-child-order)
+- [D083 — The Portfolio filter's behaviour is entirely derived — the sweep found no prototype](#d083--the-portfolio-filters-behaviour-is-entirely-derived--the-sweep-found-no-prototype)
+- [D084 — The paginator renders nothing below two pages, and its page size is derived](#d084--the-paginator-renders-nothing-below-two-pages-and-its-page-size-is-derived)
+- [D085 — The empty filter shows a line of copy; tags are never disabled](#d085--the-empty-filter-shows-a-line-of-copy-tags-are-never-disabled)
+- [D086 — The Portfolio grid stays 3-up with fluid columns down to 1024px](#d086--the-portfolio-grid-stays-3-up-with-fluid-columns-down-to-1024px)
+- [D087 — Project card tags come from the sheet's 職責, not Figma's sample triple](#d087--project-card-tags-come-from-the-sheets-職責-not-figmas-sample-triple)
+- [D088 — The Portfolio page heading is 過往專案, against both TC frames](#d088--the-portfolio-page-heading-is-過往專案-against-both-tc-frames)
 
 ## D001 — Locale strategy
 
@@ -1739,3 +1748,190 @@ and the eyebrow dominates in TC at exactly 78px either way.
 **How to apply:** do not "fix" this in passing. It repaints every zh mobile eyebrow site-wide
 across already-approved pages and needs its own change with its own before/after review.
 
+
+
+## D080 — The Portfolio grid is driven by the MDX manifest, not a parallel data module
+
+**Decision:** `app/[locale]/portfolio/page.tsx` reads `getManifest("portfolio")` at build time and
+hands the client grid serialisable rows only — `slug`, `title`, `dateLabel`, `excerpt`, `image`,
+`services`. Never `Body`, which is a component and does not cross the server/client boundary.
+
+**Why not a `projects.ts` mirroring `team.ts`:** Phase 7's `team.ts` is right for team members —
+they have no detail page and never will. Projects already had a live detail route
+(`app/[locale]/portfolio/[slug]`, Phase 4) and MDX files behind it. A parallel array would have
+to be deleted by Phase 11, and until then the listing and the detail page could disagree about a
+project's own title.
+
+Three consequences worth stating. The MDX **basename is the slug**, so
+`huan-huan-free-tour.mdx` was renamed to `inner-voices-of-that-day.mdx` to match the title the
+matrix gives it. Listing order is **newest first by `date`** — derived, because the drawn card
+order is sample data and an index with no sort control reads chronologically. And two portfolio
+frontmatter fields exist purely for the card: `dateLabel` and `image`.
+
+**Why `dateLabel` is authored, not derived from `date`:** the card's date line is
+`2025.11 In Utero Present Vol.2` in English and `2025.11 子皿 In Utero Present Vol.2` in Chinese.
+The series half is translated, so the line cannot be composed from one ISO string.
+
+**How to apply:** when a listing page and a detail page describe the same thing, give them one
+source. A second array is a drift generator, not a shortcut.
+
+## D081 — `services` is validated per content type inside the one frontmatter guard
+
+**Decision:** `parseFrontmatter(raw, file, type)` takes the content type and applies three
+portfolio-only fields — `services`, `dateLabel`, `image`. On `portfolio` they are required; on
+`news` they are **forbidden**, not merely optional, and supplying one throws. `services` values
+must be ids from `serviceAnchors` in `routes.ts`; an unknown id throws naming the file, the id,
+and the full set of valid ids.
+
+**Why ids from `serviceAnchors`:** the Portfolio filter row and the Services page name the same
+four service lines. Pairing them on a shared id is the same move D077 made for the Footer — the
+two lists cannot drift on identity even though they deliberately drift on wording (see below).
+
+**Why one guard, not `parsePortfolioFrontmatter`:** two guards over three shared fields would
+duplicate the error-message work, and `news` would drift the moment it gained a field of its own.
+
+**Why "forbidden" rather than "ignored":** a `services:` block on a news entry is an authoring
+mistake. Silently dropping it is the kind of quiet fallback D002 exists to prevent.
+
+## D082 — `ProjectCard` takes a `variant`, and the variants differ by more than child order
+
+**Decision:** `variant?: "home" | "portfolio"`, defaulting to `"home"`. Never an `lg:` switch —
+the split is per **page**, not per breakpoint. The Portfolio card is image-first at 393px too.
+
+**Correcting the record.** Every prior note — `INVENTORY.md`, the roadmap's Inherited Work row,
+and this phase's own design.md — said the two cards are the same elements in a different
+sequence. A `get_design_context` diff of `12610:6812` against the shipped component disproved it:
+
+| Aspect | `home` | `portfolio` |
+| :--- | :--- | :--- |
+| Order | tags → title → date → image → description | image → tags → title → date → description |
+| Image | `aspect-[333/445]`, inset inside the card padding | fixed **352.386px**, full-bleed to the card edge |
+| Padding | one `px-[10px] py-[13px]` box | `p-[0.542px]` card + `px-[12px] py-[20px]` content block |
+| Block gap | 15px | 16px, description on its own `pt-[8px]` |
+| Title / description | `text-4xl` / `text-xs`+20 | `Accent/Display` / `Body/S` |
+
+The type deltas are ≤1px and are deliberately **not** reconciled — Close tier. The load-bearing
+differences are the full-bleed fixed-height image and the card-vs-content padding split.
+
+**Why one prop still holds.** Desktop `12610:6812` and mobile `12219:1187` are structurally
+identical, differing only in the width the caller sets (325.33px in the 3-up, 363px at mobile),
+so the portfolio variant is a single non-responsive tree. And the prop selects a whole body
+layout rather than composing independent booleans, so there is no second axis to grow. A third
+page-level card design would be a third `variant` value, not a matrix.
+
+**The image box is a fixed height, not an aspect ratio** — the opposite of the `home` variant's
+correction in Phase 6. Figma draws 352.386px on both the 325.33px and the 363px card, so the box
+genuinely does not scale with the card's width here.
+
+**How to apply:** verify a "same elements, different order" claim against the design before
+building on it. The prop survived the correction; the reasoning behind it did not.
+
+## D083 — The Portfolio filter's behaviour is entirely derived — the sweep found no prototype
+
+**Finding first.** A `node.reactions` sweep of all four Portfolio frames found reactions on
+exactly three things: the NAV, the Footer, and the **grid container** (`12573:6947`, ON_CLICK →
+`12612:8706` Portfolio Details — which is why the cards link). Not one filter tag and not one
+pagination control carries a reaction. Recorded because "no prototype found" is evidence, the
+precedent D074 set for the Services FAQ.
+
+**Decision:** single-select, `All` active on load, re-clicking the active tag is a no-op, and the
+page index resets to 1 on any filter change. No motion — the grid re-renders, it does not
+transition; D041's 300ms is a disclosure timing and does not carry over. Tags are `<button>`s in
+a `role="group"` with `aria-pressed`, in native tab order (five controls do not justify a roving
+tabindex), and the grid region is `aria-live="polite"` so the change is announced.
+
+**Not built:** multi-select (Figma draws a single-select row), and URL-synced filter state — not
+designed, not asked for, and it would make the canonical URL ambiguous for the `hreflang` pairs
+Phase F audits.
+
+**The selected/unselected pair is the design's own, taken from mobile.** The mobile frame draws
+the active chip with a full-opacity white border and the rest at white/20 — already transcribed
+as `Tag`'s `state` prop in Phase 2. The **desktop frame draws every chip in the selected state**,
+so it carries no pair; mobile is the only frame that shows both. Mobile wins, at both breakpoints.
+
+## D084 — The paginator renders nothing below two pages, and its page size is derived
+
+**Decision:** `app/_components/Pagination.tsx` is presentational and controlled, and returns
+`null` when `pageCount < 2`. With three projects the row does not appear.
+
+**Why the page size is derived:** Figma's two grids disagree — **11 slots at desktop, 5 at
+mobile**. Neither is a project count and neither is a page size the design states. Nine ships:
+three full desktop rows, one value at both breakpoints.
+
+**Why it auto-hides rather than rendering inert:** the frame draws page 1 of a 10-page set, which
+is sample data in the same way the card's "Bottom's Up" is. An always-visible `1 … Next` on a
+single-page listing would be a state the design never draws. Omitting the component entirely was
+the other option and was rejected — Phase 11 needs it the moment a fourth project lands.
+
+**What the gate could not see.** The paginator ships built and unreachable in the browser. It was
+verified by temporarily lowering the page size to 2: the row renders at both breakpoints and both
+locales, `Next` advances to page 2, `aria-current` follows. That is a temporary-state check, not
+a page state a reviewer can reach.
+
+Ellipsis logic is generalised from the drawn `1 2 3 … 10`: first, last, and the current page's
+neighbours, with a gap wherever the run breaks. `Next` is `disabled` on the last page — derived;
+the frame draws one state only.
+
+## D085 — The empty filter shows a line of copy; tags are never disabled
+
+**Decision:** when a filter matches nothing, a localized line renders in the grid area. Figma
+draws no empty state, and `Artist Management / 藝人經紀` matches none of the three supplied
+projects, so this state is reachable on day one.
+
+**Why not disable tags with zero matches:** the filter row's contents would then depend on which
+projects happen to exist. The row would change shape when Phase 11 adds a project, and a visitor
+could never see the full set of service lines the page is advertising.
+
+The copy lives in the i18n dictionary, not inline.
+
+## D086 — The Portfolio grid stays 3-up with fluid columns down to 1024px
+
+**Decision:** single column below 1024px (where `Nav` already switches), and **3-up with fluid
+column widths** from 1024px to 1440px. The 320px filter rail and the 1024px grid both shrink
+proportionally; the grid never drops to 2-up.
+
+CLAUDE.md names "a 3-up grid that must become 2-up" as a stop-and-ask case rather than a trivial
+interpolation, so it was asked. Chosen over a 2-up band because it adds no breakpoint the design
+does not draw.
+
+**The cost, stated:** cards get narrow near 1024px. Phase F's tablet audit inherits it.
+
+## D087 — Project card tags come from the sheet's 職責, not Figma's sample triple
+
+**Decision:** a project's tags — and the `services` ids the filter runs on — are the
+`職責` rows on the matrix's Project Details tab. **Home's three cards were realigned to match**,
+a content-only edit to `home.ts` with no layout change.
+
+**Why Figma loses here:** the sample card repeats one placeholder triple (`Artist Management /
+Tour Planning / PR & Marketing`) on every slot, which is how Phase 6 acquired it. The 職責 rows
+are per-project client data. The two disagreed on all three projects.
+
+**The consequence to know:** no supplied project carries `藝人經紀 / Artist Management`, so that
+filter is empty — which is what D085 exists for. Under Figma's tags Vol.2 would have matched it
+and the empty state would never have been reachable.
+
+**One English name deliberately differs across pages.** The matrix gives the Portfolio filter
+`Global Touring`, where the Services page and the Footer call the same line
+`International Booking & Tour Planning` and Home's cards say `Tour Planning`. Three English names,
+one service line, one shared id. The ids are what must not drift; the wording is the matrix's
+call per page.
+
+**Home is otherwise pixel-identical.** Measured before and after at both breakpoints and both
+locales: every card byte-identical except EN card 3, which grew 29px because the corrected tag set
+wraps to a second row. Chinese is unchanged at every combination.
+
+## D088 — The Portfolio page heading is 過往專案, against both TC frames
+
+**Decision:** the heading reads `過往專案`. Both TC frames — desktop `12635:12926` and mobile
+`12368:2453` — draw `過往案例`, which is the NAV's *link label* for this route. The matrix gives
+`過往專案` for the page heading, and D032 makes the matrix outrank the Figma text layers.
+
+Two smaller instances of the same rule on this page: the eyebrow is `PORTFOLIO` where both mobile
+frames draw `CASE STUDIES`, and the filter label is `專案種類` in **both** TC frames — a genuinely
+different string, not a translation of `Filter`.
+
+**A drift this creates, stated.** The mobile TC header measures 163px against the frame's 213px.
+The frame's height is set by its rotated eyebrow rail, which is sized for `CASE STUDIES` at the
+Mobile Chinese `Label/M` — copy the matrix replaced and a token D079 already reports as wrong.
+It is not reproducible with the delivered copy and was not chased. Mobile EN is within 1px
+(242.19 against 243) and both desktop headers are exact (590 EN, 444 TC).

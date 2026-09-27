@@ -106,7 +106,7 @@ export async function getEntry(
     type,
     locale,
     slug,
-    frontmatter: parseFrontmatter(mod.frontmatter, file),
+    frontmatter: parseFrontmatter(mod.frontmatter, file, type),
     Body: mod.default,
   };
 }
@@ -130,4 +130,9 @@ export async function getManifest(type: ContentType): Promise<ContentEntry[]> {
   return entries;
 }
 
-export { parseFrontmatter, FrontmatterError, type Frontmatter } from "./frontmatter";
+export {
+  parseFrontmatter,
+  FrontmatterError,
+  type Frontmatter,
+  type ServiceId,
+} from "./frontmatter";
