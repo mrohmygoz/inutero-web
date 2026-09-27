@@ -26,6 +26,16 @@ const portfolio: typeof enPortfolio = {
     label: "專案分頁",
     page: "第",
   },
+  // Breadcrumb uses 過往案例 — the NAV link label from routes.ts (content matrix's
+  // own breadcrumb row), not this page's 過往專案 heading override above.
+  detail: {
+    breadcrumb: "過往案例",
+    metaClient: "合作夥伴",
+    metaDate: "時間",
+    metaRole: "職責",
+    prev: "上一個專案",
+    next: "下一個專案",
+  },
 };
 
 export default portfolio;

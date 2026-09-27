@@ -37,6 +37,18 @@ const portfolio = {
     label: "Portfolio pages",
     page: "Page",
   },
+  // Portfolio Details (Phase 11). Desktop 12612:8706, mobile 12211:3371.
+  // Breadcrumb label is "Portfolio" per the content matrix — the page's NAV
+  // link label from routes.ts, not the Portfolio hero's own "All projects"
+  // heading text.
+  detail: {
+    breadcrumb: "Portfolio",
+    metaClient: "Client",
+    metaDate: "Date",
+    metaRole: "Role",
+    prev: "Previous project",
+    next: "Next project",
+  },
 };
 
 export default portfolio;

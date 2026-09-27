@@ -1983,3 +1983,44 @@ but the real data can reorder or vary its list, key the mapping on identity, nev
 index. A positional scheme is only as safe as the assumption that every list is ordered the
 same way, and that assumption breaks silently, not loudly, the first time real content departs
 from the sample.
+
+## D090: Portfolio Details — `client` is optional-but-typed, the Gallery section is not built, prev/next replaces the sample "1/12" counter
+
+**Context.** Phase 11 built the real Portfolio Details page (`/[locale]/portfolio/[slug]`)
+against desktop `12612:8706` / mobile `12211:3371`. Three gaps surfaced between the Figma
+frame and the supplied real content.
+
+**`client` (合作夥伴) is the one frontmatter field allowed empty on portfolio.** Every other
+portfolio-only field (`dateLabel`, `image`, `services`) is required-and-non-empty; `client`
+follows the same required-as-a-concept/forbidden-on-news shape but is allowed `""`, because
+the supplied content sheet has no 合作夥伴 value for one of the three real projects (Vol.3
+彼日的心內話). Forcing a value would fabricate content the client never supplied. The meta row
+renders whichever of Client/Date/Role have a value and simply omits the row when `client` is
+`""` — not a broken state, the same treatment the rest of the site gives optional content.
+
+**The Figma frame's bottom "Gallery" section (4 sample images, node `12573:7449` desktop /
+`12211:3462` mobile) is not built.** No project's supplied content includes a distinct gallery
+image set — only the 1–3 photos already interspersed through each MDX body (design.md §2a).
+Building a Gallery strip would mean either reusing those same body photos a second time or
+inventing placeholder images for the fourth slot Figma draws; both fabricate content the same
+way an invented `Link` value would. Same reasoning `Link` already established — see below.
+
+**`Link` is still not rendered** (the meta row templates Client/Date/Role/Link; no real project
+supplies a link value, so the row is dropped rather than filled with a placeholder URL).
+
+**The mobile-only "Back to portfolio / 1 / 12" control (`12211:3496`, no desktop counterpart in
+either node metadata or a `node.reactions` sweep) became a real prev/next pair between the
+three projects, built at both breakpoints.** The drawn "1/12" is Figma's own sample-data
+pagination for a 12-item set that never existed; the real set is three items, all supplied.
+Order is the content manifest's own slug order (`bottoms-up`, `hotpot-band-show`,
+`inner-voices-of-that-day` — alphabetical, which is also file-creation order), wrapping at
+both ends so the first and last project each keep both directions. Desktop draws no such
+control in Figma; building it there anyway is a Derived addition (no design to match at that
+breakpoint) rather than a reported match — the site needs a way to move between projects at
+every width, and mobile's real prototype-adjacent control is the only reference available.
+
+**How to apply:** when a Figma frame draws a decorative or sample-count section with no
+corresponding real content (a gallery of N images, a "page 1 of 12" counter, a Link field with
+no supplied URL), do not fill it with placeholder or duplicated content to match the frame's
+shape. Render only what real content justifies, and record the gap here rather than silently
+matching or silently dropping it.

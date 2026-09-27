@@ -40,6 +40,20 @@ export type Frontmatter = {
   dateLabel: string;
   /** Listing-card poster, a path under `public/`. Portfolio only; `""` on news. */
   image: string;
+  /**
+   * Collaborating artists/partners (合作夥伴), shown in the detail page's meta
+   * row. Portfolio only, forbidden on news — but unlike `dateLabel`/`image`/
+   * `services`, allowed to be `""`: the supplied data omits it for one of the
+   * three real projects, and forcing a value would fabricate content (D090).
+   */
+  client: string;
+  /**
+   * Detail-page hero background, a path under `public/`. Portfolio only,
+   * optional — falls back to `image` (the listing poster) when absent, which
+   * is what every entry did before this field existed. Lets a project use a
+   * real supplied photo for its hero distinct from its listing-card poster.
+   */
+  heroImage: string;
 };
 
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
@@ -103,6 +117,8 @@ export function parseFrontmatter(
     services: parseServices(record.services, file, type),
     dateLabel: parsePortfolioString(record.dateLabel, "dateLabel", file, type),
     image: parsePortfolioString(record.image, "image", file, type),
+    client: parseOptionalPortfolioString(record.client, "client", file, type),
+    heroImage: parseOptionalPortfolioString(record.heroImage, "heroImage", file, type),
   };
 }
 
@@ -128,6 +144,36 @@ function parsePortfolioString(
   }
   if (typeof raw !== "string" || raw.trim() === "") {
     throw new FrontmatterError(file, field, "must be a non-empty string");
+  }
+  return raw;
+}
+
+/**
+ * Allowed absent (`undefined`) or empty on portfolio — the one field in the
+ * contract that is optional-but-typed rather than required-but-typed, since
+ * the supplied data has no value for one of the three real projects. Still
+ * forbidden (must be absent) on news, matching the other portfolio-only
+ * fields.
+ */
+function parseOptionalPortfolioString(
+  raw: unknown,
+  field: string,
+  file: string,
+  type: "news" | "portfolio",
+): string {
+  if (type === "news") {
+    if (raw !== undefined) {
+      throw new FrontmatterError(
+        file,
+        field,
+        "is only valid on portfolio entries",
+      );
+    }
+    return "";
+  }
+  if (raw === undefined) return "";
+  if (typeof raw !== "string") {
+    throw new FrontmatterError(file, field, `must be a string, got ${typeof raw}`);
   }
   return raw;
 }

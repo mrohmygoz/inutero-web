@@ -90,6 +90,7 @@ const home: typeof enHome = {
     cta: "完整案例",
     cards: [
       {
+        slug: "bottoms-up",
         dateLabel: "2025.11 子皿 In Utero Present Vol.2",
         title: "一起喝酒的朋友",
         description:
@@ -102,6 +103,7 @@ const home: typeof enHome = {
         image: "/images/projects/bottoms-up.jpg",
       },
       {
+        slug: "hotpot-band-show",
         dateLabel: "2024.09 子皿 In Utero Present Vol.1",
         title: "鍋 Band Show",
         description:
@@ -113,6 +115,7 @@ const home: typeof enHome = {
         image: "/images/projects/hotpot-band-show.jpg",
       },
       {
+        slug: "inner-voices-of-that-day",
         dateLabel: "2026.05 子皿 In Utero Present Vol.3",
         title: "彼日的心內話",
         description:

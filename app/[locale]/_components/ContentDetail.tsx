@@ -5,13 +5,13 @@ import type { ContentEntry } from "../../_lib/content";
 /**
  * Deliberately plain wrapper for an MDX-backed detail page (D-E).
  *
- * This is NOT the designed detail page. News Details (Phase 14, 6448px tall) and
- * Portfolio Details (Phase 11) supply the hero, meta row, share rails, and related-posts
- * sections; building any of that here would be starting the next phase. The bar this
- * wrapper has to clear is "the pipeline works and the body is styled", nothing more.
+ * This is NOT the designed detail page. Phase 11 replaced it for `portfolio/[slug]` with
+ * `PortfolioDetail`, which supplies the hero, meta row, share rail, and pagination footer.
+ * `news/[slug]` still renders through here until Phase 14 (6448px tall) builds its own
+ * detail component the same way — deleting this now would break that route.
  *
  * Like `PagePlaceholder`, this is throwaway scaffolding — colocated under `[locale]/`,
- * not in `app/_components/` or INVENTORY.md. Phases 11 and 14 replace it wholesale.
+ * not in `app/_components/` or INVENTORY.md.
  */
 export default function ContentDetail({ entry }: { entry: ContentEntry }) {
   return (

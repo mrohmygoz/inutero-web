@@ -28,8 +28,7 @@ function tagsFor(tags: readonly { id: keyof typeof serviceTagColor; label: strin
 
 export default function HomeFeaturedProjects({ locale }: { locale: Locale }) {
   const { featuredProjects } = getDictionary(locale).home;
-  // Every card points at the portfolio index: no slugs exist until Phase 11. The
-  // prototype wires these to Portfolio Details, so Phase 11 repoints them.
+  // Portfolio index href, still used by the section's own CTA buttons below.
   const portfolioHref = localizedHref("portfolio", locale);
 
   const cards = featuredProjects.cards.map((card) => (
@@ -40,7 +39,7 @@ export default function HomeFeaturedProjects({ locale }: { locale: Locale }) {
       description={card.description}
       tags={tagsFor(card.tags)}
       image={{ src: card.image, alt: "" }}
-      href={portfolioHref}
+      href={`${portfolioHref}/${card.slug}`}
     />
   ));
 
