@@ -97,6 +97,7 @@ Do **not** record things readable from the code or the design itself.
 - [D086 — The Portfolio grid stays 3-up with fluid columns down to 1024px](#d086--the-portfolio-grid-stays-3-up-with-fluid-columns-down-to-1024px)
 - [D087 — Project card tags come from the sheet's 職責, not Figma's sample triple](#d087--project-card-tags-come-from-the-sheets-職責-not-figmas-sample-triple)
 - [D088 — The Portfolio page heading is 過往專案, against both TC frames](#d088--the-portfolio-page-heading-is-過往專案-against-both-tc-frames)
+- [D089 — Project tag colors are fixed per service identity, site-wide](#d089--project-tag-colors-are-fixed-per-service-identity-site-wide)
 
 ## D001 — Locale strategy
 
@@ -1935,3 +1936,50 @@ The frame's height is set by its rotated eyebrow rail, which is sized for `CASE 
 Mobile Chinese `Label/M` — copy the matrix replaced and a token D079 already reports as wrong.
 It is not reproducible with the delivered copy and was not chased. Mobile EN is within 1px
 (242.19 against 243) and both desktop headers are exact (590 EN, 444 TC).
+
+
+## D089 — Project tag colors are fixed per service identity, site-wide
+
+**Finding.** Both `ProjectCard` consumers assigned solid tag colors by **position**, not by
+which service the tag names. Home's `tagsFor` counted inward from a fixed 3-service order
+(Artist Management / Tour Planning / PR & Marketing → neon / yellow / orange) and took a
+suffix; `PortfolioGrid` cycled `["neon", "yellow", "orange"]` by array index. Both assumed
+every card lists its tags in the same order. Phase 10's D087 broke that assumption — the real
+per-project 職責 order differs card to card — so the same service painted differently between
+cards, and, since Home and Portfolio built their positional schemes independently, differently
+between the two pages too.
+
+**Decision:** `serviceTagColor: Record<ServiceId, TagColor>`, exported from `ProjectCard.tsx`,
+is the one place a service maps to a color:
+
+| Service | Color |
+| :--- | :--- |
+| `artist-management` | neon |
+| `international-booking` | yellow |
+| `pr-marketing` | orange |
+| `event-production` | green *(new)* |
+
+The first three preserve Figma's own sample card (`12610:6812`), which colors exactly those
+three tags that way. Every consumer now looks up color by the tag's service id, never its
+index — `PortfolioGrid` already carried the id via `frontmatter.services`; `home.ts`'s
+`featuredProjects.cards[].tags` changed from bare label strings to `{ id, label }` pairs so
+Home has an id to look up too, without touching either locale's page-specific wording.
+
+**Why a 4th color, and why this one.** No project in the supplied set carries
+`artist-management`, and every one carries `event-production` (D087) — so a 3-color fixed
+map would leave Event Production undifferentiated from whichever color it happened to land on.
+Figma never draws a 4th tag color: its sample cards use the same three-tag placeholder
+everywhere, and `design-tokens.md` lists exactly three `Brand/Accent` colors. Rather than invent
+a hex value, `Tag` gained a fourth `TagColor` value, `green`, bound to the already-existing
+`--color-brand-primary-green` token — a real token, just previously used elsewhere (the
+eyebrow dot, `Cta`'s green tone), not a new one.
+
+**Verified:** `PR & Marketing` / 行銷宣傳 is orange, `Tour Planning`/`Global Touring` / 巡演規劃
+is yellow, and `Event Production` / 活動製作 is green on every card, on both Home and Portfolio,
+in both locales — checked by reading each tag's computed background color in the rendered page.
+
+**How to apply:** when a design's sample data implies a fixed mapping (color, icon, position)
+but the real data can reorder or vary its list, key the mapping on identity, never on array
+index. A positional scheme is only as safe as the assumption that every list is ordered the
+same way, and that assumption breaks silently, not loudly, the first time real content departs
+from the sample.

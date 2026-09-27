@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import ProjectCard, { type ProjectCardTag } from "../../../_components/ProjectCard";
+import ProjectCard, { type ProjectCardTag, serviceTagColor } from "../../../_components/ProjectCard";
 import Pagination from "../../../_components/Pagination";
 import Tag from "../../../_components/Tag";
 import { serviceAnchors } from "../../../_lib/routes";
@@ -36,9 +36,6 @@ type FilterCopy = {
   tags: Record<ServiceId, string>;
   empty: string;
 };
-
-// Figma colours the three card tags neon / yellow / orange in order.
-const tagColors = ["neon", "yellow", "orange"] as const;
 
 // Derived. Figma's two grids disagree — 11 slots at desktop, 5 at mobile — so
 // neither is a page size the design states. Nine is three full desktop rows.
@@ -116,9 +113,12 @@ export default function PortfolioGrid({
               description={project.excerpt}
               image={{ src: project.image, alt: project.title }}
               tags={project.services.map(
-                (service, index): ProjectCardTag => ({
+                (service): ProjectCardTag => ({
                   label: filter.tags[service],
-                  color: tagColors[index % tagColors.length],
+                  // Fixed per service (`serviceTagColor`), not per position —
+                  // see ProjectCard.tsx. A service now paints the same color on
+                  // every card, matching Home.
+                  color: serviceTagColor[service],
                 })
               )}
             />

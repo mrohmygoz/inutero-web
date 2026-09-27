@@ -94,7 +94,11 @@ const home: typeof enHome = {
         title: "一起喝酒的朋友",
         description:
           "集結雷擎 L8ching、張淦勛 Giyu Tjuljaviya、宋楚琳，將日常相遇與音樂節奏化為巡迴演出。",
-        tags: ["行銷宣傳", "巡演規劃", "活動製作"],
+        tags: [
+          { id: "pr-marketing", label: "行銷宣傳" },
+          { id: "international-booking", label: "巡演規劃" },
+          { id: "event-production", label: "活動製作" },
+        ],
         image: "/images/projects/bottoms-up.jpg",
       },
       {
@@ -102,7 +106,10 @@ const home: typeof enHome = {
         title: "鍋 Band Show",
         description:
           "於詹記西門大世界舉辦，結合的復古餐廳秀概念，帶聽眾一邊看表演、一邊大啖美味麻辣火鍋。",
-        tags: ["行銷宣傳", "活動製作"],
+        tags: [
+          { id: "pr-marketing", label: "行銷宣傳" },
+          { id: "event-production", label: "活動製作" },
+        ],
         image: "/images/projects/hotpot-band-show.jpg",
       },
       {
@@ -110,7 +117,11 @@ const home: typeof enHome = {
         title: "彼日的心內話",
         description:
           "攜手緩緩 Huan Huan 先後走訪台北市中山老人住宅暨服務中心、彰化花壇安耆日照中心，以及彰化北斗有冊店，在母親節前後為長輩與在地社區帶來一場場跨世代的音樂相聚。",
-        tags: ["行銷宣傳", "巡演規劃", "活動製作"],
+        tags: [
+          { id: "pr-marketing", label: "行銷宣傳" },
+          { id: "international-booking", label: "巡演規劃" },
+          { id: "event-production", label: "活動製作" },
+        ],
         image: "/images/projects/inner-voices-of-that-day.jpg",
       },
     ],

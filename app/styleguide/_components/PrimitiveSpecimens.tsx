@@ -16,6 +16,7 @@ const copy = {
     tagNeon: "Artist Management",
     tagYellow: "Tour Planning",
     tagOrange: "PR & Marketing",
+    tagGreen: "Event Production",
     eyebrow: "Mission",
     heading: "How We Work",
     headerEyebrow: "Featured Artists",
@@ -37,6 +38,7 @@ const copy = {
     tagNeon: "藝人經紀",
     tagYellow: "巡演規劃",
     tagOrange: "行銷宣傳",
+    tagGreen: "活動製作",
     // Both eyebrows are left untranslated in the Figma TC frames themselves
     // (Home Mission section I12635:15868;12405:6430, Featured Artists header
     // I12635:12928;12591:6176) — reproduced as-is rather than inventing a
@@ -97,7 +99,13 @@ export default function PrimitiveSpecimens({ locale = "en" }: { locale?: Locale 
         </div>
       </Row>
 
-      <Row label="Tag — solid neon / yellow / orange">
+      {/* Fixed per service identity across the whole site (`serviceTagColor`,
+          ProjectCard.tsx): Artist Management neon, Tour Planning yellow,
+          PR & Marketing orange — Figma's own three-tag sample — plus Event
+          Production green, added in Phase 10 once real project data needed a
+          4th colour Figma never drew (D089). Reuses the existing primary-green
+          token rather than inventing one. */}
+      <Row label="Tag — solid neon / yellow / orange / green">
         <Tag variant="solid" color="neon">
           {t.tagNeon}
         </Tag>
@@ -106,6 +114,9 @@ export default function PrimitiveSpecimens({ locale = "en" }: { locale?: Locale 
         </Tag>
         <Tag variant="solid" color="orange">
           {t.tagOrange}
+        </Tag>
+        <Tag variant="solid" color="green">
+          {t.tagGreen}
         </Tag>
       </Row>
 

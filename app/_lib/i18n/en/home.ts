@@ -2,6 +2,10 @@
 // Figma text layers for wording (D032). Two rows deliberately differ from what the
 // frames draw; both are flagged at their key below.
 
+import type { ServiceId } from "../../content";
+
+type ProjectTag = { id: ServiceId; label: string };
+
 const home = {
   title: "Home",
   metaDescription:
@@ -88,7 +92,11 @@ const home = {
         title: "Bottoms Up",
         description:
           "Bringing together L8ching, Giyu Tjuljaviya, and Erin Song, this tour transformed everyday encounters and musical rhythms into a shared live experience.",
-        tags: ["PR & Marketing", "Tour Planning", "Event Production"],
+        tags: [
+          { id: "pr-marketing", label: "PR & Marketing" },
+          { id: "international-booking", label: "Tour Planning" },
+          { id: "event-production", label: "Event Production" },
+        ] satisfies ProjectTag[],
         image: "/images/projects/bottoms-up.jpg",
       },
       {
@@ -96,7 +104,10 @@ const home = {
         title: "Hotpot Band Show",
         description:
           'Hosted at Chan Chi Hot Pots Lab, Ximen, this event reimagined the classic "dinner show" concept, blending live performances with a hotpot dining experience.',
-        tags: ["PR & Marketing", "Event Production"],
+        tags: [
+          { id: "pr-marketing", label: "PR & Marketing" },
+          { id: "event-production", label: "Event Production" },
+        ] satisfies ProjectTag[],
         image: "/images/projects/hotpot-band-show.jpg",
       },
       {
@@ -104,7 +115,11 @@ const home = {
         title: "Inner Voices of That Day",
         description:
           "Partnering with Huan Huan, we brought music directly to local communities, creating warm, cross-generational gatherings for seniors and neighbors alike around Mother's Day.",
-        tags: ["PR & Marketing", "Tour Planning", "Event Production"],
+        tags: [
+          { id: "pr-marketing", label: "PR & Marketing" },
+          { id: "international-booking", label: "Tour Planning" },
+          { id: "event-production", label: "Event Production" },
+        ] satisfies ProjectTag[],
         image: "/images/projects/inner-voices-of-that-day.jpg",
       },
     ],

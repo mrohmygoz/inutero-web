@@ -7,12 +7,16 @@ import type { ReactNode } from "react";
 // Desktop occurrences (Featured Artists filter row 12220:1061–1064) match the mobile
 // outline sizing exactly — no conflict (design.md Derived Sources).
 export type TagState = "default" | "active";
-export type TagColor = "neon" | "yellow" | "orange";
+export type TagColor = "neon" | "yellow" | "orange" | "green";
 
 const solidColorClassName: Record<TagColor, string> = {
   neon: "bg-(--color-brand-accent-neon)",
   yellow: "bg-(--color-brand-accent-yellow)",
   orange: "bg-(--color-brand-accent-orange)",
+  // No 4th accent color exists in design-tokens.md — Figma's sample cards never
+  // draw more than the original three tags. Reuses the existing primary-green
+  // token rather than inventing a hex value (D089).
+  green: "bg-(--color-brand-primary-green)",
 };
 
 const outlineStateClassName: Record<TagState, string> = {

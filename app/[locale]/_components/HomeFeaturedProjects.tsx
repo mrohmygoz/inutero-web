@@ -1,4 +1,4 @@
-import ProjectCard, { type ProjectCardTag } from "../../_components/ProjectCard";
+import ProjectCard, { type ProjectCardTag, serviceTagColor } from "../../_components/ProjectCard";
 import Cta from "../../_components/Cta";
 import Eyebrow from "../../_components/Eyebrow";
 import { getDictionary, type Locale } from "../../_lib/i18n";
@@ -17,16 +17,13 @@ import { localizedHref } from "../../_lib/routes";
 //
 // Rotations are identical across breakpoints and locales: +1.94° / -1.23° / +0.94°.
 
-// Tag colours are per service type, not per card: the frames give Artist Management
-// neon, Tour Planning yellow, PR & Marketing orange, and reuse those on every card.
-// Keyed by position in the card's own tag list so the zh labels map without a lookup
-// table — every card lists them in the same order.
-const TAG_COLORS: ProjectCardTag["color"][] = ["neon", "yellow", "orange"];
-
-function tagsFor(labels: readonly string[]): ProjectCardTag[] {
-  // A two-tag card is Tour Planning + PR & Marketing, i.e. the last two colours.
-  const offset = TAG_COLORS.length - labels.length;
-  return labels.map((label, i) => ({ label, color: TAG_COLORS[i + offset] }));
+// Tag colours are FIXED per service identity (`serviceTagColor`, ProjectCard.tsx),
+// not per position in a card's own tag list. A prior version assigned colour by
+// counting inward from a fixed 3-service order — silently wrong the moment
+// Phase 10 realigned these tags to the client sheet's own per-project order,
+// which no longer holds that positional invariant (D089).
+function tagsFor(tags: readonly { id: keyof typeof serviceTagColor; label: string }[]): ProjectCardTag[] {
+  return tags.map(({ id, label }) => ({ label, color: serviceTagColor[id] }));
 }
 
 export default function HomeFeaturedProjects({ locale }: { locale: Locale }) {

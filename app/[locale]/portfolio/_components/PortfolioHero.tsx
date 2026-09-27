@@ -31,7 +31,7 @@ export default function PortfolioHero({ locale }: { locale: Locale }) {
         <Eyebrow
           label={hero.eyebrow}
           tone="light"
-          className="hidden h-[112px] w-[27px] shrink-0 items-start justify-center py-[15px] lg:flex"
+          className="hidden h-[112px] w-[27px] shrink-0 items-start justify-center py-[15px] lg:flex lg:translate-y-8"
         />
         <div className="flex min-w-px flex-1 flex-col items-start pt-[20px] lg:pt-0">
           <h1 className="font-display text-display-h1 w-full text-(--color-basic-background) uppercase">

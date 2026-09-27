@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import Image from "next/image";
 import Tag, { type TagColor } from "./Tag";
+import type { ServiceId } from "../_lib/content";
 
 // Two page-level designs behind one component, selected by `variant` — never an
 // `lg:` switch, because the split is per-page, not per-breakpoint.
@@ -28,6 +29,22 @@ import Tag, { type TagColor } from "./Tag";
 export type ProjectCardTag = {
   label: string;
   color: TagColor;
+};
+
+// FIXED site-wide, keyed by service identity rather than a tag's position in a
+// card's own list. Phase 10 shipped both consumers (Home, Portfolio) assigning
+// color by array index, which is why the same service painted differently card
+// to card and page to page the moment the tag *sets* stopped being identical
+// (D087 broke the assumption both positional schemes depended on). Figma's
+// three-color chip only ever draws Artist Management / Tour Planning /
+// PR & Marketing on its sample cards — that mapping is preserved here — and
+// Event Production, which appears only in the real data, gets the 4th color
+// `Tag` added for it (D089).
+export const serviceTagColor: Record<ServiceId, TagColor> = {
+  "artist-management": "neon",
+  "international-booking": "yellow",
+  "pr-marketing": "orange",
+  "event-production": "green",
 };
 
 export type ProjectCardVariant = "home" | "portfolio";
