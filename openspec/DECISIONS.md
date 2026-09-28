@@ -2457,3 +2457,30 @@ phases.
 should default to this shared-tag/recency shape rather than reinventing one — and should
 measure its card count from the frame, never assume the drawn sample matches the real
 data's natural size.
+
+## D105 — Phase 15: Contact ships with no form and no NewsletterSignup band; both were
+never in the design
+
+**What:** `design-inventory.md`'s open-questions table and this phase's own `proposal.md`/
+`tasks.md` both assumed the Contact frame contained an inert contact-form view (name/email/
+message fields) and a separate `NewsletterSignup` band, with only the form's submit target
+left open. Fetching all four frames at implementation time (`get_design_context` +
+full `get_metadata` dumps, not a sparse response) found neither: Desktop EN `12612:8829`,
+Desktop TC `12635:12930`, Mobile EN `12212:5283`, and Mobile TC `12368:2766` contain only a
+header, the four department `mailto:` rows, and a "Follow us" row, followed by the global
+`Footer` instance (which already has its own newsletter block). User decision, 2026-09-29,
+asked directly once the discrepancy surfaced: build only what the frame contains. The page
+ships as header + department rows + Follow-us, nothing else.
+
+**Why:** `design-inventory.md`'s "the design shows the form" note was wrong (or the design
+changed since that note was written) — implementing from memory or from the stale note
+rather than the fetched frame would have fabricated UI with no Figma node behind it,
+violating the project's "never assume or hardcode a value from memory" rule. The form's
+submit-target question (Route Handler vs. third-party service) is therefore moot for this
+phase: there is no form to wire, not a form left unwired.
+
+**How to apply:** `design-inventory.md`'s Contact row and its open-questions table entry
+should be treated as corrected by this decision, not by this decision plus a future form
+phase — if a contact form is ever added, it needs its own fresh Figma design and its own
+phase, not a resumption of Phase 15's deferred task. `roadmap.md`'s "Still Open" table drops
+the form-submit-target row rather than reassigning it.

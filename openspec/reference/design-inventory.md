@@ -201,9 +201,7 @@ one home per fact.
 
 ### Still open
 
-| Question | Needed by |
-| :--- | :--- |
-| Contact form submit target — a Route Handler that emails, or a third-party form service? The design shows the form; delivery is not a design concern. | Phase 15 |
+None.
 
 ### Settled
 
@@ -216,3 +214,4 @@ one home per fact.
 | NAV light/dark switch trigger | Static per page, not scroll-driven (D017); routed through `darkNavRoutes` in `app/_lib/routes.ts` rather than a per-page prop (D052). |
 | Is Mochiy Pop One intended for Traditional Chinese? | It is a *Japanese* font and some glyphs take Japanese forms, but designer confirmation was **waived** — the variables are implemented as declared (D008). |
 | The three font problems (no CJK face for body/label, no Mochiy Bold, no Noto Serif TC italic) | Accepted as-is under D008. They are catalogued in `design-tokens.md` → Known Problems; they are not bugs to fix and not questions to reopen. |
+| Contact form submit target | **Moot — there is no form.** This row's premise ("the design shows the form") was stale; Phase 15 fetched all four Contact frames directly and found no form fields and no `NewsletterSignup` band, only header + department rows + Follow-us. See D105. |

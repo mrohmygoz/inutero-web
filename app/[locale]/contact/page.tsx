@@ -2,7 +2,8 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { isLocale } from "../../_lib/i18n";
 import { buildRouteMetadata } from "../../_lib/metadata";
-import PagePlaceholder from "../_components/PagePlaceholder";
+import ContactHeader from "./_components/ContactHeader";
+import ContactDetails from "./_components/ContactDetails";
 
 export async function generateMetadata({
   params,
@@ -15,5 +16,11 @@ export async function generateMetadata({
 export default async function ContactPage({ params }: PageProps<"/[locale]/contact">) {
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
-  return <PagePlaceholder routeKey="contact" locale={locale} />;
+
+  return (
+    <>
+      <ContactHeader locale={locale} />
+      <ContactDetails locale={locale} />
+    </>
+  );
 }

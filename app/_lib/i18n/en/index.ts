@@ -4,6 +4,7 @@ import services from "./services";
 import portfolio from "./portfolio";
 import artists from "./artists";
 import news from "./news";
+import contact from "./contact";
 import common from "./common";
 
 // Key order matches the pre-split single-file dictionary.
@@ -14,6 +15,7 @@ const en = {
   portfolio,
   artists,
   news,
+  contact,
   ...common,
 };
 

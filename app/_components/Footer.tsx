@@ -52,7 +52,7 @@ const legalKeys = ["privacyPolicy", "termsOfService", "cookiesSettings"] as cons
 // neutral link/chain glyph from the share icons rather than reusing the X logo, which
 // would point a brand mark at the wrong platform. Swap `icon` below when a real asset
 // arrives; `social-brand/x.svg` stays committed in case the decision is reversed.
-const socialPlatforms = [
+export const socialPlatforms = [
   { key: "facebook", icon: "/icons/social-brand/facebook.svg", href: "https://www.facebook.com/inuteromusic" },
   { key: "instagram", icon: "/icons/social-brand/instagram.svg", href: "https://www.instagram.com/inuteromusic_official/" },
   { key: "youtube", icon: "/icons/social-brand/youtube.svg", href: "https://www.youtube.com/channel/UCyKN9UgKnYyPX1AWxQLPo9Q" },
