@@ -3,6 +3,7 @@ import Cta from "../../_components/Cta";
 import Eyebrow from "../../_components/Eyebrow";
 import { getDictionary, type Locale } from "../../_lib/i18n";
 import { localizedHref } from "../../_lib/routes";
+import { getManifest, type ServiceId } from "../../_lib/content";
 
 // Source: desktop Featured Projects 12210:2392 (TC I12635:15868;12210:2392); mobile
 // 10275:3132 (TC 12368:2418). Page-local, not shared (D033). Server component — no
@@ -22,24 +23,42 @@ import { localizedHref } from "../../_lib/routes";
 // counting inward from a fixed 3-service order — silently wrong the moment
 // Phase 10 realigned these tags to the client sheet's own per-project order,
 // which no longer holds that positional invariant (D089).
-function tagsFor(tags: readonly { id: keyof typeof serviceTagColor; label: string }[]): ProjectCardTag[] {
-  return tags.map(({ id, label }) => ({ label, color: serviceTagColor[id] }));
+//
+// Labels resolve through `portfolio.filter.tags`, the same dictionary
+// `PortfolioGrid` uses — not a Home-local copy (Phase 13b).
+function tagsFor(services: readonly ServiceId[], tagLabels: Record<ServiceId, string>): ProjectCardTag[] {
+  return services.map((id) => ({ label: tagLabels[id], color: serviceTagColor[id] }));
 }
 
-export default function HomeFeaturedProjects({ locale }: { locale: Locale }) {
-  const { featuredProjects } = getDictionary(locale).home;
+export default async function HomeFeaturedProjects({ locale }: { locale: Locale }) {
+  const { home, portfolio } = getDictionary(locale);
+  const { featuredProjects } = home;
   // Portfolio index href, still used by the section's own CTA buttons below.
   const portfolioHref = localizedHref("portfolio", locale);
 
-  const cards = featuredProjects.cards.map((card) => (
+  // Slugs resolve against the manifest, in `featuredProjects.cards`'s own order —
+  // not the manifest's date-sort order (Phase 13b design.md).
+  const manifest = (await getManifest("portfolio")).filter((entry) => entry.locale === locale);
+  const entries = featuredProjects.cards.map((slug) => {
+    const entry = manifest.find((candidate) => candidate.slug === slug);
+    if (!entry) {
+      throw new Error(
+        `HomeFeaturedProjects: no portfolio entry for slug "${slug}" in locale "${locale}" ` +
+          `(configured in home.ts featuredProjects.cards).`
+      );
+    }
+    return entry;
+  });
+
+  const cards = entries.map(({ slug, frontmatter }) => (
     <ProjectCard
-      key={card.title}
-      title={card.title}
-      dateLabel={card.dateLabel}
-      description={card.description}
-      tags={tagsFor(card.tags)}
-      image={{ src: card.image, alt: "" }}
-      href={`${portfolioHref}/${card.slug}`}
+      key={slug}
+      title={frontmatter.title}
+      dateLabel={frontmatter.dateLabel}
+      description={frontmatter.excerpt}
+      tags={tagsFor(frontmatter.services, portfolio.filter.tags)}
+      image={{ src: frontmatter.image, alt: "" }}
+      href={`${portfolioHref}/${slug}`}
     />
   ));
 

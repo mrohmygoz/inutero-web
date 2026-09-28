@@ -2,10 +2,6 @@
 // Figma text layers for wording (D032). Two rows deliberately differ from what the
 // frames draw; both are flagged at their key below.
 
-import type { ServiceId } from "../../content";
-
-type ProjectTag = { id: ServiceId; label: string };
-
 const home = {
   title: "Home",
   metaDescription:
@@ -74,57 +70,18 @@ const home = {
       },
     ],
   },
-  // Featured Projects (12210:2392 desktop, 10275:3132 mobile). The cards come from
-  // content-matrix → "Home — featured project cards (3)", which REPLACES Figma's
-  // third card: the frames draw "Yesterday Once More" (臥軌的火車), the matrix lists
-  // In Utero Present Vol.3. Matrix wins on copy (D032).
-  //
-  // Figma splits each card into a title and a short date line, so the matrix's
-  // single bolded string is split across those two slots rather than dropping the
-  // "In Utero Present Vol.N" half.
+  // Featured Projects (12210:2392 desktop, 10275:3132 mobile). Cards are slugs into
+  // `content/portfolio/` (Phase 13b) — display order is this array's own order, not
+  // the manifest's date-sort order. All other card facts (title, date, image, tags,
+  // description) live once in that project's frontmatter; see `HomeFeaturedProjects`.
   featuredProjects: {
     eyebrow: "Portfolio",
     heading: "Featured Projects",
     cta: "View all projects",
     cards: [
-      {
-        slug: "2025-11-08-bottoms-up",
-        dateLabel: "2025.11 In Utero Present Vol.2",
-        title: "Bottoms Up",
-        description:
-          "Bringing together L8ching, Giyu Tjuljaviya, and Erin Song, this tour transformed everyday encounters and musical rhythms into a shared live experience.",
-        tags: [
-          { id: "pr-marketing", label: "PR & Marketing" },
-          { id: "international-booking", label: "Tour Planning" },
-          { id: "event-production", label: "Event Production" },
-        ] satisfies ProjectTag[],
-        image: "/images/projects/2025-11-08-bottoms-up.jpg",
-      },
-      {
-        slug: "2024-09-04-hotpot-band-show",
-        dateLabel: "2024.09 In Utero Present Vol.1",
-        title: "Hotpot Band Show",
-        description:
-          'Hosted at Chan Chi Hot Pots Lab, Ximen, this event reimagined the classic "dinner show" concept, blending live performances with a hotpot dining experience.',
-        tags: [
-          { id: "pr-marketing", label: "PR & Marketing" },
-          { id: "event-production", label: "Event Production" },
-        ] satisfies ProjectTag[],
-        image: "/images/projects/2024-09-04-hotpot-band-show.jpg",
-      },
-      {
-        slug: "2026-05-08-inner-voices-of-that-day",
-        dateLabel: "2026.05 In Utero Present Vol.3",
-        title: "Inner Voices of That Day",
-        description:
-          "Partnering with Huan Huan, we brought music directly to local communities, creating warm, cross-generational gatherings for seniors and neighbors alike around Mother's Day.",
-        tags: [
-          { id: "pr-marketing", label: "PR & Marketing" },
-          { id: "international-booking", label: "Tour Planning" },
-          { id: "event-production", label: "Event Production" },
-        ] satisfies ProjectTag[],
-        image: "/images/projects/2026-05-08-inner-voices-of-that-day.jpg",
-      },
+      "2025-11-08-bottoms-up",
+      "2024-09-04-hotpot-band-show",
+      "2026-05-08-inner-voices-of-that-day",
     ],
   },
 };

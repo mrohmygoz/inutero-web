@@ -73,60 +73,16 @@ const home: typeof enHome = {
       },
     ],
   },
-  // See en.ts for the card-slot rationale. Card 3 replaces Figma's
-  // 臥軌的火車：台灣巡迴【昨日重現】 with the matrix's Vol.3 (D032).
-  //
-  // The card tags ARE translated here — the TC frames draw the service item
-  // titles. The section eyebrow is not: the matrix marks `PORTFOLIO` as
-  // `keep EN`.
-  //
-  // Phase 10 corrected the tag SETS. Figma repeats one placeholder triple on
-  // every sample card; the real per-project 職責 is on the matrix's Project
-  // Details tab, and that is what both this section and the Portfolio grid now
-  // use. No project carries 藝人經紀.
+  // See en.ts for the card-slot rationale. Slugs are locale-neutral (Phase 13b) —
+  // both dictionaries list the same three, in the same order.
   featuredProjects: {
     eyebrow: "Portfolio",
     heading: "代表案例",
     cta: "完整案例",
     cards: [
-      {
-        slug: "2025-11-08-bottoms-up",
-        dateLabel: "2025.11 子皿 In Utero Present Vol.2",
-        title: "一起喝酒的朋友",
-        description:
-          "集結雷擎 L8ching、張淦勛 Giyu Tjuljaviya、宋楚琳，將日常相遇與音樂節奏化為巡迴演出。",
-        tags: [
-          { id: "pr-marketing", label: "行銷宣傳" },
-          { id: "international-booking", label: "巡演規劃" },
-          { id: "event-production", label: "活動製作" },
-        ],
-        image: "/images/projects/2025-11-08-bottoms-up.jpg",
-      },
-      {
-        slug: "2024-09-04-hotpot-band-show",
-        dateLabel: "2024.09 子皿 In Utero Present Vol.1",
-        title: "鍋 Band Show",
-        description:
-          "於詹記西門大世界舉辦，結合的復古餐廳秀概念，帶聽眾一邊看表演、一邊大啖美味麻辣火鍋。",
-        tags: [
-          { id: "pr-marketing", label: "行銷宣傳" },
-          { id: "event-production", label: "活動製作" },
-        ],
-        image: "/images/projects/2024-09-04-hotpot-band-show.jpg",
-      },
-      {
-        slug: "2026-05-08-inner-voices-of-that-day",
-        dateLabel: "2026.05 子皿 In Utero Present Vol.3",
-        title: "彼日的心內話",
-        description:
-          "攜手緩緩 Huan Huan 先後走訪台北市中山老人住宅暨服務中心、彰化花壇安耆日照中心，以及彰化北斗有冊店，在母親節前後為長輩與在地社區帶來一場場跨世代的音樂相聚。",
-        tags: [
-          { id: "pr-marketing", label: "行銷宣傳" },
-          { id: "international-booking", label: "巡演規劃" },
-          { id: "event-production", label: "活動製作" },
-        ],
-        image: "/images/projects/2026-05-08-inner-voices-of-that-day.jpg",
-      },
+      "2025-11-08-bottoms-up",
+      "2024-09-04-hotpot-band-show",
+      "2026-05-08-inner-voices-of-that-day",
     ],
   },
 };

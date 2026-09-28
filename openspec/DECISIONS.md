@@ -2389,3 +2389,41 @@ pick a tone rather than assume one.
 polarity (light vs. dark background), fetch that specific section's own Figma node — don't assume
 a component's existing hardcoded colors transfer. If a future listing needs a third tone, extend
 `Pagination`'s `tone` union rather than duplicating the component.
+
+## D103 — Phase 13b: Home's Featured Projects cards read `content/portfolio/` instead of
+re-authoring project facts in `home.ts`; corrects a label drift as a side effect
+
+**What:** `home.ts`'s `featuredProjects.cards` changed from an array of fully-authored card
+objects (`slug`, `dateLabel`, `title`, `description`, `tags`, `image` — one hand-copied set per
+card, per locale) to a plain `string[]` of portfolio slugs, in display order. Order and inclusion
+are both expressed by the array itself; every other fact is now read once, at build time, from
+`content/portfolio/{locale}/{slug}.mdx` frontmatter via `getManifest("portfolio")` — the same
+manifest `/[locale]/portfolio` already uses. `HomeFeaturedProjects.tsx` became an `async function`
+component that resolves each configured slug against the manifest and throws (naming the slug and
+locale) if one has no match — no silent fallback, matching D002. Tag labels resolve through
+`portfolio.filter.tags[serviceId]`, the same dictionary `PortfolioGrid` already uses, rather than
+a second hand-copied label per card.
+
+**Why:** Every field but `slug` was already authored in portfolio frontmatter; `home.ts` was a
+fourth copy of the same facts (once per content type, per locale). This had already drifted:
+`international-booking` read "Tour Planning" in Home's EN cards while Portfolio's filter
+dictionary and every other consumer of that id (Artists, Footer, Services) read "Global Touring" —
+same id, two labels, no mechanism to catch the divergence. Checked against
+`content-matrix.md`: no row gives Home's cards a label distinct from the Portfolio filter row, so
+this was drift, not a deliberate shorter variant. The slug list itself stays in `home.ts`, not a
+`featured: boolean` frontmatter field, because Home's three-card scatter is not a generic N-card
+grid — each position has its own hard-coded offset/rotation/width, so *order* has to live
+somewhere, and an ordered array in `home.ts` expresses both "which" and "in what order" in one
+place without teaching portfolio frontmatter which other page chooses to surface it.
+
+**Consequence:** A future portfolio copy edit (title, image swap, tag correction) now
+automatically propagates to Home — no second file to remember. A typo'd or renamed slug in
+`home.ts` is a build break (`next build`/`next dev`), not a quietly-shrinking Home page. The one
+visible change from this refactor is the `international-booking` label correction described
+above — flagged at the review gate as a bug fix, not a new requirement.
+
+**How to apply:** When a page-local dictionary (`home.ts`, or any other page's own i18n file)
+re-authors facts that a content manifest already owns, prefer resolving from the manifest inside
+the consuming Server Component and keeping only page-specific presentation config (which items,
+what order) in the dictionary — the same pattern `/[locale]/portfolio`'s `page.tsx` established
+for `PortfolioGrid`, just resolved locally instead of pushed down as props.
