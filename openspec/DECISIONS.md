@@ -2304,6 +2304,15 @@ creation — do not add a project/article with a bare slug and rename it later. 
 the frontmatter `date` field must agree; nothing enforces this in code (the frontmatter guard does
 not parse the filename), so a mismatch is a silent authoring error, not a build failure.
 
+**Addendum, 2026-09-28:** the original pass renamed the 14 original News entries' `.mdx` files but
+left their `public/images/news/<slug>/` directories on the old bare slug (the two entries added
+afterward, D101, already had dated directories from creation). Renamed all 14 to match; only the
+directory takes the date prefix, individual filenames inside keep their plain descriptor
+(`<dated-slug>/<slug>-hero.jpg`, not `<dated-slug>/<dated-slug>-hero.jpg`) — same shape the two
+D101 directories already used. `public/images/home` was also asked about and deliberately left
+alone: its files (`hero-1.jpg`...`hero-5.jpg`, `intro.jpg`, `services.jpg`) aren't derived from any
+content slug, so "align to slug" doesn't apply there.
+
 ## D101 — Two more News articles, for the two press releases behind existing Portfolio projects
 
 **Decision:** Two more real News articles were added from source material outside the original
