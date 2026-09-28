@@ -17,18 +17,22 @@ import Tag, { type TagColor } from "./Tag";
 // Presentational shell only (D-C) — no MDX/route knowledge. The CMS long-form
 // article body renderer that pairs with real article content is Phase 4; this
 // component is only the title/tag/date/image teaser card.
+//
+// `tags` is a list, not a single tag (Phase 13 revision) — News found real
+// articles that genuinely span more than one category (e.g. an overseas
+// showcase recap is both Global Touring and Events). The row wraps rather
+// than forcing every chip onto one line, since no design reference draws a
+// multi-tag card.
 export default function Article({
   title,
-  tag,
-  tagColor,
+  tags,
   dateLabel,
   image,
   href,
   className,
 }: {
   title: string;
-  tag: string;
-  tagColor: TagColor;
+  tags: { label: string; color: TagColor }[];
   dateLabel: string;
   image?: { src: string; alt: string };
   href?: string;
@@ -40,9 +44,13 @@ export default function Article({
     >
       <div className="flex w-full flex-1 flex-col items-start justify-between gap-3 border-t border-(--opacity-neutral-darkest-15) pt-[21px] lg:self-stretch">
         <div className="flex w-full items-center justify-between">
-          <Tag variant="solid" color={tagColor}>
-            {tag}
-          </Tag>
+          <div className="flex flex-wrap items-center gap-[6px]">
+            {tags.map((t) => (
+              <Tag key={t.label} variant="solid" color={t.color}>
+                {t.label}
+              </Tag>
+            ))}
+          </div>
           <p className="font-body text-label-s font-normal uppercase text-(--opacity-neutral-darkest-40)">
             {dateLabel}
           </p>

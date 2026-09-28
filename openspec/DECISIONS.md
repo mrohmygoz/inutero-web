@@ -101,6 +101,13 @@ Do **not** record things readable from the code or the design itself.
 - [D092 — Featured Artists: only 4 of 8 real artists have a photo resolvable from the Figma file itself; `ArtistCard.image` becomes optional; the mobile bio gains a clamp](#d092-featured-artists-only-4-of-8-real-artists-have-a-photo-resolvable-from-the-figma-file-itself-artistcardimage-becomes-optional-the-mobile-bio-gains-a-clamp)
 - [D093 — Featured Artists: the filter rail is light-polarity and built locally, not via the shared `Tag` component](#d093-featured-artists-the-filter-rail-is-light-polarity-and-built-locally-not-via-the-shared-tag-component)
 - [D094 — Featured Artists: the filter label, empty-state copy, and grid geometry are page-owned; the tag ids and mechanism are Portfolio's, reused verbatim](#d094-featured-artists-the-filter-label-empty-state-copy-and-filter-rail-geometry-are-page-owned-the-tag-ids-and-single-selectall-defaultno-prototype-behaviour-are-portfolios-reused-verbatim)
+- [D095 — News's route-table node IDs had desktop and mobile swapped](#d095--newss-route-table-node-ids-had-desktop-and-mobile-swapped)
+- [D096 — News's header is light, not dark-NAV; `TUNING IN`/`子皿超音波` is a literal, non-token heading size](#d096--newss-header-is-light-not-dark-nav-tuning-in子皿超音波-is-a-literal-non-token-heading-size)
+- [D097 — News's filter chips are light-polarity and built locally, following Artists' D093 pattern; tag taxonomy is independent from `serviceAnchors`](#d097--newss-filter-chips-are-light-polarity-and-built-locally-following-artists-d093-pattern-tag-taxonomy-is-independent-from-serviceanchors)
+- [D098 — The Phase 4 placeholder News article is retired; its filter tag distribution is uneven by design](#d098--the-phase-4-placeholder-news-article-is-retired-its-filter-tag-distribution-is-uneven-by-design)
+- [D099 — News articles can carry more than one tag; the EN date label is a readable full date, ZH keeps the dot-numeric form](#d099--news-articles-can-carry-more-than-one-tag-the-en-date-label-is-a-readable-full-date-zh-keeps-the-dot-numeric-form)
+- [D100 — Portfolio and News slugs carry a `YYYY-MM-DD-` date prefix](#d100--portfolio-and-news-slugs-carry-a-yyyy-mm-dd--date-prefix)
+- [D101 — Two more News articles, for the two press releases behind existing Portfolio projects](#d101--two-more-news-articles-for-the-two-press-releases-behind-existing-portfolio-projects)
 
 ## D001 — Locale strategy
 
@@ -2139,3 +2146,196 @@ different, which is itself the evidence that extraction is still premature.
 artists is under any page size a real listing needs — Portfolio's own derived `PAGE_SIZE` is 9
 (D-A in design.md). The instance is the same drawn sample chrome D084 already found on
 Portfolio's frames, not a second real page of artists.
+
+## D095 — News's route-table node IDs had desktop and mobile swapped
+
+**Decision:** `phase-13-news/tasks.md` 1.1 gave desktop EN as `12211:4003` and mobile EN as
+`12368:2630`. `design-inventory.md`'s own route table (the canonical node-ID source, per
+CLAUDE.md) gives the same route as desktop EN `12612:8808`, desktop TC `12635:12929`, mobile EN
+`12211:4003`, mobile TC `12368:2630` — i.e. the two node IDs the task named as "desktop" are
+actually the mobile pair (their ID ranges match every other route's mobile EN/TC columns,
+`1221x`/`12368`, not the `126xx` range every other route's desktop frames use). Fetched the
+corrected four frames.
+
+**Why:** `design-inventory.md` is the source of truth for node IDs; a planning artifact's
+inline node reference is a transcription, not a second source.
+
+**How to apply:** When a task or design doc's node ID conflicts with `design-inventory.md`,
+trust the inventory and note the correction — don't silently fetch whichever ID the task named.
+
+## D096 — News's header is light, not dark-NAV; `TUNING IN`/`子皿超音波` is a literal, non-token heading size
+
+**Decision:** `NewsHeader` uses a light surface — white background, `Nav` in normal flow at its
+default `theme="light"` — not a dark NAV overlay. `news` was already absent from `darkNavRoutes`
+in `routes.ts` before this phase; this confirms that was correct rather than an oversight.
+Eyebrow uses `tone="dark"` (dark text on light bg), the same polarity as `ArtistsHero`, the
+opposite of `PortfolioHero`.
+
+The heading (`TUNING IN` / `子皿超音波`) renders at a literal `113px` font-size / `79.1px`
+line-height / `-1.13px` letter-spacing — every one of the four frames (mobile and desktop, EN
+and TC) reports these exact numbers. That triple is the *Mobile English* `Display/H1` mode's
+value in `design-tokens.md`/`globals.css`, not the responsive `text-display-h1` utility (which
+would resolve to `220px` at desktop via the `lg:` mode switch, D009). `NewsHeader.tsx` sets the
+value as a literal Tailwind arbitrary-value class, uniform across breakpoints and locales, not
+via the token utility.
+
+**Why:** Two independent `get_design_context` fetches (desktop EN's `Header` frame and desktop
+TC's `Tuning in` text node) both returned the mobile-mode numbers verbatim, not the desktop H1
+token's. Treated as a locally-pinned literal, matching D030's and D037's precedent for a
+Figma value that doesn't correspond to any token — transcribed as found rather than "corrected"
+to the token value, since a token substitution here would be an invented larger heading no frame
+draws.
+
+**How to apply:** If a later phase (Polish) finds this was an authoring mistake on the Figma
+file rather than a deliberate choice, resolving it means changing `NewsHeader.tsx`'s literal
+value to `font-display text-display-h1`, not adding a new token.
+
+## D097 — News's filter chips are light-polarity and built locally, following Artists' D093 pattern; tag taxonomy is independent from `serviceAnchors`
+
+**Decision:** `NewsGrid`'s filter chips reuse Artists' local `FilterTag` shape (plain button,
+`bg-(--color-basic-accent)` fill on active, border-only default) rather than `Tag`, for the same
+reason D093 gave Artists: the real-content mobile filter row (`12220:1647`, which already draws
+the final `Artists & works / Global Touring / Events / About In Utero` tags, not Figma's
+placeholder `Industry/Artists/Tour/Company/Events` sample) is white-bg/dark-text/dark-border,
+the opposite polarity from `Tag`'s outline variant.
+
+`newsFilters` in `routes.ts` is a fourth, independent id/label table — not `serviceAnchors`,
+not Portfolio's or Artists' tag ids. design.md D-A is explicit this is deliberate: News's real
+taxonomy is not the four service lines any other filtered page uses. The frontmatter contract
+(`app/_lib/content/frontmatter.ts`) gained a `tag: NewsFilterId` field (required on news,
+forbidden on portfolio) to carry it, and `image` was generalized from portfolio-only to required
+on both content types, since News's grid needed a real per-article listing photo the existing
+contract had no field for.
+
+**Why:** Same reasoning as D093/D094 — a light-surface filter chip is a real, repeated need
+(this is its second occurrence) but the *tag set* is page-specific data, not a case for sharing
+component code.
+
+**How to apply:** If a third light-surface filter page appears, that is the point to promote the
+inline chip to a shared component (D093's own deferred threshold) — not before. Do not reuse
+`newsFilters`' ids anywhere outside News, and do not let News read `serviceAnchors`.
+
+## D098 — The Phase 4 placeholder News article is retired; its filter tag distribution is uneven by design
+
+**Decision:** `content/news/{en,zh}/taipei-indie-goes-abroad.mdx` — Phase 4's placeholder MDX
+entry with fabricated Latin-filler body text — is deleted, superseded by the real 2026-05-13
+press release (`2026-05-13-in-utero-huan-huan-community-tour`, tagged `about-in-utero`) covering
+the same underlying story (design.md D-C). Tag distribution and slug format are amended by D099
+and D100 respectively — see those for the current state. The 14 real articles' original tag
+distribution was uneven (Events ×7, Artists & Works ×4, Global Touring ×2, About In Utero ×1) —
+this was already the real shape of the client's supplied press output, not an artifact of
+tagging discipline; each article's tag was a per-article content judgment (design.md D-B), never
+a default or a rotation.
+
+**Why:** Keeping the placeholder alongside the real entry would duplicate one real event under
+two slugs with two different bodies, one fabricated. The uneven distribution is worth recording
+explicitly so a later phase doesn't "fix" it by re-tagging articles to balance the filter.
+
+**Consequence:** `public/images/content/sample-live.jpg` loses its only `content/` reference —
+`app/styleguide/_components/BlockSpecimens.tsx` still references it directly, and that reference
+(and the file's deletion) stay out of this phase's scope, same as design.md recorded.
+
+## D099 — News articles can carry more than one tag; the EN date label is a readable full date, ZH keeps the dot-numeric form
+
+**Decision:** `Frontmatter.tag` (singular, `NewsFilterId | ""`) is replaced by `Frontmatter.tags`
+(`readonly NewsFilterId[]`, required non-empty on news, forbidden on portfolio). `Article.tsx`
+takes `tags: { label, color }[]` instead of a single `tag`/`tagColor` pair and renders a wrapping
+row of chips; `NewsGrid`'s filter matches on `article.tags.includes(activeTag)` rather than
+equality. Several of the 14 real articles were re-tagged to carry two tags where the content
+genuinely spans categories — an overseas-showcase announcement/recap is both `global-touring` and
+`events`, a themed concert or listening-party recap is both `events` and `artists-works`, and the
+In Utero community tour is both `about-in-utero` and `events`.
+
+Separately, the News listing's date label now differs by locale: English renders a readable full
+date (`June 12, 2026` — `Article.tsx`'s existing `uppercase` class turns this into `JUNE 12,
+2026`), Chinese keeps the dot-numeric press-release convention (`2026.06.12`). Built from the ISO
+date string's own year/month/day components in `app/[locale]/news/page.tsx`'s
+`formatNewsDateLabel`, not `Date`/`toLocaleDateString` — parsing an ISO date through `Date` and
+reformatting risks a UTC/local timezone off-by-one-day shift.
+
+**Why:** User feedback during review — the initial one-tag-per-article rule (design.md D-B) and
+the single `2026.06.12`-style date label in both locales (this file's own D-A-adjacent choice,
+made without a design reference either way) were both corrected after seeing the real 14-article
+set rendered: several articles read as visibly under-tagged with only one axis, and an English
+reader expects a written month, not the client's Chinese-press dot format.
+
+**How to apply:** A `tags` array of length 1 is the common case and still renders exactly as the
+single-chip design shows. Do not force every article to multiple tags — most of the 14 stayed
+single-tagged because a second tag would not be true to the content (e.g. a single-song release
+is `artists-works` only, not also `events`). The date-format split is News-specific; it does not
+change Portfolio's authored `dateLabel` convention (D-B in `phase-10-portfolio/design.md`).
+
+## D100 — Portfolio and News slugs carry a `YYYY-MM-DD-` date prefix
+
+**Decision:** Every `content/{portfolio,news}/{en,zh}/*.mdx` filename is now `<date>-<slug>.mdx`
+— e.g. `2026-04-16-adan-lonely-goldfish-concert.mdx` — where `<date>` is that entry's own
+frontmatter `date`. The filename (prefix included) is still the whole slug per D026 ("basename is
+the slug, never declared in frontmatter"); nothing in `app/_lib/content/index.ts` changed, since
+it already treats the filename minus `.mdx` as the slug with no assumed shape. All three real
+Portfolio projects and all 14 real News articles were renamed: `bottoms-up` ->
+`2025-11-08-bottoms-up`, `hotpot-band-show` -> `2024-09-04-hotpot-band-show`,
+`inner-voices-of-that-day` -> `2026-05-08-inner-voices-of-that-day`, and each News slug gained its
+own article's date prefix (see D098/D099 for the News set).
+
+Every reference to an old bare slug was updated: `app/_lib/i18n/{en,zh}/home.ts`'s three Featured
+Project cards (D043's explicit `slug` field), and the Portfolio slug table in
+`content-matrix.md`. `content-matrix.md`'s News section and `routes.md` never hardcoded slugs, so
+neither needed a change.
+
+**Why:** User request, post-Phase-13-review — dated filenames make chronological order visible in
+a directory listing and match the client's own `YYYY.MM.DD <headline>` folder-naming convention
+for supplied press material, without requiring every author to compute a manifest sort themselves.
+
+**Consequence:** Every News and Portfolio URL changed (e.g. `/en/news/adan-lonely-goldfish-concert`
+-> `/en/news/2026-04-16-adan-lonely-goldfish-concert`). No redirects exist for the old paths — the
+site has no visitors yet, and `next.config.ts`'s only `redirects()` entry is D011's bare-`/`
+rule. A future phase adding real traffic before another slug change should add redirects then,
+not retroactively for this one.
+
+Portfolio Details' prev/next order (`listSlugs("portfolio")`, alphabetical per D090) is now
+chronological as a side effect, since a date-prefixed sort and a date-ascending sort coincide:
+`hotpot-band-show` (2024) -> `bottoms-up` (2025) -> `inner-voices-of-that-day` (2026), not the
+old `bottoms-up` -> `hotpot-band-show` -> `inner-voices-of-that-day`. D090 called the old order
+"alphabetical, which is also file-creation order" — coincidental either way, not a design
+requirement, so the reorder is accepted rather than pinned.
+
+**How to apply:** Any future Portfolio or News entry's filename is `<date>-<slug>.mdx` from
+creation — do not add a project/article with a bare slug and rename it later. The date prefix and
+the frontmatter `date` field must agree; nothing enforces this in code (the frontmatter guard does
+not parse the filename), so a mismatch is a silent authoring error, not a build failure.
+
+## D101 — Two more News articles, for the two press releases behind existing Portfolio projects
+
+**Decision:** Two more real News articles were added from source material outside the original
+14-article set: `2025-10-14-bottoms-up-tour-on-sale` (the on-sale announcement for the tour that
+Portfolio's `2025-11-08-bottoms-up` project covers) and `2024-09-04-hotpot-band-show-wraps-up`
+(the wrap-up recap for `2024-09-04-hotpot-band-show`), sourced from the client's `.docx` press
+releases in `web_ref/portfolios/{一起喝酒的朋友,鍋Band Show}/` — the same source-material folders
+Phase 10 used for those two Portfolio entries, not the News set's own `web_ref/news/` folder.
+Same contract as the original 14: ZH bodies preserve the source press-release text verbatim, EN
+bodies are new full translations (AI-translated, not client-reviewed), each frontmatter carries a
+`tags` array per D099, and each slug carries its own article's date per D100 (`2025-10-14` — the
+on-sale date, not the tour's `2025-11-08` opening date the Portfolio project uses; `2024-09-04` —
+the event date, matching the Portfolio project's own date since that press release is itself a
+same-day recap). Photos exported fresh to `public/images/news/<slug>/`, not reused from
+`public/images/content/bottoms-up-*`/`hotpot-band-show-*` (Portfolio's own images for the same
+two projects) — the two content types keep separate image sets even when they cover the same
+underlying event, matching how `in-utero-huan-huan-community-tour` (D098) already didn't reuse
+Portfolio's `inner-voices-of-that-day` images either. Both tagged `[events, artists-works]` — an
+on-sale announcement and an event recap both read as genuinely spanning both categories, the same
+judgment call the SXSW and Chunzi-listening-party articles made (D099).
+
+**Why:** User request — these two Portfolio projects each have a real press release behind them
+that was never surfaced as a News entry, unlike `inner-voices-of-that-day`, whose own press
+release became `in-utero-huan-huan-community-tour` in the original Phase 13 set.
+
+**Consequence:** A Portfolio project and a News article can now legitimately describe the same
+underlying event under two different slugs and two different image sets — this is expected, not a
+duplication to reconcile (Portfolio is the case-study writeup, News is the press release itself),
+and is already true of the `inner-voices-of-that-day` / `in-utero-huan-huan-community-tour` pair.
+16 real News articles now exist, not 14; the site-wide tag distribution is Events ×12, Artists &
+Works ×8, Global Touring ×2, About In Utero ×1 across those 16.
+
+**How to apply:** If a future Portfolio project's own `web_ref` folder turns out to hold a real
+press release, treat it the same way — a real News entry from real source material, not a
+placeholder, following this same contract.

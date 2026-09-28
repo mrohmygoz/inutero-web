@@ -121,8 +121,7 @@ export default function CardSpecimens({ locale = "en" }: { locale?: Locale }) {
 
       <Article
         title={t.articleTitle}
-        tag={t.articleTag}
-        tagColor="neon"
+        tags={[{ label: t.articleTag, color: "neon" }]}
         dateLabel={t.articleDate}
         image={{ src: "/images/cards/article-card.png", alt: t.articleTitle }}
         href="#"

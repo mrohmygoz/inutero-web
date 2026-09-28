@@ -91,7 +91,7 @@ below cannot ship more than a shell without them.
 | ~~Portfolio~~ **delivered** | ~~All project card content (5 cards)~~ — Figma's slot counts are drawn samples and disagree with each other (11 desktop, 5 mobile). The three real projects on the Project Details tab were the whole supplied set, and Phase 6 had already transcribed their EN and ZH copy into `home.ts`. They now live as MDX under `content/portfolio/{en,zh}/`. **No AI-generated copy was needed.** A fourth project needs a fourth MDX pair. | ~~Phase 10~~ — done |
 | Project Details | All per-project article bodies and client quotes | Phase 11 |
 | ~~Featured Artists~~ **delivered** | ~~Card content beyond the 8 artists listed below (design has 16 slots)~~ — the 8 supplied are the whole set; Figma's 16 slots are a drawn sample, same finding as Portfolio's 11-vs-5 disagreement. English bios are **not supplied** (`待補` for all 8) — AI-generated from the Chinese and shipped flagged non-final, in `app/_lib/artists.ts`. All 8 now have a real photo — only 4 were resolvable from the Figma file itself (its desktop card grid cycles 4 real photos across 12 sample slots); the other 4 came from the client's Dropbox folder directly, supplied mid-review. | ~~Phase 12~~ — done |
-| News | Featured-banner content; all article card copy | Phase 13 |
+| News | ~~All article card copy~~ **delivered** — ~~16 real press releases become MDX entries~~. ZH bodies are the original client press-release text, verbatim; EN bodies are AI-translated, not final client-reviewed copy (same flag as Portfolio/Artists' AI-assisted EN). "Top News" banner content (`12211:4017`) is still open — real content now exists in three of four frames but disagrees across them, and the node is not built this phase (design.md Non-Goals; see the frame table below). | Phase 13 — article copy done; "Top News" banner still open, planned for 13a |
 | News Details | All article bodies; the 3 related-post cards | Phase 14 |
 | ~~Our Story~~ **delivered** | ~~Team member bios; 2nd team card~~ — the client supplied 9 real members with photos and Chinese descriptions; transcribed into `app/_lib/team.ts` (D051). Figma's 5-card Lorem-ipsum sample was a drawn sample, not a count. | ~~Phase 7~~ — done |
 | Our Story | Web Design credit name + IG handle (`待補庭嘉露出名稱＆IG`) | Phase F — the Credits section itself was deferred out of Phase 7 by user decision; see `roadmap.md` → Inherited Work |
@@ -396,9 +396,12 @@ other — 11 at desktop, 5 at mobile — so neither was ever a project count.
 
 | Project | Slug | Tags (職責) |
 | :--- | :--- | :--- |
-| Vol.3 彼日的心內話 / Inner Voices of That Day | `inner-voices-of-that-day` | 行銷宣傳 / 巡演規劃 / 活動製作 |
-| Vol.2 一起喝酒的朋友 / Bottoms Up | `bottoms-up` | 行銷宣傳 / 巡演規劃 / 活動製作 |
-| Vol.1 鍋 Band Show / Hotpot Band Show | `hotpot-band-show` | 行銷宣傳 / 活動製作 |
+| Vol.3 彼日的心內話 / Inner Voices of That Day | `2026-05-08-inner-voices-of-that-day` | 行銷宣傳 / 巡演規劃 / 活動製作 |
+| Vol.2 一起喝酒的朋友 / Bottoms Up | `2025-11-08-bottoms-up` | 行銷宣傳 / 巡演規劃 / 活動製作 |
+| Vol.1 鍋 Band Show / Hotpot Band Show | `2024-09-04-hotpot-band-show` | 行銷宣傳 / 活動製作 |
+
+Slugs carry a `YYYY-MM-DD-` date prefix (D100) — the filename is still the whole slug (D026), the
+date is just its leading segment now, matching the news slugs below.
 
 **The tags are the 職責 rows, not Figma's card tags** (D087). Figma repeats one placeholder
 triple on every sample slot, which is how Phase 6 acquired it for Home; Home was realigned to
@@ -510,9 +513,34 @@ Each artist has one press photo — see [Assets](#assets-referenced-by-the-sheet
 `All / Industry / artists / tour / events`; the final set is a different taxonomy in both
 languages. Do not reuse the Portfolio/Artists tags here.
 
-The featured banner (`12211:4017`) is `待補` — the sheet notes its purpose was never
-confirmed in Figma (*「元件未展開，需在Figma確認用途（可能為精選文章區塊）」*). Article cards
-(`12220:1669, 1670, 1680, 1690, 1781, 1782, 1783`) are all `待補`.
+The **"Top News" banner** (`12211:4017` mobile; `12573:7967`/`12573:7968` desktop) sits between
+the header and the filter row — full-bleed photo, a solid tag chip, a large headline, and a date,
+all over a dark gradient. **Purpose confirmed as of 2026-09-28** (re-fetched via
+`get_design_context`, prompted by user review) — it is a single featured-article hero, not the
+`待補` unknown the sheet originally flagged; named "Top News" per user decision, 2026-09-28. Still
+not built (Phase 13 shipped before this was populated) — **planned for Phase 13a**, see
+`roadmap.md`.
+
+**Content across the four frames is real but inconsistent, and needs a decision before it can be
+built:**
+
+| Frame | Tag | Headline | Date |
+| :--- | :--- | :--- | :--- |
+| Desktop EN (`12573:7967`) | `Industry` | Taipei indie scene finds its voice internationally | June 12, 2025 |
+| Mobile EN (`12211:4017`) | `Artists` | Taipei indie scene finds its voice internationally | June 12, 2025 |
+| Mobile TC (`12368:2637`) | `藝人作品新訊` | 音樂品牌子皿攜樂團緩緩 走入日照中心與地方社區推出《彼日的心內話》免費企劃巡迴演出 | June 12, 2025 |
+| Desktop TC (`I12635:12929;12573:7967`) | — | *(still empty — no children)* | — |
+
+EN (both breakpoints) headlines a story that matches none of the 16 real News articles — its
+headline echoes the retired Phase 4 placeholder (`taipei-indie-goes-abroad`, D098), suggesting
+that placeholder was itself drafted from this Figma sample rather than the reverse. Mobile TC
+instead headlines the real `2026-05-13-in-utero-huan-huan-community-tour` story, tagged
+`藝人作品新訊` — close to but not identical to `newsFilters`' own `音樂新訊` label for
+`artists-works`. Desktop TC has no content at all. Whoever builds Phase 13a must resolve this as
+a real editorial decision (which real article is "featured," and by what rule — newest? manually
+pinned?) rather than transcribing whichever frame's sample text is present, and record the
+resolution in that phase's own `design.md`. Article cards (`12220:1669, 1670, 1680, 1690, 1781,
+1782, 1783`) are `待補` — superseded by the 16 real articles Phase 13 shipped.
 
 ### News — 30 real headlines available
 

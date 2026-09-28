@@ -11,11 +11,13 @@
  * a `.d.ts` declaration that TypeScript could never actually check.
  */
 
-import { serviceAnchors } from "../routes";
+import { newsFilters, serviceAnchors } from "../routes";
 
 export type ServiceId = (typeof serviceAnchors)[number]["id"];
+export type NewsFilterId = (typeof newsFilters)[number]["id"];
 
 const serviceIds: readonly string[] = serviceAnchors.map((a) => a.id);
+const newsFilterIds: readonly string[] = newsFilters.map((f) => f.id);
 
 export type Frontmatter = {
   /** Headline shown in listings, page metadata, and the detail page. */
@@ -32,13 +34,27 @@ export type Frontmatter = {
    */
   services: readonly ServiceId[];
   /**
+   * News filter tags — the News listing's filter axis (Phase 13, design.md
+   * D-A). Required and non-empty on `news`, forbidden on `portfolio`. An
+   * article may carry more than one tag when it genuinely spans categories
+   * (e.g. an overseas showcase recap is both Global Touring and Events) —
+   * amended from design.md D-B's original one-tag-per-article rule, per user
+   * feedback during review (see DECISIONS.md). `newsFilters` in `routes.ts`
+   * is the id source, kept independent from `services` above.
+   */
+  tags: readonly NewsFilterId[];
+  /**
    * The card's short date line, e.g. "2025.11 In Utero Present Vol.2". Authored
    * per locale rather than derived from `date`: the series half is translated
    * ("子皿 In Utero Present Vol.2") and the two cannot be composed from one ISO
    * string. Portfolio only; `""` on news.
    */
   dateLabel: string;
-  /** Listing-card poster, a path under `public/`. Portfolio only; `""` on news. */
+  /**
+   * Listing-card poster, a path under `public/`. Required on both content
+   * types (Phase 13 extended this from portfolio-only, since News's grid
+   * needs a real photo per article too — design.md D-D).
+   */
   image: string;
   /**
    * Collaborating artists/partners (合作夥伴), shown in the detail page's meta
@@ -121,8 +137,9 @@ export function parseFrontmatter(
     date,
     excerpt: record.excerpt as string,
     services: parseServices(record.services, file, type),
+    tags: parseTags(record.tags, file, type),
     dateLabel: parsePortfolioString(record.dateLabel, "dateLabel", file, type),
-    image: parsePortfolioString(record.image, "image", file, type),
+    image: parseRequiredString(record.image, "image", file),
     client: parseOptionalPortfolioString(record.client, "client", file, type),
     heroImage: parseOptionalPortfolioString(record.heroImage, "heroImage", file, type),
     gallery: parseGallery(record.gallery, file, type),
@@ -147,6 +164,44 @@ function parseGallery(
     throw new FrontmatterError(file, "gallery", "must be a list of image path strings");
   }
   return raw as string[];
+}
+
+/** Required and non-empty on both content types. */
+function parseRequiredString(raw: unknown, field: string, file: string): string {
+  if (typeof raw !== "string" || raw.trim() === "") {
+    throw new FrontmatterError(file, field, "is required and must be a non-empty string");
+  }
+  return raw;
+}
+
+/** Required non-empty list on news (each a `newsFilters` id), forbidden on portfolio. */
+function parseTags(
+  raw: unknown,
+  file: string,
+  type: "news" | "portfolio",
+): readonly NewsFilterId[] {
+  if (type === "portfolio") {
+    if (raw !== undefined) {
+      throw new FrontmatterError(file, "tags", "is only valid on news entries");
+    }
+    return [];
+  }
+
+  if (!Array.isArray(raw) || raw.length === 0) {
+    throw new FrontmatterError(file, "tags", "must be a non-empty list of news filter ids");
+  }
+
+  for (const value of raw) {
+    if (typeof value !== "string" || !newsFilterIds.includes(value)) {
+      throw new FrontmatterError(
+        file,
+        "tags",
+        `contains ${JSON.stringify(value)}, which is not a known news filter id (${newsFilterIds.join(", ")})`,
+      );
+    }
+  }
+
+  return raw as NewsFilterId[];
 }
 
 /** Required and non-empty on portfolio, forbidden on news. */

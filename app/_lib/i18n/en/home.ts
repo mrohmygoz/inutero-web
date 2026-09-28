@@ -88,7 +88,7 @@ const home = {
     cta: "View all projects",
     cards: [
       {
-        slug: "bottoms-up",
+        slug: "2025-11-08-bottoms-up",
         dateLabel: "2025.11 In Utero Present Vol.2",
         title: "Bottoms Up",
         description:
@@ -101,7 +101,7 @@ const home = {
         image: "/images/projects/bottoms-up.jpg",
       },
       {
-        slug: "hotpot-band-show",
+        slug: "2024-09-04-hotpot-band-show",
         dateLabel: "2024.09 In Utero Present Vol.1",
         title: "Hotpot Band Show",
         description:
@@ -113,7 +113,7 @@ const home = {
         image: "/images/projects/hotpot-band-show.jpg",
       },
       {
-        slug: "inner-voices-of-that-day",
+        slug: "2026-05-08-inner-voices-of-that-day",
         dateLabel: "2026.05 In Utero Present Vol.3",
         title: "Inner Voices of That Day",
         description:

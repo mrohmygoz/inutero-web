@@ -172,4 +172,5 @@ export {
   FrontmatterError,
   type Frontmatter,
   type ServiceId,
+  type NewsFilterId,
 } from "./frontmatter";

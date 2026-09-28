@@ -85,6 +85,19 @@ export function serviceAnchorHref(id: string, locale: Locale): string {
 }
 
 /**
+ * News's own filter taxonomy — deliberately independent from `serviceAnchors`
+ * (Phase 13, design.md D-A). The matrix is explicit that this is "the one tag
+ * set that is not the service lines": do not reuse these ids on Portfolio or
+ * Artists, and do not let their ids leak in here.
+ */
+export const newsFilters = [
+  { id: "artists-works", label: { en: "Artists & Works", zh: "音樂新訊" } },
+  { id: "global-touring", label: { en: "Global Touring", zh: "活動消息" } },
+  { id: "events", label: { en: "Events", zh: "國際曝光" } },
+  { id: "about-in-utero", label: { en: "About In Utero", zh: "子皿營運日誌" } },
+] as const;
+
+/**
  * Swaps the locale segment of a path while preserving the rest, e.g.
  * ("/en/portfolio", "zh") -> "/zh/portfolio". Assumes `pathname` already
  * starts with a valid locale prefix (true for every route under `[locale]/`).
