@@ -2348,3 +2348,44 @@ Works ×8, Global Touring ×2, About In Utero ×1 across those 16.
 **How to apply:** If a future Portfolio project's own `web_ref` folder turns out to hold a real
 press release, treat it the same way — a real News entry from real source material, not a
 placeholder, following this same contract.
+
+## D102 — Phase 13a: the Top News banner's featured article is a build-time config value, not derived; Pagination gained a `tone` prop it never had before
+
+**What:** The four Top News banner frames (`12211:4017` mobile, `12573:7967`/`7968` desktop)
+disagree on featured content — EN headlines a retired placeholder story (D098) that matches none
+of the 16 real articles, Mobile TC headlines the real `2026-05-13-in-utero-huan-huan-community-
+tour` story, and Desktop TC's own override node (`I12635:12929;12573:7967`) is genuinely empty
+(re-confirmed via `get_design_context`: no children, despite the sibling node `12573:7968` — a
+different node — rendering the EN placeholder as a component-default fallback). Resolved by
+adding `featuredSlug: string` to `app/_lib/i18n/{en,zh}/news.ts`, both set to
+`2026-05-13-in-utero-huan-huan-community-tour` (it exists in both locales' manifests, and TC's own
+frame already features it). `page.tsx` resolves it against the already-fetched `getManifest`
+array and throws (naming the slug and locale) if not found — no silent fallback, matching D002.
+
+Separately, `Pagination.tsx` was assumed reusable "with zero component changes" (design.md Goals)
+by mirroring `PortfolioGrid`'s integration. Fetching News's actual pagination node (`12612:7790`)
+found it on a light section using dark-gray (`#333`-ish) inactive text and rule color, not
+`Pagination.tsx`'s hardcoded white (built for Portfolio's dark section) — reusing it verbatim
+would have rendered invisible white-on-white text. Added `tone?: "dark" | "light"` (default
+`"dark"`, Portfolio unaffected); News's `NewsGrid` passes `"light"`, using
+`--opacity-neutral-darkest-60` for inactive text/rule (the closest existing token to Figma's
+`#333`; no `-70`/`-80` opacity step exists in the 124-token set) and `--color-basic-accent`
+(desktop) / `--opacity-neutral-darkest-20` (mobile) for the rule, matching `NewsGrid`'s own filter
+rail convention.
+
+**Why:** A featured-article pick is an editorial decision no Figma frame actually settles
+consistently, and D002 requires content mismatches to fail loudly rather than transcribe whichever
+frame happens to have sample text. The Pagination color mismatch was discovered only by fetching
+the real News frame — design.md's "zero changes" assumption was written without that fetch and
+turned out wrong; confirmed with the user before extending the shared component (2026-09-28).
+
+**Consequence:** `featuredSlug` can be changed by editing one field — no admin UI, no
+"auto-pick newest" fallback (design.md Non-Goals). EN and TC could in principle feature different
+articles; this phase deliberately configures the same one in both. `Pagination.tsx`'s public API
+now includes `tone`, defaulting to Portfolio's existing look — any future paginated listing must
+pick a tone rather than assume one.
+
+**How to apply:** Before reusing a shared component "verbatim" across sections of different
+polarity (light vs. dark background), fetch that specific section's own Figma node — don't assume
+a component's existing hardcoded colors transfer. If a future listing needs a third tone, extend
+`Pagination`'s `tone` union rather than duplicating the component.

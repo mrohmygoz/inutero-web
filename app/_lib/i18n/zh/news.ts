@@ -19,6 +19,12 @@ const news: typeof enNews = {
     },
     empty: "此分類目前尚無文章。",
   },
+  pagination: {
+    next: "Next", // matrix: `keep EN`
+    label: "News pages",
+    page: "Page",
+  },
+  featuredSlug: "2026-05-13-in-utero-huan-huan-community-tour",
 };
 
 export default news;

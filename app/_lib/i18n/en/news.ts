@@ -28,6 +28,17 @@ const news = {
     // prototype on any filter tag (Portfolio/Artists precedent).
     empty: "No articles in this category yet.",
   },
+  pagination: {
+    next: "Next",
+    label: "News pages",
+    page: "Page",
+  },
+  // Top News banner (Phase 13a). Desktop 12573:7967/7968, mobile 12211:4017,
+  // mobile TC 12368:2637. The four frames disagree on featured content — this
+  // is a build-time editorial pick, not a Figma transcription (design.md,
+  // DECISIONS.md D102). A slug that doesn't resolve in this locale's manifest
+  // fails the build loudly (D002), never a silent fallback.
+  featuredSlug: "2026-05-13-in-utero-huan-huan-community-tour",
 };
 
 export default news;

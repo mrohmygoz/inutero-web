@@ -2,10 +2,11 @@
 
 import { useMemo, useState } from "react";
 import Article from "../../../_components/Article";
-import type { TagColor } from "../../../_components/Tag";
+import Pagination from "../../../_components/Pagination";
 import { newsFilters } from "../../../_lib/routes";
 import type { NewsFilterId } from "../../../_lib/content";
 import type { Locale } from "../../../_lib/i18n";
+import { newsTagColor } from "./tagColors";
 
 // Source: desktop Section 12573:7983 (filter rail 12611:7639 at x=32 w=290,
 // article list 12612:7807 at x=386 w=1022, single-column stack of full-width
@@ -13,15 +14,16 @@ import type { Locale } from "../../../_lib/i18n";
 // side-by-side/stacked shape); mobile Container 12220:1646 (filter
 // 12220:1647, article list 12211:4040, both inside a 15px gutter).
 //
-// Pagination and the featured-banner section above the filter (design.md
-// Non-Goals; the empty 12573:7967/12211:4017 nodes) are Phase 13a's and are
-// not rendered here — the grid ships every matching article unpaginated.
-//
 // The filter mechanism is Portfolio's, reused verbatim (design.md D-B):
 // single-select, `All` default, client-side, no URL sync. Only the tag ids/
 // labels (`newsFilters` in routes.ts) are page-owned. A `node.reactions`
 // sweep of all four News frames found no prototype on the tag row, same
 // finding as Portfolio (D083) and Artists (D094).
+//
+// Pagination (Phase 13a): mirrors `PortfolioGrid` verbatim behaviourally —
+// `PAGE_SIZE = 9`, reset-to-page-1-on-filter-change, same `Math.ceil` math —
+// but passes `tone="light"` to `Pagination`, since this section (unlike
+// Portfolio's dark one) is light-background (design.md, DECISIONS.md D102).
 export type NewsArticleSummary = {
   slug: string;
   title: string;
@@ -37,32 +39,39 @@ type FilterCopy = {
   empty: string;
 };
 
-// Fixed per tag, not per position — same reasoning as `serviceTagColor`
-// (D089): a tag paints the same accent color on every card. Four real tags,
-// four accent colors in `Tag`'s solid palette — one each, no reuse.
-const newsTagColor: Record<NewsFilterId, TagColor> = {
-  "artists-works": "neon",
-  "global-touring": "yellow",
-  events: "orange",
-  "about-in-utero": "green",
-};
+// Derived — Figma gives no page-size guidance for News (no grid/pagination
+// prototype in the reaction sweep). Reused from Portfolio for a site-wide
+// consistent value; with 16 real articles this makes page 2 reachable
+// without a temporary size override, unlike Portfolio's 3-project set.
+const PAGE_SIZE = 9;
 
 export default function NewsGrid({
   locale,
   articles,
   filter,
+  pagination,
 }: {
   locale: Locale;
   articles: NewsArticleSummary[];
   filter: FilterCopy;
+  pagination: { next: string; label: string; page: string };
 }) {
   const [activeTag, setActiveTag] = useState<NewsFilterId | null>(null);
+  const [page, setPage] = useState(1);
 
   const visible = useMemo(
     () =>
       activeTag === null ? articles : articles.filter((article) => article.tags.includes(activeTag)),
     [articles, activeTag]
   );
+
+  const pageCount = Math.max(1, Math.ceil(visible.length / PAGE_SIZE));
+  const pageItems = visible.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
+  function selectTag(tag: NewsFilterId | null) {
+    setActiveTag(tag);
+    setPage(1);
+  }
 
   return (
     <section className="w-full bg-(--color-basic-background) px-[15px] pt-[40px] pb-[30px] lg:flex lg:items-start lg:gap-[32px] lg:px-[32px] lg:py-[64px]">
@@ -72,13 +81,13 @@ export default function NewsGrid({
         </p>
 
         <div role="group" aria-label={filter.label} className="flex flex-wrap gap-x-[5px] gap-y-[8px] pt-[16px]">
-          <FilterTag label={filter.all} active={activeTag === null} onSelect={() => setActiveTag(null)} />
+          <FilterTag label={filter.all} active={activeTag === null} onSelect={() => selectTag(null)} />
           {newsFilters.map((tag) => (
             <FilterTag
               key={tag.id}
               label={filter.tags[tag.id]}
               active={activeTag === tag.id}
-              onSelect={() => setActiveTag(tag.id)}
+              onSelect={() => selectTag(tag.id)}
             />
           ))}
         </div>
@@ -86,7 +95,7 @@ export default function NewsGrid({
 
       <div className="min-w-px lg:flex-1">
         <div aria-live="polite" className="flex flex-col gap-[30px] lg:gap-[32px]">
-          {visible.map((article) => (
+          {pageItems.map((article) => (
             <Article
               key={article.slug}
               href={`/${locale}/news/${article.slug}`}
@@ -97,12 +106,16 @@ export default function NewsGrid({
             />
           ))}
 
-          {visible.length === 0 ? (
+          {pageItems.length === 0 ? (
             // Derived — Figma draws no empty state; Portfolio/Artists precedent
             // (D085). Does not trigger with the real 14-article set (design.md
             // Risks), kept as a guard.
             <p className="font-body text-body-s py-[40px] text-(--opacity-neutral-darkest-60)">{filter.empty}</p>
           ) : null}
+        </div>
+
+        <div className="pt-[20px] lg:pt-[32px]">
+          <Pagination page={page} pageCount={pageCount} onChange={setPage} labels={pagination} tone="light" />
         </div>
       </div>
     </section>

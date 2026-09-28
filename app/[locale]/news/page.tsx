@@ -5,6 +5,9 @@ import { buildRouteMetadata } from "../../_lib/metadata";
 import { getManifest } from "../../_lib/content";
 import NewsHeader from "./_components/NewsHeader";
 import NewsGrid, { type NewsArticleSummary } from "./_components/NewsGrid";
+import NewsTopStory from "./_components/NewsTopStory";
+import NewsletterSignup from "../../_components/NewsletterSignup";
+import { newsTagColor } from "./_components/tagColors";
 
 // English reads as a full date ("June 12, 2026" — Article.tsx's uppercase
 // class renders "JUNE 12, 2026"); Chinese keeps the client's own dot-numeric
@@ -36,10 +39,12 @@ export default async function NewsPage({ params }: PageProps<"/[locale]/news">) 
   const { news } = getDictionary(locale);
 
   // Build time, not runtime — same contract as Portfolio (D-A there).
-  const articles: NewsArticleSummary[] = (await getManifest("news"))
-    .filter((entry) => entry.locale === locale)
+  const manifest = (await getManifest("news")).filter((entry) => entry.locale === locale);
+
+  const articles: NewsArticleSummary[] = manifest
     // Newest first, same derivation as Portfolio: no sort control exists, and
     // a news index with no order reads chronologically.
+    .slice()
     .sort((a, b) => Date.parse(b.frontmatter.date) - Date.parse(a.frontmatter.date))
     .map(({ slug, frontmatter }) => ({
       slug,
@@ -54,10 +59,29 @@ export default async function NewsPage({ params }: PageProps<"/[locale]/news">) 
       tags: [...frontmatter.tags],
     }));
 
+  // Top News banner (Phase 13a): resolved from the already-fetched manifest,
+  // not a second content lookup. Loud, not silent, on a bad config — matches
+  // every other manifest cross-reference contract in the codebase (D002).
+  const featured = manifest.find((entry) => entry.slug === news.featuredSlug);
+  if (!featured) {
+    throw new Error(
+      `News featuredSlug "${news.featuredSlug}" not found in the "${locale}" news manifest.`
+    );
+  }
+  const featuredTag = featured.frontmatter.tags[0];
+
   return (
     <>
       <NewsHeader locale={locale} />
-      <NewsGrid locale={locale} articles={articles} filter={news.filter} />
+      <NewsTopStory
+        href={`/${locale}/news/${featured.slug}`}
+        title={featured.frontmatter.title}
+        dateLabel={formatNewsDateLabel(featured.frontmatter.date, locale)}
+        image={{ src: featured.frontmatter.image, alt: featured.frontmatter.title }}
+        tag={{ label: news.filter.tags[featuredTag], color: newsTagColor[featuredTag] }}
+      />
+      <NewsGrid locale={locale} articles={articles} filter={news.filter} pagination={news.pagination} />
+      <NewsletterSignup locale={locale} />
     </>
   );
 }

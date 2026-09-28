@@ -22,7 +22,10 @@ export default function NewsHeader({ locale }: { locale: Locale }) {
 
   return (
     <section className="w-full bg-(--color-basic-background)">
-      <div className="flex items-start gap-[5px] pr-[15px] lg:gap-0 lg:px-[32px] lg:py-[68px]">
+      {/* `pb-[25px]` (Phase 13a): mobile header frame (12220:1633) is 214px
+          tall against a 25px-shorter content block — the Top News banner
+          that now follows needs this reserved, or the two sections collide. */}
+      <div className="flex items-start gap-[5px] pr-[15px] pb-[25px] lg:gap-0 lg:px-[32px] lg:py-[68px]">
         <Eyebrow
           label={header.eyebrow}
           tone="dark"
