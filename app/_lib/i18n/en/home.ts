@@ -98,7 +98,7 @@ const home = {
           { id: "international-booking", label: "Tour Planning" },
           { id: "event-production", label: "Event Production" },
         ] satisfies ProjectTag[],
-        image: "/images/projects/bottoms-up.jpg",
+        image: "/images/projects/2025-11-08-bottoms-up.jpg",
       },
       {
         slug: "2024-09-04-hotpot-band-show",
@@ -110,7 +110,7 @@ const home = {
           { id: "pr-marketing", label: "PR & Marketing" },
           { id: "event-production", label: "Event Production" },
         ] satisfies ProjectTag[],
-        image: "/images/projects/hotpot-band-show.jpg",
+        image: "/images/projects/2024-09-04-hotpot-band-show.jpg",
       },
       {
         slug: "2026-05-08-inner-voices-of-that-day",
@@ -123,7 +123,7 @@ const home = {
           { id: "international-booking", label: "Tour Planning" },
           { id: "event-production", label: "Event Production" },
         ] satisfies ProjectTag[],
-        image: "/images/projects/inner-voices-of-that-day.jpg",
+        image: "/images/projects/2026-05-08-inner-voices-of-that-day.jpg",
       },
     ],
   },

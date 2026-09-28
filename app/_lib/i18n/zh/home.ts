@@ -100,7 +100,7 @@ const home: typeof enHome = {
           { id: "international-booking", label: "巡演規劃" },
           { id: "event-production", label: "活動製作" },
         ],
-        image: "/images/projects/bottoms-up.jpg",
+        image: "/images/projects/2025-11-08-bottoms-up.jpg",
       },
       {
         slug: "2024-09-04-hotpot-band-show",
@@ -112,7 +112,7 @@ const home: typeof enHome = {
           { id: "pr-marketing", label: "行銷宣傳" },
           { id: "event-production", label: "活動製作" },
         ],
-        image: "/images/projects/hotpot-band-show.jpg",
+        image: "/images/projects/2024-09-04-hotpot-band-show.jpg",
       },
       {
         slug: "2026-05-08-inner-voices-of-that-day",
@@ -125,7 +125,7 @@ const home: typeof enHome = {
           { id: "international-booking", label: "巡演規劃" },
           { id: "event-production", label: "活動製作" },
         ],
-        image: "/images/projects/inner-voices-of-that-day.jpg",
+        image: "/images/projects/2026-05-08-inner-voices-of-that-day.jpg",
       },
     ],
   },
