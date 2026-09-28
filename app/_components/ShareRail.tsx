@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { shareIntentHref, shareTargets, useShareUrl } from "../../../../_components/share";
+import { shareIntentHref, shareTargets, useShareUrl } from "./share";
 
 // Source: CMS 12610:7339 — the desktop-only left rail beside the article body,
 // owed by Phase 10's roadmap "Inherited Work" row. No 393px counterpart exists
@@ -12,9 +12,8 @@ import { shareIntentHref, shareTargets, useShareUrl } from "../../../../_compone
 // left rail is the icon set `ShareRow`'s third glyph (X, not YouTube) was
 // actually taken from.
 //
-// Page-local (not `app/_components/`) — Portfolio Details is its only consumer
-// today. Promote to a shared component if News Details (Phase 14) reuses it
-// verbatim.
+// Promoted here from `[locale]/portfolio/[slug]/_components/` in Phase 14 once
+// News Details became a second, verbatim consumer.
 export default function ShareRail({
   title,
   copyLinkLabel,

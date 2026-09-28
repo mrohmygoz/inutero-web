@@ -25,6 +25,14 @@ const news: typeof enNews = {
     page: "Page",
   },
   featuredSlug: "2026-05-13-in-utero-huan-huan-community-tour",
+  // Breadcrumb reuses the header's own ZH heading line (content-matrix.md:
+  // "News Details" table gives 子皿超音波 > 新聞標題, not a translation of "News").
+  detail: {
+    breadcrumb: "子皿超音波",
+    relatedTagline: "more for you", // matrix: `keep EN`
+    relatedHeading: "相關內容",
+    relatedButton: "所有內容",
+  },
 };
 
 export default news;

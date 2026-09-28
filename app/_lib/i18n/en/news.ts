@@ -39,6 +39,14 @@ const news = {
   // DECISIONS.md D102). A slug that doesn't resolve in this locale's manifest
   // fails the build loudly (D002), never a silent fallback.
   featuredSlug: "2026-05-13-in-utero-huan-huan-community-tour",
+  // News Details (Phase 14). Desktop 12612:8828, mobile 12211:4467. Copy is
+  // content-matrix.md's "News Details" table, not the Figma sample text.
+  detail: {
+    breadcrumb: "News",
+    relatedTagline: "more for you",
+    relatedHeading: "Related Posts",
+    relatedButton: "View all post",
+  },
 };
 
 export default news;

@@ -1,8 +1,8 @@
 import Image from "next/image";
 import Cms from "../../../../_components/Cms";
 import ShareRow from "../../../../_components/ShareRow";
+import ShareRail from "../../../../_components/ShareRail";
 import Gallery from "./Gallery";
-import ShareRail from "./ShareRail";
 import type { ContentEntry } from "../../../../_lib/content";
 import { getDictionary, type Locale } from "../../../../_lib/i18n";
 import { localizedHref } from "../../../../_lib/routes";

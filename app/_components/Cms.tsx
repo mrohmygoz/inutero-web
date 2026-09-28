@@ -127,7 +127,12 @@ export type CmsProps = {
 export default function Cms({ body: Body, className }: CmsProps) {
   return (
     <div
-      className={`mx-auto w-full max-w-[672px] px-5 py-10 lg:max-w-[1031px] lg:px-8 lg:py-[92px] ${
+      // No bottom padding: both real consumers (`PortfolioDetail`, `NewsDetail`) place
+      // `ShareRow` directly after this body, and its own top padding (40px mobile / 64px
+      // desktop) is the entire designed gap to the last element — confirmed against the
+      // CMS instance's own metadata, where `ShareRow`'s container begins at the exact y
+      // the body content ends. A `pb` here would double that gap.
+      className={`mx-auto w-full max-w-[672px] px-5 pt-10 lg:max-w-[1031px] lg:px-8 lg:pt-[92px] ${
         className ?? ""
       }`.trim()}
     >

@@ -2427,3 +2427,33 @@ re-authors facts that a content manifest already owns, prefer resolving from the
 the consuming Server Component and keeping only page-specific presentation config (which items,
 what order) in the dictionary — the same pattern `/[locale]/portfolio`'s `page.tsx` established
 for `PortfolioGrid`, just resolved locally instead of pushed down as props.
+
+## D104 — Phase 14: News Details' related-posts selection (shared-tag match, recency
+fallback, capped at 3); `heroImage` widened to both content types; `ShareRail` promoted
+
+**What:** `NewsDetail`'s "Related posts" section selects up to 3 other News entries: articles
+sharing at least one `tags` value with the current entry, most-recent first, excluding the
+current slug; if fewer than 3 share a tag, the remainder is filled by the most recent
+remaining articles regardless of tag. The cap of 3 is a measured Figma fact, not a guess — both
+the desktop (`12612:8230`) and mobile (`12220:1976`) frames draw exactly 3 stacked `Article`
+cards (never a grid), and a `node.reactions` sweep of all four News Details frames found no
+prototype on the hero or these cards, matching Portfolio's D083–D085 precedent.
+
+`heroImage` (in `frontmatter.ts`) is now optional on both `news` and `portfolio` — previously
+forbidden on `news`. No existing `.mdx` sets it; the fallback to `image` (the listing poster)
+is unchanged, so this is purely additive.
+
+`ShareRail` moved from `[locale]/portfolio/[slug]/_components/` to `app/_components/`
+now that `NewsDetail` reuses it verbatim (its own INVENTORY entry had flagged this as the
+promotion condition since Phase 11).
+
+**Why:** No Figma reaction/prototype exists to confirm a related-posts algorithm, so one had
+to be derived; shared-tag relevance with a recency fallback is the same reasoning Portfolio's
+prev/next used for its own undesigned selection order. The count (3) had to be read from the
+frames rather than assumed, since guessing a page's own drawn sample size has burned prior
+phases.
+
+**How to apply:** Any future "related content" section without a Figma-confirmed algorithm
+should default to this shared-tag/recency shape rather than reinventing one — and should
+measure its card count from the frame, never assume the drawn sample matches the real
+data's natural size.

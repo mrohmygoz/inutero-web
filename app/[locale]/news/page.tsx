@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { getDictionary, isLocale, type Locale } from "../../_lib/i18n";
+import { getDictionary, isLocale } from "../../_lib/i18n";
 import { buildRouteMetadata } from "../../_lib/metadata";
 import { getManifest } from "../../_lib/content";
 import NewsHeader from "./_components/NewsHeader";
@@ -8,21 +8,7 @@ import NewsGrid, { type NewsArticleSummary } from "./_components/NewsGrid";
 import NewsTopStory from "./_components/NewsTopStory";
 import NewsletterSignup from "../../_components/NewsletterSignup";
 import { newsTagColor } from "./_components/tagColors";
-
-// English reads as a full date ("June 12, 2026" — Article.tsx's uppercase
-// class renders "JUNE 12, 2026"); Chinese keeps the client's own dot-numeric
-// press-release convention ("2026.06.12"). Built from the ISO string's own
-// components, not `Date`/`toLocaleDateString` — parsing "2026-06-12" through
-// `Date` and reformatting risks a UTC/local timezone off-by-one-day shift.
-const EN_MONTHS = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December",
-];
-function formatNewsDateLabel(isoDate: string, locale: Locale): string {
-  if (locale !== "en") return isoDate.replace(/-/g, ".");
-  const [year, month, day] = isoDate.split("-").map(Number);
-  return `${EN_MONTHS[month - 1]} ${day}, ${year}`;
-}
+import { formatNewsDateLabel } from "./_lib/formatNewsDateLabel";
 
 export async function generateMetadata({
   params,

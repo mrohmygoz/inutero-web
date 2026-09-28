@@ -64,10 +64,12 @@ export type Frontmatter = {
    */
   client: string;
   /**
-   * Detail-page hero background, a path under `public/`. Portfolio only,
-   * optional — falls back to `image` (the listing poster) when absent, which
-   * is what every entry did before this field existed. Lets a project use a
-   * real supplied photo for its hero distinct from its listing-card poster.
+   * Detail-page hero background, a path under `public/`. Optional on both
+   * content types — falls back to `image` (the listing poster) when absent,
+   * which is what every entry did before this field existed. Lets an article
+   * or project use a real supplied photo for its hero distinct from its
+   * listing-card poster (Phase 14 widened this from portfolio-only to also
+   * allow `news`).
    */
   heroImage: string;
   /**
@@ -141,7 +143,7 @@ export function parseFrontmatter(
     dateLabel: parsePortfolioString(record.dateLabel, "dateLabel", file, type),
     image: parseRequiredString(record.image, "image", file),
     client: parseOptionalPortfolioString(record.client, "client", file, type),
-    heroImage: parseOptionalPortfolioString(record.heroImage, "heroImage", file, type),
+    heroImage: parseOptionalString(record.heroImage, "heroImage", file),
     gallery: parseGallery(record.gallery, file, type),
   };
 }
@@ -226,6 +228,15 @@ function parsePortfolioString(
   }
   if (typeof raw !== "string" || raw.trim() === "") {
     throw new FrontmatterError(file, field, "must be a non-empty string");
+  }
+  return raw;
+}
+
+/** Optional on both content types — absent yields `""`. */
+function parseOptionalString(raw: unknown, field: string, file: string): string {
+  if (raw === undefined) return "";
+  if (typeof raw !== "string") {
+    throw new FrontmatterError(file, field, `must be a string, got ${typeof raw}`);
   }
   return raw;
 }
