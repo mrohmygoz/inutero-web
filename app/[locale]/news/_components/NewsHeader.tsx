@@ -7,12 +7,12 @@ import { getDictionary, type Locale } from "../../../_lib/i18n";
 // `darkNavRoutes`, and NAV renders in normal flow, so unlike PortfolioHero
 // this section does not need to reserve the NAV's height itself.
 //
-// The heading is a literal 113px/79.1px-leading/-1.13px-tracking size — every
-// one of the four frames (mobile/desktop x EN/TC) reports the same numbers,
-// which is the *mobile* Display/H1 mode's value, not the responsive
-// `text-display-h1` token (220px at desktop, 62px mobile ZH). Transcribed
-// literally rather than tokenized, matching D030/D037's precedent for a
-// locally-drawn size with no token behind it (recorded in DECISIONS.md).
+// D096 originally transcribed the heading as a literal 113px/79.1px/-1.13px
+// size because the Figma fetch returned the mobile Display/H1 mode's numbers
+// even for the desktop frame. That literal never scaled up at desktop, making
+// this header (and Contact's, same quirk) visibly smaller than Portfolio/
+// Artists/Home. Treated as the Figma authoring mistake D096 flagged itself as
+// a candidate for — reverted to the responsive `text-display-h1` token.
 //
 // Unlike Portfolio/Artists, this header carries a body paragraph below the
 // heading (content-matrix.md "Header body" row) — the one structural
@@ -35,10 +35,10 @@ export default function NewsHeader({ locale }: { locale: Locale }) {
         <Eyebrow
           label={header.eyebrow}
           tone="dark"
-          className="hidden h-[112px] w-[27px] shrink-0 items-start justify-center py-[15px] lg:flex lg:translate-y-5"
+          className="hidden h-[112px] w-[27px] shrink-0 items-start justify-center py-[15px] lg:flex lg:translate-y-7"
         />
         <div className="flex min-w-px flex-1 flex-col items-start gap-[20px] pt-[20px] lg:pt-0">
-          <h1 className="font-display w-full text-[113px] leading-[79.1px] tracking-[-1.13px] font-bold text-(--color-basic-accent) uppercase">
+          <h1 className="font-display text-display-h1 w-full text-(--color-basic-accent) uppercase">
             {header.headingLines.map((line) => (
               <span key={line} className="block">
                 {line}

@@ -2163,7 +2163,14 @@ inline node reference is a transcription, not a second source.
 **How to apply:** When a task or design doc's node ID conflicts with `design-inventory.md`,
 trust the inventory and note the correction — don't silently fetch whichever ID the task named.
 
-## D096 — News's header is light, not dark-NAV; `TUNING IN`/`子皿超音波` is a literal, non-token heading size
+## D096 — News's header is light, not dark-NAV; `TUNING IN`/`子皿超音波` is a literal, non-token heading size (superseded — see below)
+
+> **Superseded:** the literal-113px call below was reverted. `ContactHeader` was built later
+> from the same Figma quirk (its own `get_design_context` fetch also returned the mobile-mode
+> 113px triple for its desktop header node), and with two pages now visibly smaller-headed than
+> Portfolio/Artists/Home, this was judged to be the authoring mistake this entry's own **How to
+> apply** flagged as a possibility, not a deliberate design choice. Both `NewsHeader.tsx` and
+> `ContactHeader.tsx` now use `font-display text-display-h1` like the other headers.
 
 **Decision:** `NewsHeader` uses a light surface — white background, `Nav` in normal flow at its
 default `theme="light"` — not a dark NAV overlay. `news` was already absent from `darkNavRoutes`

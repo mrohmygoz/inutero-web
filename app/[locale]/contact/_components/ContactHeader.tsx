@@ -28,7 +28,7 @@ export default function ContactHeader({ locale }: { locale: Locale }) {
           className="hidden h-[134px] w-[27px] shrink-0 items-center justify-center py-[15px] lg:flex"
         />
         <div className="flex min-w-px flex-1 flex-col items-start gap-[20px] pt-[20px] lg:pt-0">
-          <h1 className="font-display text-[113px] leading-[79.1px] tracking-[-1.13px] font-bold text-(--color-basic-background) uppercase">
+          <h1 className="font-display text-display-h1 text-(--color-basic-background) uppercase">
             {header.heading}
           </h1>
           <p className="font-body text-body-l hidden text-(--color-basic-background) lg:block">
