@@ -13,6 +13,7 @@ import {
 } from "../_lib/routes";
 import Logo from "./Logo";
 import LogoMark from "./LogoMark";
+import { socialPlatforms } from "./Footer";
 
 // Figma: desktop NAV 12653:5366 / DARK 12653:5259, mobile NAV 12219:1100,
 // menu overlay 10270:2118 (EN) / 12368:2386 (TC). Desktop 12612:8541 is a stray
@@ -251,18 +252,20 @@ export default function Nav({ locale, theme }: { locale: Locale; theme?: NavThem
           {/* No mt-auto — it would split the slack three ways. */}
           <div className="shrink-0">
             <div className="flex h-[56px] items-center justify-center gap-5">
-              {(["facebook", "instagram", "x", "youtube"] as const).map((platform) => (
+              {socialPlatforms.map(({ key: platform, icon, href }) => (
                 <a
                   key={platform}
-                  href="#"
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   aria-label={platform}
                   className="relative block size-[37.4px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-basic-background)"
                 >
                   <span
                     className="absolute inset-0 bg-(--color-basic-accent)"
                     style={{
-                      maskImage: `url(/icons/social-brand/${platform}.svg)`,
-                      WebkitMaskImage: `url(/icons/social-brand/${platform}.svg)`,
+                      maskImage: `url(${icon})`,
+                      WebkitMaskImage: `url(${icon})`,
                       maskSize: "contain",
                       WebkitMaskSize: "contain",
                       maskRepeat: "no-repeat",
