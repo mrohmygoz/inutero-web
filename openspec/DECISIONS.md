@@ -108,6 +108,7 @@ Do **not** record things readable from the code or the design itself.
 - [D099 — News articles can carry more than one tag; the EN date label is a readable full date, ZH keeps the dot-numeric form](#d099--news-articles-can-carry-more-than-one-tag-the-en-date-label-is-a-readable-full-date-zh-keeps-the-dot-numeric-form)
 - [D100 — Portfolio and News slugs carry a `YYYY-MM-DD-` date prefix](#d100--portfolio-and-news-slugs-carry-a-yyyy-mm-dd--date-prefix)
 - [D101 — Two more News articles, for the two press releases behind existing Portfolio projects](#d101--two-more-news-articles-for-the-two-press-releases-behind-existing-portfolio-projects)
+- [D106 — Phase 16a: NAV active-route styling has no dedicated Figma variant; built from the user's spec](#d106--phase-16a-nav-active-route-styling-has-no-dedicated-figma-variant-built-from-the-users-spec)
 
 ## D001 — Locale strategy
 
@@ -2491,3 +2492,24 @@ should be treated as corrected by this decision, not by this decision plus a fut
 phase — if a contact form is ever added, it needs its own fresh Figma design and its own
 phase, not a resumption of Phase 15's deferred task. `roadmap.md`'s "Still Open" table drops
 the form-submit-target row rather than reassigning it.
+
+## D106 — Phase 16a: NAV active-route styling has no dedicated Figma variant; built from the user's spec
+
+**What:** The standalone `Desktop NAV` component (`12653:5366`) only exposes `Property
+1=EN|CN` variants, and per-page composed frames assemble their NAV instance outside the
+page symbol's own node tree, so an "active route" state could not be isolated cheaply via
+Figma MCP. The user specified the treatment directly when proposing the phase: desktop
+active links render in `--color-brand-primary-green`; mobile menu active links render
+italic in `--color-basic-accent` (black). Implemented as specified, without a matching
+Figma node to verify pixel values against.
+
+**Why:** The project's "never assume or hardcode a value from memory" rule is about not
+guessing when a Figma source exists to check against. Here no such source was found within
+the phase's Figma-call budget, and the user — who can see the file directly — supplied the
+exact treatment. Deferring further Figma spelunking (e.g. crawling the desktop page's full
+node tree to find where its NAV instance actually lives) was not worth the calls for a
+two-token color/style swap already specified.
+
+**How to apply:** If a future phase finds the actual Figma active-state node, verify this
+decision's colors/styles against it and correct here if they differ — treat this as
+provisional-but-shipped, not as re-derived from the design.

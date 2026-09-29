@@ -52,6 +52,15 @@ export function navThemeForPath(pathname: string): "light" | "dark" {
   return route && darkNavRoutes.includes(route.key) ? "dark" : "light";
 }
 
+/**
+ * Resolves the active `RouteKey` for a pathname, e.g. "/en/artists" -> "artists".
+ * Returns undefined for pages outside the route table (portfolio/news details, styleguide).
+ */
+export function activeRouteForPath(pathname: string): RouteKey | undefined {
+  const segment = pathname.split("/")[2] ?? "";
+  return routes.find((r) => r.segment === segment)?.key;
+}
+
 export function getRoute(key: RouteKey): RouteDef {
   const route = routes.find((r) => r.key === key);
   if (!route) throw new Error(`Unknown route key: ${key}`);
