@@ -20,7 +20,7 @@ export default function ContactHeader({ locale }: { locale: Locale }) {
           label={header.eyebrow}
           tone="light"
           gutterInset
-          className="flex h-[99px] w-[17px] shrink-0 items-center justify-center lg:hidden"
+          className="flex h-[99px] w-[17px] shrink-0 items-center justify-center lg:hidden translate-y-4"
         />
         <Eyebrow
           label={header.eyebrow}
