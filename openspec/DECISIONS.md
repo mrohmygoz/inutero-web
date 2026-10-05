@@ -2513,3 +2513,31 @@ two-token color/style swap already specified.
 **How to apply:** If a future phase finds the actual Figma active-state node, verify this
 decision's colors/styles against it and correct here if they differ — treat this as
 provisional-but-shipped, not as re-derived from the design.
+
+## D107 — Phase 16b: substitute images for placeholder-only News folders reuse existing site photography of the same subject where possible, otherwise a generic festival/stage shot
+
+**What:** 9 of the 26 `web_ref/news_add/` folders shipped only a placeholder caption text
+(`稿照（提供：…）`) with no actual image file. Rather than falling back to the site's
+generic content placeholder, each got a substitute hand-picked from photography already
+on the site: Fire EX.- and Elephant Gym-specific announcements reuse a real photo of that
+same band from an earlier News article or `public/images/artists/`; festival-lineup
+announcements (FIREBALL Fest. waves 1–3) reuse a generic festival-stage wide shot from an
+unrelated article (Organik Festival, SXSW recap) rather than another band's event-specific
+photo. Every substitute's alt text / markdown title is suffixed `（示意圖）` in ZH and
+"(illustrative photo)" in EN, so the image is never presented as depicting the actual event.
+
+**Why:** Design.md for this phase explicitly allowed "stage wide shots, artist portraits
+already used elsewhere on the site" as substitutes, while flagging the risk of a reader
+assuming a substitute depicts the specific event. Marking it in the visible alt text (not
+just in a code comment or this record) is the mitigation: anyone reading image metadata or
+using a screen reader sees the disclosure, not just someone reading the source file.
+
+**How to apply:** If the client supplies real photography for any of these 9 articles later,
+replace the substitute image and drop the `（示意圖）` / "(illustrative photo)" suffix from
+its alt text — the suffix is specifically a flag for a substitute, not a stylistic choice to
+preserve. The 9 affected slugs: `2026-06-14-fire-ex-kaohsiung-signing-event`,
+`2026-06-16-fireball-fest-2026-lineup-wave-1`, `2026-06-23-elephant-gym-highway-single`,
+`2026-07-01-rfu-debut-sakizaya-rap-album`, `2026-07-07-fireball-fest-2026-lineup-wave-2`,
+`2026-07-10-jewel-chang-debut-album`,
+`2026-07-14-giyu-tjuljaviya-legacy-taipei-concert-announcement`,
+`2026-07-29-fireball-fest-2026-lineup-wave-3`, `2026-08-01-fire-ex-kaohsiung-arena-sold-out`.
