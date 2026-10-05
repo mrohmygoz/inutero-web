@@ -79,8 +79,8 @@ const home = {
     heading: "Featured Projects",
     cta: "View all projects",
     cards: [
-      "2025-11-08-bottoms-up",
-      "2024-09-04-hotpot-band-show",
+      "2025-11-22-fireball-fest",
+      "2022-11-05-golden-indie-music-awards",
       "2026-05-08-inner-voices-of-that-day",
     ],
   },

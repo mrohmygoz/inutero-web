@@ -2541,3 +2541,89 @@ preserve. The 9 affected slugs: `2026-06-14-fire-ex-kaohsiung-signing-event`,
 `2026-07-10-jewel-chang-debut-album`,
 `2026-07-14-giyu-tjuljaviya-legacy-taipei-concert-announcement`,
 `2026-07-29-fireball-fest-2026-lineup-wave-3`, `2026-08-01-fire-ex-kaohsiung-arena-sold-out`.
+
+## D108 — Phase 16c: slugs, dates, and client for the 8 new Portfolio entries, derived from the Project Details sheet rather than guessed from folder/docx content
+
+**What:** `YYYY-MM-DD-slug` per the established Phase 13/16b convention, dated to the specific
+event each body covers (not the sheet's broader, often multi-year, client-relationship range):
+
+| Slug | Client (合作夥伴) | Date basis |
+| :--- | :--- | :--- |
+| `2025-11-22-fireball-fest` | 夥球擊 | Day 1/2 `.docx` festival dates (sheet range: 2019–2026, ongoing) |
+| `2024-10-11-world-music-festival-taiwan` | 風潮音樂 | Opening day of the `.docx`-covered 2024 edition |
+| `2022-11-05-golden-indie-music-awards` | 必應創造 | Date in the client's own working-photo filenames (sheet range: 2018–2026, ongoing) |
+| `2026-04-24-organik-festival` | Smoke Machine | `.docx`-covered 2026 edition's opening date |
+| `2026-05-12-our-song` | 公視台語台 | Kickoff press-conference date in the `.docx` |
+| `2026-03-26-taiwan-beats-showcase-sxsw` | Young Team Productions | `.docx`-covered 2026 SXSW edition |
+| `2024-06-15-elephant-gym-europe-mongolia-tour` | 大象體操 | Sheet confirms 2024 for the leg; no exact day exists for any of its 11 stops. Mid-June placeholder flagged non-final — swap for a real date if the client's Dropbox press release ever supplies one. |
+| `2024-09-03-railway-suicide-train-yesterday-once-more` | 臥軌的火車 | MTV article's tour-opening date (sheet: 2024.09, matching) |
+
+## D109 — Phase 16c: `services` tags for the 8 new Portfolio entries, mapped from the sheet's own 職責 field
+
+**What:** 行銷宣傳／媒體宣傳／社群經營 → `pr-marketing`; 巡演規劃／海外團策展／海外事務／亞洲音樂
+大賞策展 → `international-booking`; 活動製作／入圍者接待 → `event-production`. Resulting tags:
+`fireball-fest` → `pr-marketing`, `international-booking`; `world-music-festival-taiwan` →
+`pr-marketing`; `golden-indie-music-awards` → `event-production`, `pr-marketing`,
+`international-booking`; `organik-festival` → `pr-marketing`; `our-song` → `pr-marketing`;
+`taiwan-beats-showcase-sxsw` → `pr-marketing`; `elephant-gym-europe-mongolia-tour` →
+`international-booking`; `railway-suicide-train-yesterday-once-more` → `pr-marketing`,
+`international-booking`, `event-production`. None of the 8 carries `artist-management` — the
+sheet's own role history doesn't assign it to any of them, including the two artist-specific
+entries (Elephant Gym, 臥軌的火車), which are booking/tour-planning engagements, not full
+management.
+
+**Why:** The sheet is the client's own authoritative record of what In Utero actually did on
+each engagement, superseding any inference from folder names or `.docx` content.
+
+## D110 — Phase 16c: `excerpt` for the 8 new Portfolio entries is the Project Details sheet's own EN/ZH copy verbatim, not AI-translated or condensed further
+
+**What:** Unlike every prior content phase, the sheet supplied official client-approved EN and
+ZH excerpt text for all 8 entries as a matched pair — used as-is in both `excerpt` fields. Only
+the longer body text is AI-translated (ZH → EN) and flagged non-final, same as before.
+
+**Why:** This is a step up from the Phase 13/16b precedent, which only had ZH source material
+to work from and had to AI-translate even the excerpt. Where official bilingual copy exists,
+reproducing it verbatim is more faithful than re-translating it.
+
+## D111 — Phase 16c: Home's `featuredProjects.cards` reordered to FIREBALL → GIMA → Inner Voices of That Day
+
+**What:** `featuredProjects.cards` in both `app/_lib/i18n/en/home.ts` and `app/_lib/i18n/zh/home.ts`
+changed from `["2025-11-08-bottoms-up", "2024-09-04-hotpot-band-show",
+"2026-05-08-inner-voices-of-that-day"]` to `["2025-11-22-fireball-fest",
+"2022-11-05-golden-indie-music-awards", "2026-05-08-inner-voices-of-that-day"]`, per explicit
+client-communicated priority (火球祭 → 金音獎 → 母親節緩巡). Reuses D103's existing mechanism — no
+component change. Bottoms Up and Hotpot Band Show remain live, linkable Portfolio entries; only
+the Home card slot changed.
+
+## D112 — Phase 16c: Golden Indie Music Awards (GIMA) body is written from the sheet's role
+history and photography alone, flagged thin rather than fabricated
+
+**What:** The sheet's own note for GIMA is "活動新聞稿：以照片為主／照片：＃子皿金音" — the client
+confirms there is no press-release text for this entry; photography is the primary material.
+The ZH/EN bodies describe In Utero's actual role across the engagement (nominee hospitality,
+PR/marketing, community management, Asia Music Awards curation per year) and what the supplied
+`子皿工作照`/`子皿特輯` photo sets document, without inventing event narrative, quotes, or
+specific editions beyond what the sheet and photo folders support.
+
+**How to apply:** If the client later supplies real press-release copy for any GIMA edition,
+rewrite the body against that source and drop this entry's thin-content framing.
+
+## D113 — Phase 16c: Portfolio images reorganized into one folder per slug, mirroring News
+
+**What:** All 11 Portfolio entries' images moved from the flat `public/images/projects/<slug>.jpg`
+(listing poster) + `public/images/content/<descriptive-name>.jpg` (hero/gallery/body) split into
+`public/images/portfolio/<full-slug>/<short-name>-{cover,hero,<descriptor>}.jpg` — one folder per
+entry, holding its cover, hero, and any gallery/body images together. This mirrors the convention
+`public/images/news/<slug>/` already uses. `public/images/projects/` and `public/images/content/`
+are retired for Portfolio; both still hold one unrelated orphan file each
+(`you-and-me.jpg`, `sample-live.jpg` — the latter is `BlockSpecimens.tsx`'s styleguide sample,
+out of scope here, tracked separately in the roadmap's Phase F backlog).
+
+**Why:** User feedback after Phase 16c shipped — the prior split made it hard to see or manage
+all of one project's images together, and News already had a cleaner per-slug convention to
+copy.
+
+**How to apply:** Any future Portfolio entry's images go straight into a new
+`public/images/portfolio/<slug>/` folder; don't resurrect the old flat dirs. `ProjectCard`,
+`frontmatter.ts`, and the MDX manifest have no knowledge of the physical path convention — only
+frontmatter's `image`/`heroImage`/`gallery` string values changed, no code changed.
