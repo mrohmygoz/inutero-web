@@ -5,7 +5,8 @@
     "nameZh": "小孟",
     "roleEn": "Cofounder",
     "roleZh": "共同創辦人",
-    "description": "我聽過我看過你在我身邊隨著星月漫步把心打開"
+    "description": "我聽過我看過你在我身邊隨著星月漫步把心打開",
+    "image": "/images/about/meng.jpg"
   },
   {
     "slug": "may",
@@ -13,7 +14,8 @@
     "nameZh": "孟軒",
     "roleEn": "Cofounder",
     "roleZh": "共同創辦人",
-    "description": "tobe媽媽2026"
+    "description": "tobe媽媽2026",
+    "image": "/images/about/may.jpg"
   },
   {
     "slug": "bun",
@@ -21,7 +23,8 @@
     "nameZh": "晏榕",
     "roleEn": "Manager",
     "roleZh": "經紀",
-    "description": "想要在國外開一間天〇茗茶"
+    "description": "想要在國外開一間天〇茗茶",
+    "image": "/images/about/bun.jpg"
   },
   {
     "slug": "hanying",
@@ -29,7 +32,8 @@
     "nameZh": "涵穎",
     "roleEn": "Marketing",
     "roleZh": "行銷企劃",
-    "description": "我的生命三要素：手搖、美食、睡覺"
+    "description": "我的生命三要素：手搖、美食、睡覺",
+    "image": "/images/about/hanying.jpg"
   },
   {
     "slug": "ray",
@@ -37,7 +41,8 @@
     "nameZh": "鴻濬",
     "roleEn": "Marketing",
     "roleZh": "行銷企劃",
-    "description": "自由最高！"
+    "description": "自由最高！",
+    "image": "/images/about/ray.jpeg"
   },
   {
     "slug": "bonnie",
@@ -45,7 +50,8 @@
     "nameZh": "寶尼",
     "roleEn": "Marketing",
     "roleZh": "行銷企劃",
-    "description": "宅宅 Otaku"
+    "description": "宅宅 Otaku",
+    "image": "/images/about/bonnie.jpg"
   },
   {
     "slug": "chiumei",
@@ -53,7 +59,8 @@
     "nameZh": "邱梅",
     "roleEn": "Assistant",
     "roleZh": "行政助理",
-    "description": "我愛貓咪"
+    "description": "我愛貓咪",
+    "image": "/images/about/chiumei.jpg"
   },
   {
     "slug": "sedjam",
@@ -61,13 +68,23 @@
     "nameZh": "小猴",
     "roleEn": "Assistant",
     "roleZh": "行政助理",
-    "description": "我是宥心媽媽"
+    "description": "我是宥心媽媽",
+    "image": "/images/about/sedjam.jpeg"
   },
   {
     "slug": "si-mamrat",
     "nameEn": "Si mamrat",
     "nameZh": "江明展",
     "roleZh": "冬季限定",
-    "description": "Hi我是好蒿，我不太會自我介紹。"
+    "description": "Hi我是好蒿，我不太會自我介紹。",
+    "image": "/images/about/si-mamrat.jpg"
+  },
+  {
+    "slug": "anita",
+    "nameEn": "Anita",
+    "nameZh": "泥塔 Anita",
+    "roleZh": "小幫手",
+    "description": "我很I，只想發呆。",
+    "image": "/images/about/anita.jpeg"
   }
 ]

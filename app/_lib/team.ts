@@ -20,25 +20,10 @@ export type TeamMember = {
   roleEn?: string;
   roleZh: string;
   description: string;
+  image: string;
 };
 
 export const teamMembers: TeamMember[] = teamData as TeamMember[];
-
-const imageExtensions: Record<string, string> = {
-  meng: "jpg",
-  may: "jpg",
-  bun: "jpg",
-  hanying: "jpg",
-  ray: "jpeg",
-  bonnie: "jpg",
-  chiumei: "jpg",
-  sedjam: "jpeg",
-  "si-mamrat": "jpg",
-};
-
-export function teamMemberImageSrc(member: TeamMember): string {
-  return `/images/about/${member.slug}.${imageExtensions[member.slug]}`;
-}
 
 export function teamMemberDisplay(member: TeamMember, locale: Locale) {
   return {

@@ -4,7 +4,7 @@ import { useRef, useState, type ReactNode } from "react";
 import Eyebrow from "../../../_components/Eyebrow";
 import TeamCard from "../../../_components/TeamCard";
 import { getDictionary, type Locale } from "../../../_lib/i18n";
-import { teamMembers, teamMemberDisplay, teamMemberImageSrc } from "../../../_lib/team";
+import { teamMembers, teamMemberDisplay } from "../../../_lib/team";
 
 // Source: desktop Section 12573:6174 (886.5px); mobile Section 12210:2881
 // (752px, TC 12368:2437, 690px). Page-local, single consumer (D-A).
@@ -75,7 +75,7 @@ export default function AboutTeam({ locale }: { locale: Locale }) {
         name={display.name}
         role={display.role}
         bio={display.bio}
-        image={{ src: teamMemberImageSrc(member), alt: display.name }}
+        image={{ src: member.image, alt: display.name }}
         className="shrink-0 snap-start"
       />
     );
