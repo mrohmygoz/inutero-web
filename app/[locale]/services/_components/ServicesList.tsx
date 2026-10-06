@@ -39,7 +39,10 @@ export default function ServicesList({ locale }: { locale: Locale }) {
             description={service.description}
             features={service.features}
             ctaLabel={ctaLabel}
-            ctaHref={localizedHref("portfolio", locale)}
+            ctaHref={localizedHref(
+              serviceAnchors[i].id === "artist-management" ? "artists" : "portfolio",
+              locale
+            )}
             image={{ src: images[i], alt: service.imageAlt }}
           />
         </div>
