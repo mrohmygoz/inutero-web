@@ -5,7 +5,7 @@ import type enCommon from "../en/common";
 // `tsc --noEmit` error too — not just a missing one (D010, Phase 07b D-F).
 const common: typeof enCommon = {
   common: {
-    siteName: "子皿股份有限公司",
+    siteName: "子皿有限公司",
   },
   nav: {
     menuClose: "返回",
