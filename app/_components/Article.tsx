@@ -1,4 +1,5 @@
 import Image from "next/image";
+import LatinBold from "./LatinBold";
 import Tag, { type TagColor } from "./Tag";
 
 // Source: mobile occurrence 12220:1670 (News page) / desktop definition
@@ -57,7 +58,7 @@ export default function Article({
         </div>
         <div className="flex w-full flex-col items-start lg:items-center lg:justify-center lg:pb-[20px]">
           <p className="font-display text-display-h5 lg:text-display-h4 w-full [word-break:break-word] font-bold uppercase text-(--color-basic-text-primary)">
-            {title}
+            <LatinBold text={title} />
           </p>
         </div>
       </div>

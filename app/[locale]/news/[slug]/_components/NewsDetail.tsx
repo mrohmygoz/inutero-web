@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Cms from "../../../../_components/Cms";
+import LatinBold from "../../../../_components/LatinBold";
 import ShareRail from "../../../../_components/ShareRail";
 import ShareRow from "../../../../_components/ShareRow";
 import Tag from "../../../../_components/Tag";
@@ -97,7 +98,7 @@ export default function NewsDetail({
             ))}
           </div>
           <p className="font-display text-display-h4 lg:text-display-h3 w-[354px] max-w-full font-bold text-white uppercase lg:mt-5 lg:w-full lg:max-w-[1020px]">
-            {frontmatter.title}
+            <LatinBold text={frontmatter.title} />
           </p>
           <p className="font-body text-body-s text-white lg:pt-2">{dateLabel}</p>
         </div>

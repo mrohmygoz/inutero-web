@@ -461,6 +461,84 @@
   --text-display-jumbo--font-weight: 700;
 }
 
+/*
+ * Portfolio project titles (frontmatter `title`) are never translated — the
+ * same English string renders in both locales. Same fix as the Home hero
+ * headline above: pin the Latin H2 values so the Chinese display scale
+ * (smaller, Regular weight) doesn't apply to text that isn't Chinese.
+ * Desktop-only value: this class is only used in the desktop-only (`lg:flex`)
+ * title block in PortfolioDetail.
+ */
+.tokens-heading-h2-latin {
+  --text-display-h2: 180px;
+  --text-display-h2--line-height: 118px;
+  --text-display-h2--letter-spacing: -1.2px;
+  --text-display-h2--font-weight: 700;
+}
+
+/*
+ * Artist names (ArtistCard) are untranslated for acts that already go by a
+ * Latin name in both locales (an artist's `nameEn`/`nameZh` pair can be
+ * identical). Applied conditionally by the caller via isLatinOnly() — most
+ * artists DO have a genuinely different Chinese name, where the Chinese
+ * scale is correct and this class must not apply.
+ */
+.tokens-heading-h5-latin {
+  --text-display-h5: 41px;
+  --text-display-h5--line-height: 32.8px;
+  --text-display-h5--letter-spacing: -0.41px;
+  --text-display-h5--font-weight: 700;
+}
+
+@media (width >= 1024px) {
+  .tokens-heading-h5-latin {
+    /* H5 size/leading are identical Mobile/Desktop English — only
+       letter-spacing changes (globals.css desktop :root block). */
+    --text-display-h5--letter-spacing: -0.78px;
+  }
+}
+
+/*
+ * D120 revision: English characters must render at the English px size for
+ * their heading level everywhere — a mixed zh/en sentence is not exempt.
+ * `LatinBold` (app/_components/LatinBold.tsx) applies one of these to each
+ * Latin run it finds inside an otherwise-Chinese title, pinning font-size,
+ * line-height, letter-spacing and weight directly (not through the
+ * --text-display-* variables, since those are already the Chinese values
+ * on the ambient paragraph and a run must not inherit them). One class per
+ * text-display-<mobile> lg:text-display-<desktop> pair actually used on a
+ * title in the codebase — not a fully generic h1–h7 set.
+ */
+.tokens-run-h4-h3-latin {
+  font-size: 55px;
+  line-height: 41.25px;
+  letter-spacing: -0.55px;
+  font-weight: 700;
+}
+
+@media (width >= 1024px) {
+  .tokens-run-h4-h3-latin {
+    font-size: 120px;
+    line-height: 84px;
+    letter-spacing: -1.2px;
+  }
+}
+
+.tokens-run-h5-h4-latin {
+  font-size: 41px;
+  line-height: 32.8px;
+  letter-spacing: -0.41px;
+  font-weight: 700;
+}
+
+@media (width >= 1024px) {
+  .tokens-run-h5-h4-latin {
+    font-size: 78px;
+    line-height: 58px;
+    letter-spacing: -0.55px;
+  }
+}
+
 /* font-style isn't part of Tailwind's --text-* pairing mechanism — applied via
    utility classes instead. Accent/Display always needs italic in three of the
    four modes; expose it as a one-off utility so it tracks the same cascade. */

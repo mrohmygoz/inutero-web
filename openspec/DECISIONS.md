@@ -2722,3 +2722,67 @@ export path that `next build` does.
 client"` module should move to a plain `.ts` module instead of being imported across that
 boundary — this failure mode only surfaces at build/prerender time, not in dev, so it won't
 be caught by routine `npm run dev` verification.
+
+## D119 — Untranslated proper nouns pin the Latin type scale, not `html[lang]`
+
+**What:** Portfolio project titles (`frontmatter.title`, e.g. "Organik Festival") are never
+translated — the same English string appears in both locales' MDX. The desktop title in
+`PortfolioDetail.tsx` rendered it through the bare `text-display-h2` token, which the
+`html[lang="zh"]` layer overrides to the Chinese scale (130px desktop, Regular weight, wider
+leading) — correct for actual Chinese headings, but wrong for a string that stays Latin. Added
+`.tokens-heading-h2-latin` (`app/globals.css`) pinning the English H2 desktop values (180px /
+118px line-height / -1.2px / 700), same pattern as the existing `.tokens-headline-h1-latin` /
+`.tokens-headline-jumbo-latin` used by `HomeHero.tsx`. Applied only to the desktop instance —
+the mobile title renders through `text-accent-display`, whose weight and size are already
+identical across locales (only `font-style` and line-height differ there, which is an
+intentional per-locale accent-style choice, not this bug).
+
+**Why:** Reported by the user as "English characters in zh mode aren't aligned in px with en
+mode," evidenced by an EN/ZH screenshot pair of the Organik Festival portfolio page. A full
+sweep of every `text-display-*`/`text-accent-display` consumer in the codebase found this is
+the only other live instance of the bug class `HomeHero.tsx` already solved — all other
+locale-scaled headings render genuinely translated dictionary or MDX copy (including artist
+and team names, which have real `nameEn`/`nameZh` pairs), so the scale swap is correct there.
+
+**How to apply:** Any future heading that renders an untranslated literal (a proper noun, a
+brand name, a client name) through a bare `text-display-*`/`text-accent-display` class must
+pin the Latin values with a `.tokens-*-latin` utility the same way, rather than inheriting
+`html[lang="zh"]`'s CJK-tuned scale. Don't add this pinning preemptively to headings that
+render real translated copy — the locale scale swap is correct and intentional there.
+
+## D120 — `LatinBold` + conditional Latin-scale pin for mixed-script and ambiguous titles
+
+**What:** Two follow-ups to D119, found by sweeping every remaining `text-display-*` consumer
+after the user reported the same visual bug on news titles and artist cards:
+
+- **News titles** (`NewsTopStory.tsx`, `NewsDetail.tsx`'s hero, `Article.tsx` — the latter
+  covers both the News grid listing and NewsDetail's related-posts cards) are genuinely
+  translated Chinese sentences that can embed an untranslated Latin proper noun mid-string
+  (e.g. `溫蒂漫步新專輯《The House Of》發行...`). D119's whole-heading pin doesn't fit — most
+  of the string is real Chinese and needs the Chinese scale/size. Added `LatinBold`
+  (`app/_components/LatinBold.tsx`) + `splitLatinRuns`/`isLatinOnly`
+  (`app/_lib/latinText.ts`): it walks the string and wraps only the Latin runs in
+  `style={{ fontWeight: 700 }}`, inline so it wins over the ambient `html[lang="zh"]`
+  font-weight token regardless of cascade order. Weight-only, not a full H2/H5-style scale
+  pin — font-size must keep following the Chinese flow for the sentence to wrap and baseline
+  correctly as one paragraph.
+- **Artist names** (`ArtistCard.tsx`) are a genuine mix: most acts have distinct
+  `nameEn`/`nameZh` values (真正翻譯, Chinese scale is correct), but some go by a Latin-only
+  name in both locales (`JPBS`). Added `.tokens-heading-h5-latin` (`app/globals.css`, same
+  shape as D119's H2 class) applied conditionally via `isLatinOnly(name)` — unlike D119's
+  Portfolio fix, this field can't be pinned unconditionally.
+
+**Why:** `--text-display-h3--font-weight: 400` (and the mobile `h5` override, same value) is
+a no-op for the CJK face (`Mochiy Pop One`, single static weight — see `fonts.ts`) but
+visibly thins the Latin face (`Alumni Sans`, also only loaded at one static weight, 700),
+since the font being asked to render at an unavailable weight reads lighter than its
+surrounding bold Chinese neighbors. `h4` and desktop `h5` already stay Bold in `zh` (no
+override), so the bug only surfaces at the specific breakpoint × heading-level combinations
+that do carry a 400 override — which is why it wasn't visible on every mixed title.
+
+**How to apply:** `isLatinOnly`/`splitLatinRuns` are the general tools now — reach for
+`isLatinOnly()` to decide whether a dynamic string should get a `.tokens-*-latin` pin
+(content that's either fully Chinese or fully Latin, never both), and reach for `LatinBold`
+when a single string can have both a Chinese sentence and Latin proper noun in it. Don't wrap
+static, page-owned dictionary strings in either — they're known at authoring time; use a
+`.tokens-*-latin` class directly instead, as `HomeHero.tsx` does.

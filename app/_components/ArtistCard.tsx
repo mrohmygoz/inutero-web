@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { isLatinOnly } from "../_lib/latinText";
 
 // Source: desktop symbol 12592:6786 (320×550) / mobile occurrence 12220:1114 —
 // re-verified against fresh Figma output; this is a genuinely responsive card,
@@ -56,7 +57,9 @@ export default function ArtistCard({
       </div>
       <div className="flex w-full flex-col items-start justify-between gap-[16px] lg:flex-1">
         <div className="flex w-full flex-col items-start gap-[4px] lg:gap-[6px]">
-          <p className="font-display text-display-h5 w-full [word-break:break-word] font-bold uppercase text-(--color-basic-border)">
+          <p
+            className={`font-display text-display-h5 w-full [word-break:break-word] font-bold uppercase text-(--color-basic-border) ${isLatinOnly(name) ? "tokens-heading-h5-latin" : ""}`.trim()}
+          >
             {name}
           </p>
           <p className="font-body text-label-m pt-1 font-normal uppercase text-(--color-brand-primary-green)">
