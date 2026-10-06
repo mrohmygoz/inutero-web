@@ -13,12 +13,6 @@ import { getDictionary, type Locale } from "../../../_lib/i18n";
 export default function AboutHero({ locale }: { locale: Locale }) {
   const { hero } = getDictionary(locale).about;
 
-  const body = hero.bodyParagraphs.map((paragraph) => (
-    <p key={paragraph} className="font-body text-body-l text-white/90">
-      {paragraph}
-    </p>
-  ));
-
   const mobileHeroTextDisplay = locale === "zh" ? "text-display-h1" : "text-display-h2";
 
   return (
@@ -51,8 +45,6 @@ export default function AboutHero({ locale }: { locale: Locale }) {
               </h1>
             </div>
           </div>
-
-          {/* <div className="flex flex-col items-start px-5 py-[30px]">{body}</div> */}
         </div>
       </section>
 
@@ -76,10 +68,6 @@ export default function AboutHero({ locale }: { locale: Locale }) {
             <span className="block">{hero.headlineLine3} {hero.headlineLine4}</span>
           </h1>
         </div>
-
-        {/* <div className="relative mt-8 flex justify-end px-[32px] pb-[64px]">
-          <div className="flex w-[380px] flex-col items-start gap-4">{body}</div>
-        </div> */}
       </section>
     </>
   );
