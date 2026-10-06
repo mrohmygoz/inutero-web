@@ -33,10 +33,6 @@ const MENU_LINK_FONT_SIZE_EN = "clamp(65.4px, 4.4dvh + 41.1px, 78px)";
 const MENU_LINK_LINE_HEIGHT_EN = "clamp(45.8px, 3.09dvh + 28.7px, 54.6px)";
 // Home's 81px italic emphasis needs its own ramp or it flattens into the list.
 const MENU_HOME_FONT_SIZE_EN = "clamp(67.9px, 4.6dvh + 42.4px, 81px)";
-// Layout viewport, not dvh, on purpose: a media query cannot see the URL bar
-// collapse, so the logo can't pop in and out mid-scroll (D064).
-const MENU_LOGO_HIDDEN = "[@media(max-height:666px)]:hidden";
-
 const themeClassName: Record<
   NavTheme,
   { border: string; text: string; mark: string; localePill: string; localeOutline: string }
@@ -194,16 +190,10 @@ export default function Nav({ locale, theme }: { locale: Locale; theme?: NavThem
             </button>
           </div>
 
-          {/* my-auto splits the slack evenly, centring this between the pinned
+          {/* flex-1 + centered content fills the slack between the pinned
               close row and footer. Diverges from Figma by request (D065). */}
-          <div className="my-auto shrink-0">
-            {/* Decorative, so it is the first thing to drop. mb lives here, not
-                on the nav, so the gap leaves with it. */}
-            <div className={`shrink-0 ${MENU_LOGO_HIDDEN}`}>
-              <LogoMark className="mx-auto size-[100px] text-(--color-basic-background)" />
-            </div>
-
-            <nav aria-label="Mobile" className="flex flex-col">
+          <div className="flex flex-1 flex-col items-center justify-center">
+            <nav aria-label="Mobile" className="flex w-full flex-col">
               <a
                 href={localizedHref("home", locale)}
                 aria-current={activeRoute === "home" ? "page" : undefined}

@@ -31,8 +31,8 @@ const PHOTOS = [
   "/images/home/hero-5.jpg", // Variant5
 ];
 
-const HOLD_MS = 800;
-const FADE_MS = 200;
+const HOLD_MS = 1800;
+const FADE_MS = 300;
 
 export default function MastPhotoCycle() {
   const [index, setIndex] = useState(0);

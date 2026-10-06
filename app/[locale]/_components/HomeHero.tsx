@@ -57,7 +57,7 @@ export default function HomeHero({ locale }: { locale: Locale }) {
         {/* Mast 10275:3094 — 665px tall, full-bleed photo under a 30% scrim.
             The photo is not a still: the Mast is a five-variant set wired to a
             timed dissolve in the prototype. See MastPhotoCycle. */}
-        <div className="relative min-h-dvh w-full overflow-hidden bg-(--color-basic-accent)">
+        <div className="relative min-h-135 w-full overflow-hidden bg-(--color-basic-accent)">
           <MastPhotoCycle />
           <div aria-hidden className="absolute inset-0 bg-black/30" />
 
