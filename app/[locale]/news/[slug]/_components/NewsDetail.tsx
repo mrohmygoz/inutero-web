@@ -98,7 +98,7 @@ export default function NewsDetail({
             ))}
           </div>
           <p className="font-display text-display-h4 lg:text-display-h3 w-[354px] max-w-full font-bold text-white uppercase lg:mt-5 lg:w-full lg:max-w-[1020px]">
-            <LatinBold text={frontmatter.title} />
+            <LatinBold text={frontmatter.title} level="h4-h3" />
           </p>
           <p className="font-body text-body-s text-white lg:pt-2">{dateLabel}</p>
         </div>

@@ -2759,13 +2759,16 @@ after the user reported the same visual bug on news titles and artist cards:
   covers both the News grid listing and NewsDetail's related-posts cards) are genuinely
   translated Chinese sentences that can embed an untranslated Latin proper noun mid-string
   (e.g. `溫蒂漫步新專輯《The House Of》發行...`). D119's whole-heading pin doesn't fit — most
-  of the string is real Chinese and needs the Chinese scale/size. Added `LatinBold`
+  of the string is real Chinese and needs the Chinese scale. Added `LatinBold`
   (`app/_components/LatinBold.tsx`) + `splitLatinRuns`/`isLatinOnly`
-  (`app/_lib/latinText.ts`): it walks the string and wraps only the Latin runs in
-  `style={{ fontWeight: 700 }}`, inline so it wins over the ambient `html[lang="zh"]`
-  font-weight token regardless of cascade order. Weight-only, not a full H2/H5-style scale
-  pin — font-size must keep following the Chinese flow for the sentence to wrap and baseline
-  correctly as one paragraph.
+  (`app/_lib/latinText.ts`): it walks the string and wraps only the Latin runs in a
+  `.tokens-run-<mobile>-<desktop>-latin` class (`app/globals.css`) pinning font-size,
+  line-height, letter-spacing, and weight to the English values for that heading's
+  breakpoint pair — explicit user decision: English characters render at the English px
+  size everywhere, including mid-sentence, even though that makes the Latin run visibly
+  larger than its surrounding Chinese neighbors (e.g. 120px vs. the zh scale's 38px at
+  desktop H3). Only the breakpoint pairs an actual title uses are defined
+  (`h4-h3`, `h5-h4`), not a fully generic H1–H7 set.
 - **Artist names** (`ArtistCard.tsx`) are a genuine mix: most acts have distinct
   `nameEn`/`nameZh` values (真正翻譯, Chinese scale is correct), but some go by a Latin-only
   name in both locales (`JPBS`). Added `.tokens-heading-h5-latin` (`app/globals.css`, same
@@ -2774,15 +2777,17 @@ after the user reported the same visual bug on news titles and artist cards:
 
 **Why:** `--text-display-h3--font-weight: 400` (and the mobile `h5` override, same value) is
 a no-op for the CJK face (`Mochiy Pop One`, single static weight — see `fonts.ts`) but
-visibly thins the Latin face (`Alumni Sans`, also only loaded at one static weight, 700),
-since the font being asked to render at an unavailable weight reads lighter than its
-surrounding bold Chinese neighbors. `h4` and desktop `h5` already stay Bold in `zh` (no
-override), so the bug only surfaces at the specific breakpoint × heading-level combinations
-that do carry a 400 override — which is why it wasn't visible on every mixed title.
+visibly thins the Latin face (`Alumni Sans`, also only loaded at one static weight, 700). The
+user's stated rule is broader than just weight, though: English characters must render at
+the English px size "no matter it's a mixed zh and en or purely en" — a simple, uniform
+principle applied even though it means an embedded Latin run no longer shares its line's
+optical size with the Chinese text around it.
 
 **How to apply:** `isLatinOnly`/`splitLatinRuns` are the general tools now — reach for
-`isLatinOnly()` to decide whether a dynamic string should get a `.tokens-*-latin` pin
-(content that's either fully Chinese or fully Latin, never both), and reach for `LatinBold`
-when a single string can have both a Chinese sentence and Latin proper noun in it. Don't wrap
+`isLatinOnly()` to decide whether a dynamic string should get a `.tokens-heading-*-latin` pin
+(content that's either fully Chinese or fully Latin, never both), and reach for `LatinBold` +
+a `.tokens-run-*-latin` class when a single string can have both a Chinese sentence and a
+Latin proper noun in it — add a new `tokens-run-<mobile>-<desktop>-latin` pair only when a
+title actually uses that breakpoint combo (see `RUN_CLASS` in `LatinBold.tsx`). Don't wrap
 static, page-owned dictionary strings in either — they're known at authoring time; use a
 `.tokens-*-latin` class directly instead, as `HomeHero.tsx` does.
