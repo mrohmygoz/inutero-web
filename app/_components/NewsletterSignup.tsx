@@ -1,4 +1,9 @@
+"use client";
+
+import { useState } from "react";
 import Cta from "./Cta";
+import EmailSignupSuccessModal from "./EmailSignupSuccessModal";
+import { isValidEmail } from "./emailValidation";
 import { getDictionary, type Locale } from "../_lib/i18n";
 
 // Source: desktop NewsletterSignup 12612:8163; mobile symbol 12212:6048 ("Section",
@@ -10,39 +15,29 @@ import { getDictionary, type Locale } from "../_lib/i18n";
 // surface; this is a standalone full-width dark section with a Display/H3 heading and no
 // disclaimer. Footer.tsx keeps its own.
 //
-// D-F: with no `action`, the field and button render as inert markup — the button is
-// `type="button"` and there is no form submit target. No newsletter endpoint exists and
-// none is in scope (the one planned Route Handler is Phase 15's contact form). A <form>
-// with no action would GET the current URL and visibly reload the page, which is worse
-// than doing nothing; the same reasoning D022 applied to the Footer's legal links.
+// Phase 16d (D116): no newsletter endpoint exists or is planned, so there is no `action`
+// to submit to — the field instead gets real client-side validation and a success
+// confirmation modal (D114/D115), which is why this is now a client component.
 
-export default function NewsletterSignup({
-  locale,
-  action,
-}: {
-  locale: Locale;
-  /** Submit target. Omit for the inert presentational block. */
-  action?: string;
-}) {
+export default function NewsletterSignup({ locale }: { locale: Locale }) {
   const t = getDictionary(locale).newsletter;
+  const [email, setEmail] = useState("");
+  const [invalid, setInvalid] = useState(false);
+  const [success, setSuccess] = useState(false);
 
-  const field = (
-    <label className="flex w-full flex-1 items-center border-b border-(--color-basic-foreground) py-3">
-      <span className="sr-only">{t.placeholder}</span>
-      <input
-        type="email"
-        name="email"
-        placeholder={t.placeholder}
-        className="font-body text-body-s w-full bg-transparent text-center text-(--opacity-white-50) outline-none lg:text-left"
-      />
-    </label>
-  );
+  function handleSubmit() {
+    if (!isValidEmail(email)) {
+      setInvalid(true);
+      return;
+    }
+    setInvalid(false);
+    setSuccess(true);
+  }
 
-  const submit = (
-    <Cta tone="green" {...(action ? { type: "submit" as const } : {})}>
-      {t.button}
-    </Cta>
-  );
+  function handleDismiss() {
+    setSuccess(false);
+    setEmail("");
+  }
 
   return (
     <section className="w-full border-y border-(--opacity-white-10) bg-(--color-basic-accent) lg:border-y-0">
@@ -57,22 +52,37 @@ export default function NewsletterSignup({
             </p>
           </div>
 
-          {action ? (
-            <form
-              action={action}
-              className="mt-[30px] flex w-full flex-col gap-[29px] lg:mt-0 lg:max-w-[750px] lg:flex-row lg:items-start lg:gap-7"
+          <div className="mt-[30px] flex w-full flex-col gap-[29px] lg:mt-0 lg:max-w-[750px] lg:flex-row lg:items-start lg:gap-7">
+            <label
+              className={`flex w-full flex-1 items-center border-b py-3 ${
+                invalid
+                  ? "border-(--color-brand-accent-orange)"
+                  : "border-(--color-basic-foreground)"
+              }`}
             >
-              {field}
-              {submit}
-            </form>
-          ) : (
-            <div className="mt-[30px] flex w-full flex-col gap-[29px] lg:mt-0 lg:max-w-[750px] lg:flex-row lg:items-start lg:gap-7">
-              {field}
-              {submit}
-            </div>
-          )}
+              <span className="sr-only">{t.placeholder}</span>
+              <input
+                type="email"
+                name="email"
+                value={email}
+                onChange={(event) => {
+                  setEmail(event.target.value);
+                  setInvalid(false);
+                }}
+                placeholder={t.placeholder}
+                className={`font-body text-body-s w-full bg-transparent text-center outline-none lg:text-left ${
+                  invalid ? "text-(--color-brand-accent-orange) placeholder:text-(--color-brand-accent-orange)" : "text-(--opacity-white-50)"
+                }`}
+              />
+            </label>
+            <Cta tone="green" onClick={handleSubmit}>
+              {t.button}
+            </Cta>
+          </div>
         </div>
       </div>
+
+      <EmailSignupSuccessModal locale={locale} open={success} onClose={handleDismiss} />
     </section>
   );
 }

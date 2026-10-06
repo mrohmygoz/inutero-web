@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import type { Locale } from "../_lib/i18n";
 import { getDictionary } from "../_lib/i18n";
 import {
@@ -7,6 +10,8 @@ import {
   serviceAnchors,
   type RouteKey,
 } from "../_lib/routes";
+import EmailSignupSuccessModal from "./EmailSignupSuccessModal";
+import { isValidEmail } from "./emailValidation";
 import Logo from "./Logo";
 
 // Source: desktop Footer Default 12573:9181 / TC 12635:16558; mobile
@@ -73,6 +78,24 @@ export default function Footer({ locale }: { locale: Locale }) {
   const dict = getDictionary(locale);
   const f = dict.footer;
 
+  const [email, setEmail] = useState("");
+  const [invalid, setInvalid] = useState(false);
+  const [success, setSuccess] = useState(false);
+
+  function handleSubmit() {
+    if (!isValidEmail(email)) {
+      setInvalid(true);
+      return;
+    }
+    setInvalid(false);
+    setSuccess(true);
+  }
+
+  function handleDismiss() {
+    setSuccess(false);
+    setEmail("");
+  }
+
   return (
     <footer className="w-full">
       <div className="bg-(--color-basic-background) px-[10px] py-[20px] lg:px-8 lg:py-16">
@@ -120,22 +143,38 @@ export default function Footer({ locale }: { locale: Locale }) {
               {f.newsletterLabel}
             </p>
             {/* Not a <form>: there is no newsletter endpoint, and a <form> with no
-                action GETs the current URL and visibly reloads the page. Inert markup
-                instead, matching NewsletterSignup (D-F) and the same reasoning D022
-                applied to the legal links below. The Footer block stays its own design —
-                the Phase 4 survey confirmed it is not the NewsletterSignup component. */}
+                action GETs the current URL and visibly reloads the page. Instead, the
+                field validates client-side and opens EmailSignupSuccessModal on a valid
+                email (Phase 16d, D114–D116) — same reasoning D022 applied to the legal
+                links below for why there's still no real submission target. The Footer
+                block stays its own design — the Phase 4 survey confirmed it is not the
+                NewsletterSignup component; it composes the same validation + modal. */}
             <div className="flex flex-col gap-7">
-              <label className="border-b border-(--color-basic-accent) py-3">
+              <label
+                className={`border-b py-3 ${
+                  invalid ? "border-(--color-brand-accent-orange)" : "border-(--color-basic-accent)"
+                }`}
+              >
                 <span className="sr-only">{f.newsletterPlaceholder}</span>
                 <input
                   type="email"
+                  value={email}
+                  onChange={(event) => {
+                    setEmail(event.target.value);
+                    setInvalid(false);
+                  }}
                   placeholder={f.newsletterPlaceholder}
-                  className="w-full bg-transparent text-center font-body text-body-s text-(--color-basic-text-secondary) outline-none lg:text-left"
+                  className={`w-full bg-transparent text-center font-body text-body-s outline-none lg:text-left ${
+                    invalid
+                      ? "text-(--color-brand-accent-orange) placeholder:text-(--color-brand-accent-orange)"
+                      : "text-(--color-basic-text-secondary)"
+                  }`}
                 />
               </label>
               <button
                 type="button"
-                className="bg-(--color-brand-primary-green) py-[17px] font-body text-label-m text-(--color-basic-accent) uppercase focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-basic-accent)"
+                onClick={handleSubmit}
+                className="cursor-pointer bg-(--color-brand-primary-green) py-[17px] font-body text-label-m text-(--color-basic-accent) uppercase focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-basic-accent)"
               >
                 {f.newsletterCta}
               </button>
@@ -188,6 +227,8 @@ export default function Footer({ locale }: { locale: Locale }) {
 
         <p className="font-body text-body-s text-(--opacity-white-60)">{f.copyright}</p>
       </div>
+
+      <EmailSignupSuccessModal locale={locale} open={success} onClose={handleDismiss} />
     </footer>
   );
 }

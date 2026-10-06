@@ -1,8 +1,11 @@
+"use client";
+
 import Cms from "@/app/_components/Cms";
+import EmailSignupSuccessModal from "@/app/_components/EmailSignupSuccessModal";
 import NewsletterSignup from "@/app/_components/NewsletterSignup";
 import ShareRow from "@/app/_components/ShareRow";
 import UniversalCTA from "@/app/_components/UniversalCTA";
-import type { Locale } from "@/app/_lib/i18n";
+import { getDictionary, type Locale } from "@/app/_lib/i18n";
 
 // A hand-written stand-in for a compiled MDX body, so the CMS specimen does not depend
 // on the content directory. It exercises every element the design defines (paragraph,
@@ -68,6 +71,8 @@ function Frame({ label, children }: { label: string; children: React.ReactNode }
 }
 
 export default function BlockSpecimens({ locale = "en" }: { locale?: Locale }) {
+  const t = getDictionary(locale).newsletter;
+
   return (
     // These are full-bleed sections in the design (1440px wide at desktop). The
     // styleguide's own max-w-(--container-large) would crop them, so they break out to
@@ -78,8 +83,34 @@ export default function BlockSpecimens({ locale = "en" }: { locale?: Locale }) {
         <UniversalCTA locale={locale} href={`/${locale}/contact`} />
       </Frame>
 
-      <Frame label='NewsletterSignup — no `action` (inert, D-F)'>
+      <Frame label="NewsletterSignup — validates on submit, opens EmailSignupSuccessModal on a valid email (Phase 16d, D114–D116)">
         <NewsletterSignup locale={locale} />
+      </Frame>
+
+      <Frame label="NewsletterSignup — invalid/error state (placeholder + bottom border → --color-brand-accent-orange, D114)">
+        <section className="w-full bg-(--color-basic-accent)">
+          <div className="mx-auto w-full max-w-[576px] px-5 py-[26px] lg:max-w-none lg:px-8 lg:py-16">
+            <label className="flex w-full max-w-[480px] items-center border-b border-(--color-brand-accent-orange) py-3">
+              <span
+                className="font-body text-body-s w-full text-center text-(--color-brand-accent-orange) lg:text-left"
+                aria-hidden
+              >
+                {t.placeholder}
+              </span>
+            </label>
+          </div>
+        </section>
+      </Frame>
+
+      <Frame label="EmailSignupSuccessModal — open state (D115)">
+        {/* `will-change: transform` gives this box a containing block, so the modal's
+            `fixed inset-0` scopes to this specimen frame instead of the whole page. */}
+        <div
+          className="relative h-[280px] overflow-hidden bg-(--color-basic-text-secondary)"
+          style={{ willChange: "transform" }}
+        >
+          <EmailSignupSuccessModal locale={locale} open onClose={() => {}} />
+        </div>
       </Frame>
 
       <Frame label="Cms — article body only; the desktop left share rail in 12610:7361 is Phase 11/14 page chrome">

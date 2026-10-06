@@ -2627,3 +2627,51 @@ copy.
 `public/images/portfolio/<slug>/` folder; don't resurrect the old flat dirs. `ProjectCard`,
 `frontmatter.ts`, and the MDX manifest have no knowledge of the physical path convention — only
 frontmatter's `image`/`heroImage`/`gallery` string values changed, no code changed.
+
+## D114 — Phase 16d: Newsletter error state reuses `--color-brand-accent-orange`, no new token added
+
+**What:** The invalid-email state on both newsletter fields (`NewsletterSignup`, `Footer`)
+switches the placeholder text and bottom border to `--color-brand-accent-orange`. The design
+system has zero red/error tokens (confirmed against `design-tokens.md` and `globals.css` — only
+green/neon/orange/yellow brand accents exist), and no Figma frame specifies this state at all.
+
+**Why:** Inventing a new color token for a single interaction state with no design provenance
+risks looking more "official" than it is and pollutes `/styleguide`'s token list with a color
+Figma never specified. Reusing the existing orange accent signals "alert" with a color already
+load-bearing elsewhere in the brand; orange is not otherwise used in either field's valid-state
+design, so there's no local collision.
+
+**How to apply:** Any future error/invalid-state UI on this site should default to
+`--color-brand-accent-orange` rather than inventing a new token, unless Figma later supplies a
+real error color.
+
+## D115 — Phase 16d: Newsletter success confirmation is a new shared `EmailSignupSuccessModal`, not a toast
+
+**What:** `app/_components/EmailSignupSuccessModal.tsx` — a centered overlay with a dim backdrop
+(`--opacity-neutral-darkest-60`), `role="alertdialog"`, close-button focus on open, and
+Escape/backdrop-click/close-button dismissal. It is the first modal in the codebase. Shared
+verbatim by both `NewsletterSignup` and `Footer` rather than duplicated, since the confirmation
+copy and behavior are identical regardless of which field triggered it.
+
+**Why:** User explicitly asked for a "small pop-up window" over a toast. No portal was built —
+the site has no other overlapping overlay, so a fixed-position element within the existing DOM
+tree is sufficient.
+
+**How to apply:** If a future feature needs a second modal, start from this component's
+focus/dismiss pattern (documented in `app/_components/INVENTORY.md`) rather than reinventing it.
+
+## D116 — Phase 16d: `NewsletterSignup` and `Footer` convert from server to client components
+
+**What:** Both components gain `"use client"`. `NewsletterSignup`'s `action` prop (previously
+optional, enabling a real `<form>`) is removed outright — no call site ever passed one (grep
+confirmed), and D029's original "inert markup, no backend" reasoning assumed no interactivity
+was possible without one, which no longer holds now that validation and the success modal are
+real client-side interactivity.
+
+**Why:** Keeping an unused `action` escape hatch for a submission path that still doesn't exist
+would be a half-finished abstraction. `Footer`'s static link content has no server-only data
+dependency, so converting it to a client component for its newsletter block has no behavioral
+side effect elsewhere in the component.
+
+**How to apply:** No newsletter/signup endpoint exists or is planned (D029/D105 still hold) — no
+email is transmitted, logged, or persisted by either component.

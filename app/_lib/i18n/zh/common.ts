@@ -34,6 +34,13 @@ const common: typeof enCommon = {
     placeholder: "youremail@gmail.com",
     button: "訂閱",
   },
+  // Phase 16d, D115 — non-final copy, same precedent as other AI-authored copy in this
+  // project. No backend sends this email anywhere (D029/D105 still hold).
+  emailSignupSuccess: {
+    heading: "訂閱成功",
+    body: "感謝您的訂閱，請留意信箱中來自子皿的最新消息。",
+    closeLabel: "關閉",
+  },
   // Copy below follows openspec/reference/content-matrix.md (the client's copy deck),
   // which outranks the Figma text layers for wording (D032).
   footer: {

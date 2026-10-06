@@ -28,6 +28,13 @@ const common = {
     placeholder: "youremail@gmail.com",
     button: "Sign up",
   },
+  // Phase 16d, D115 — non-final copy, same precedent as other AI-authored copy in this
+  // project. No backend sends this email anywhere (D029/D105 still hold).
+  emailSignupSuccess: {
+    heading: "You're signed up",
+    body: "Thanks for signing up — keep an eye on your inbox for updates from In Utero.",
+    closeLabel: "Close",
+  },
   footer: {
     servicesHeading: "Services",
     artistManagement: "Artist Management",
