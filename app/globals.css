@@ -204,8 +204,12 @@
      (400) per D008 follow-up — see note below the desktop zh block. */
   --text-display-jumbo--font-weight: 400;
 
-  --text-label-m: 11px;
-  --text-label-m--line-height: 11px;
+  /* D008 follow-up, 2026-10-06: Label/M stays 11px per the Figma spec, but at
+     that size Mochiy Pop One reads noticeably smaller than the Latin label
+     text it sits beside (CTA buttons, Footer newsletter heading). User asked
+     to bump it for zh only — not a Figma-derived value. */
+  --text-label-m: 13px;
+  --text-label-m--line-height: 13px;
 
   --text-accent-display--line-height: 48.1px;
   --text-accent-display--font-style: normal;
@@ -292,9 +296,9 @@
     --text-display-h7--line-height: 28px;
     --text-display-h7--letter-spacing: -0.22px;
 
-    /* Label/M reverts to the English 11px size at desktop */
-    --text-label-m: 11px;
-    --text-label-m--line-height: 11px;
+    /* Label/M stays bumped at desktop too — see note on the mobile-zh rule above */
+    --text-label-m: 13px;
+    --text-label-m--line-height: 13px;
 
     --text-accent-display--font-style: italic;
   }
