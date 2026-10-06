@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import type { Locale } from "../_lib/i18n";
 import { getDictionary } from "../_lib/i18n";
 import {
@@ -10,9 +9,10 @@ import {
   serviceAnchors,
   type RouteKey,
 } from "../_lib/routes";
+import { socialPlatforms } from "../_lib/socialPlatforms";
 import EmailSignupSuccessModal from "./EmailSignupSuccessModal";
-import { isValidEmail } from "./emailValidation";
 import Logo from "./Logo";
+import { useNewsletterSignup } from "./useNewsletterSignup";
 
 // Source: desktop Footer Default 12573:9181 / TC 12635:16558; mobile
 // 12384:4852 (carries both Default/TC in one node — same content both
@@ -47,23 +47,6 @@ const footerPageRoutes: RouteKey[] = ["about", "portfolio", "artists", "news", "
 
 const legalKeys = ["privacyPolicy", "termsOfService", "cookiesSettings"] as const;
 
-// URLs from openspec/reference/content-matrix.md -> Contact -> social URLs.
-//
-// The fourth slot is Podcast (Firstory), not X — user decision 2026-08-02 resolving the
-// conflict between the matrix (which supplies a Podcast URL and no X URL) and both the TC
-// Footer frame 12635:16558 and the committed icon set (which carry X).
-//
-// ICON TBD: there is no Podcast glyph in the Figma social set, so this slot borrows the
-// neutral link/chain glyph from the share icons rather than reusing the X logo, which
-// would point a brand mark at the wrong platform. Swap `icon` below when a real asset
-// arrives; `social-brand/x.svg` stays committed in case the decision is reversed.
-export const socialPlatforms = [
-  { key: "facebook", icon: "/icons/social-brand/facebook.svg", href: "https://www.facebook.com/inuteromusic" },
-  { key: "instagram", icon: "/icons/social-brand/instagram.svg", href: "https://www.instagram.com/inuteromusic_official/" },
-  { key: "youtube", icon: "/icons/social-brand/youtube.svg", href: "https://www.youtube.com/channel/UCyKN9UgKnYyPX1AWxQLPo9Q" },
-  { key: "podcast", icon: "/icons/share/link.svg", href: "https://cl7z0x1hm09ua01wi2ukt6kjq.firstory.io/" },
-] as const;
-
 function VerticalLabel({ children }: { children: string }) {
   return (
     <div className="flex w-[21px] shrink-0 items-center justify-center py-[10px]">
@@ -78,23 +61,8 @@ export default function Footer({ locale }: { locale: Locale }) {
   const dict = getDictionary(locale);
   const f = dict.footer;
 
-  const [email, setEmail] = useState("");
-  const [invalid, setInvalid] = useState(false);
-  const [success, setSuccess] = useState(false);
-
-  function handleSubmit() {
-    if (!isValidEmail(email)) {
-      setInvalid(true);
-      return;
-    }
-    setInvalid(false);
-    setSuccess(true);
-  }
-
-  function handleDismiss() {
-    setSuccess(false);
-    setEmail("");
-  }
+  const { email, setEmail, invalid, success, handleSubmit, handleDismiss } =
+    useNewsletterSignup();
 
   return (
     <footer className="w-full">
@@ -142,13 +110,10 @@ export default function Footer({ locale }: { locale: Locale }) {
             <p className="font-body text-label-m text-center text-(--color-brand-primary-green) uppercase lg:text-left">
               {f.newsletterLabel}
             </p>
-            {/* Not a <form>: there is no newsletter endpoint, and a <form> with no
-                action GETs the current URL and visibly reloads the page. Instead, the
-                field validates client-side and opens EmailSignupSuccessModal on a valid
-                email (Phase 16d, D114–D116) — same reasoning D022 applied to the legal
-                links below for why there's still no real submission target. The Footer
-                block stays its own design — the Phase 4 survey confirmed it is not the
-                NewsletterSignup component; it composes the same validation + modal. */}
+            {/* Not a <form>: a <form> with no action GETs the current URL and visibly
+                reloads the page. Submission goes through useNewsletterSignup() ->
+                POST /api/newsletter instead — same hook NewsletterSignup.tsx uses; the
+                Footer block stays its own design (Phase 4 survey). */}
             <div className="flex flex-col gap-7">
               <label
                 className={`border-b py-3 ${
@@ -159,10 +124,7 @@ export default function Footer({ locale }: { locale: Locale }) {
                 <input
                   type="email"
                   value={email}
-                  onChange={(event) => {
-                    setEmail(event.target.value);
-                    setInvalid(false);
-                  }}
+                  onChange={(event) => setEmail(event.target.value)}
                   placeholder={f.newsletterPlaceholder}
                   className={`w-full bg-transparent text-center font-body text-body-s outline-none lg:text-left ${
                     invalid

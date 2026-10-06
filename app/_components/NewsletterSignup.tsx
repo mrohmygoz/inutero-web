@@ -1,9 +1,8 @@
 "use client";
 
-import { useState } from "react";
 import Cta from "./Cta";
 import EmailSignupSuccessModal from "./EmailSignupSuccessModal";
-import { isValidEmail } from "./emailValidation";
+import { useNewsletterSignup } from "./useNewsletterSignup";
 import { getDictionary, type Locale } from "../_lib/i18n";
 
 // Source: desktop NewsletterSignup 12612:8163; mobile symbol 12212:6048 ("Section",
@@ -15,29 +14,13 @@ import { getDictionary, type Locale } from "../_lib/i18n";
 // surface; this is a standalone full-width dark section with a Display/H3 heading and no
 // disclaimer. Footer.tsx keeps its own.
 //
-// Phase 16d (D116): no newsletter endpoint exists or is planned, so there is no `action`
-// to submit to — the field instead gets real client-side validation and a success
-// confirmation modal (D114/D115), which is why this is now a client component.
+// Validates client-side, then persists via POST /api/newsletter (newsletter-blob-signup) —
+// shared submit behavior lives in useNewsletterSignup(), consumed here and by Footer.tsx.
 
 export default function NewsletterSignup({ locale }: { locale: Locale }) {
   const t = getDictionary(locale).newsletter;
-  const [email, setEmail] = useState("");
-  const [invalid, setInvalid] = useState(false);
-  const [success, setSuccess] = useState(false);
-
-  function handleSubmit() {
-    if (!isValidEmail(email)) {
-      setInvalid(true);
-      return;
-    }
-    setInvalid(false);
-    setSuccess(true);
-  }
-
-  function handleDismiss() {
-    setSuccess(false);
-    setEmail("");
-  }
+  const { email, setEmail, invalid, success, handleSubmit, handleDismiss } =
+    useNewsletterSignup();
 
   return (
     <section className="w-full border-y border-(--opacity-white-10) bg-(--color-basic-accent) lg:border-y-0">
@@ -65,10 +48,7 @@ export default function NewsletterSignup({ locale }: { locale: Locale }) {
                 type="email"
                 name="email"
                 value={email}
-                onChange={(event) => {
-                  setEmail(event.target.value);
-                  setInvalid(false);
-                }}
+                onChange={(event) => setEmail(event.target.value)}
                 placeholder={t.placeholder}
                 className={`font-body text-body-s w-full bg-transparent text-center outline-none lg:text-left ${
                   invalid ? "text-(--color-brand-accent-orange) placeholder:text-(--color-brand-accent-orange)" : "text-(--opacity-white-50)"

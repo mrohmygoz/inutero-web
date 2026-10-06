@@ -1,4 +1,4 @@
-import { socialPlatforms } from "../../../_components/Footer";
+import { socialPlatforms } from "../../../_lib/socialPlatforms";
 import { getDictionary, type Locale } from "../../../_lib/i18n";
 
 // Source: desktop Section 12573:8313 (Container 12573:8314, right-aligned at

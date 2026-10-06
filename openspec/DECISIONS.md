@@ -2675,3 +2675,50 @@ side effect elsewhere in the component.
 
 **How to apply:** No newsletter/signup endpoint exists or is planned (D029/D105 still hold) — no
 email is transmitted, logged, or persisted by either component.
+
+**Superseded by D117** — `newsletter-blob-signup` adds a real endpoint; the signup is now
+transmitted and persisted.
+
+## D117 — `newsletter-blob-signup`: storage shape, Blob vs. Sheets, and rate-limit scope
+
+**What:** Signups persist to Vercel Blob, one private blob per signup at
+`newsletter/<sha256(lowercased email)>.json`, content `{ email, timestamp }`. A new global
+(not per-IP) rate limit caps accepted writes at 1/second via a `SET ... PX 1000 NX` against
+Vercel's first-party Redis (`REDIS_URL`, TCP — `ioredis`, not `@vercel/kv`'s REST client).
+Repeat signups for an already-stored email are a dedup no-op (`head()` hit) that still
+reports success and does not consume the rate-limit budget.
+
+**Why:** The hashed pathname makes the dedup check a single O(1) `head()` — no listing, no
+scanning — and keeps the pathname itself from leaking the plaintext email. Two alternatives
+were rejected: a single appended JSON/NDJSON file (no locking, races on concurrent writes,
+no natural dedup index) and a timestamp-named blob with list-and-scan dedup (O(n) per
+signup, paginated past 1000 blobs). Google Sheets was also considered (human-reviewable
+directly) but rejected — it adds a second credential surface beyond Vercel's own, and its
+dedup is still a linear column scan, no efficiency win over Blob's own list-and-scan
+fallback. The rate limit is global, not per-IP, per explicit user confirmation — Route
+Handlers have no in-process state shared across invocations/regions, so a global limit
+needs the external Redis counter regardless of scope.
+
+**How to apply:** Supersedes D116's "no email is transmitted or stored" and the overlapping
+claim in D029/D105 — those decisions' reasoning no longer holds for the newsletter fields.
+Reading the signup list back out has no tooling yet (non-goal) — `list({ prefix:
+"newsletter/" })` + fetch is the fallback until an export tool is built.
+
+## D118 — `socialPlatforms` moved out of `Footer.tsx` into `app/_lib/socialPlatforms.ts`
+
+**What:** The four social/podcast link entries (`key`, `icon`, `href`), previously a named
+export of `Footer.tsx`, now live in their own non-client module. `Footer.tsx`, `Nav.tsx`, and
+`ContactDetails.tsx` all import from `app/_lib/socialPlatforms.ts`.
+
+**Why:** Found as a real production build failure (deployment `C476J63M9JK2MHupGguUUnki5gS8`,
+commit f9320ef): `ContactDetails.tsx` (a server component) imported `socialPlatforms` from
+`Footer.tsx` (a `"use client"` module per D116). In Next 16's Turbopack static prerendering,
+a plain-value named export crossing that client→server import direction isn't guaranteed to
+survive as its real value — `/en/contact` failed to prerender with `socialPlatforms.map is
+not a function`. This had shipped unnoticed because `next dev` doesn't hit the same static
+export path that `next build` does.
+
+**How to apply:** Any data a server component needs that currently lives inside a `"use
+client"` module should move to a plain `.ts` module instead of being imported across that
+boundary — this failure mode only surfaces at build/prerender time, not in dev, so it won't
+be caught by routine `npm run dev` verification.

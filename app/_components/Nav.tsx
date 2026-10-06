@@ -13,7 +13,7 @@ import {
 } from "../_lib/routes";
 import Logo from "./Logo";
 import LogoMark from "./LogoMark";
-import { socialPlatforms } from "./Footer";
+import { socialPlatforms } from "../_lib/socialPlatforms";
 
 // Figma: desktop NAV 12653:5366 / DARK 12653:5259, mobile NAV 12219:1100,
 // menu overlay 10270:2118 (EN) / 12368:2386 (TC). Desktop 12612:8541 is a stray
