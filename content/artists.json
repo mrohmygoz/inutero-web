@@ -1,26 +1,17 @@
 [
   {
-    "slug": "bugs-of-phonon",
-    "nameEn": "Bugs of Phonon",
-    "nameZh": "聲子蟲",
+    "slug": "huan-huan",
+    "nameEn": "Huan Huan",
+    "nameZh": "緩緩 Huan Huan",
     "services": [
+      "artist-management",
       "international-booking",
-      "pr-marketing"
+      "pr-marketing",
+      "event-production"
     ],
-    "bioZh": "組成於2008年，一組以吉他、貝斯、鼓、電子聲響的後搖滾樂隊，音樂時而寧靜美好，在美好之中又隱含著風雨欲來的暴戾。",
-    "bioEn": "Formed in 2008, a post-rock band built from guitar, bass, drums, and electronic textures — music that drifts between serene beauty and the storm quietly gathering beneath it.",
-    "photo": "/images/artists/bugs-of-phonon.jpg"
-  },
-  {
-    "slug": "jpbs",
-    "nameEn": "JPBS",
-    "nameZh": "JPBS",
-    "services": [
-      "international-booking"
-    ],
-    "bioZh": "來自曼谷的器樂/實驗搖滾樂隊，2023年發表首張專輯《Waiting Room》，以多元的音樂風格，建構神秘而迷人的世界，創造關於生命與死亡的故事。",
-    "bioEn": "An instrumental/experimental rock band from Bangkok. Their 2023 debut album Waiting Room builds a mysterious, captivating world out of eclectic styles — a story about life and death.",
-    "photo": "/images/artists/jpbs.jpg"
+    "bioZh": "成立於台北的另類流行樂團，歌曲大多不快偏慢，明亮又柔和，像是安靜的朋友，陪你行經每一個日常。",
+    "bioEn": "An alt-pop band from Taipei whose unhurried, bright and gentle songs feel like a quiet friend walking beside you through everyday life.",
+    "photo": "/images/artists/huan-huan.jpg"
   },
   {
     "slug": "elephant-gym",
@@ -35,20 +26,6 @@
     "bioZh": "成立於高雄，為台灣少見的 Math Rock（數字/數學搖滾）樂團，2024年獲頒金曲獎評審團獎。",
     "bioEn": "Formed in Kaohsiung, one of Taiwan's rare math rock bands. Winner of the Jury Award at the 2024 Golden Melody Awards.",
     "photo": "/images/artists/elephant-gym.jpg"
-  },
-  {
-    "slug": "huan-huan",
-    "nameEn": "Huan Huan",
-    "nameZh": "緩緩 Huan Huan",
-    "services": [
-      "artist-management",
-      "international-booking",
-      "pr-marketing",
-      "event-production"
-    ],
-    "bioZh": "成立於台北的另類流行樂團，歌曲大多不快偏慢，明亮又柔和，像是安靜的朋友，陪你行經每一個日常。",
-    "bioEn": "An alt-pop band from Taipei whose unhurried, bright and gentle songs feel like a quiet friend walking beside you through everyday life.",
-    "photo": "/images/artists/huan-huan.jpg"
   },
   {
     "slug": "panai",
@@ -77,6 +54,29 @@
     "photo": "/images/artists/come-on-baybay.jpg"
   },
   {
+    "slug": "bugs-of-phonon",
+    "nameEn": "Bugs of Phonon",
+    "nameZh": "聲子蟲",
+    "services": [
+      "international-booking",
+      "pr-marketing"
+    ],
+    "bioZh": "組成於2008年，一組以吉他、貝斯、鼓、電子聲響的後搖滾樂隊，音樂時而寧靜美好，在美好之中又隱含著風雨欲來的暴戾。",
+    "bioEn": "Formed in 2008, a post-rock band built from guitar, bass, drums, and electronic textures — music that drifts between serene beauty and the storm quietly gathering beneath it.",
+    "photo": "/images/artists/bugs-of-phonon.jpg"
+  },
+  {
+    "slug": "jpbs",
+    "nameEn": "JPBS",
+    "nameZh": "JPBS",
+    "services": [
+      "international-booking"
+    ],
+    "bioZh": "來自曼谷的器樂/實驗搖滾樂隊，2023年發表首張專輯《Waiting Room》，以多元的音樂風格，建構神秘而迷人的世界，創造關於生命與死亡的故事。",
+    "bioEn": "An instrumental/experimental rock band from Bangkok. Their 2023 debut album Waiting Room builds a mysterious, captivating world out of eclectic styles — a story about life and death.",
+    "photo": "/images/artists/jpbs.jpg"
+  },
+  {
     "slug": "flesh-juicer",
     "nameEn": "Flesh Juicer",
     "nameZh": "血肉果汁機",
@@ -97,5 +97,326 @@
     "bioZh": "昭霖是來自高雄的青年藝術家、台語音樂唱作人。台語是昭霖的第一語言，家族經營的宮廟、鄉間小吃部的卡拉OK與90年代的「新台語歌」都是他重要的養分來源。",
     "bioEn": "A young artist and Taiwanese-language singer-songwriter from Kaohsiung, for whom Taiwanese is his first language — shaped by his family's temple, rural karaoke bars, and 90s Taiwanese pop.",
     "photo": "/images/artists/zhaolin.jpg"
+  },
+  {
+    "slug": "fire-ex",
+    "nameEn": "Fire EX.",
+    "nameZh": "滅火器",
+    "services": [
+      "pr-marketing",
+      "international-booking"
+    ],
+    "bioZh": "台灣最具代表性的龐克樂團，成軍 25 年來唱遍包含 Fuji Rock 的海內外大小舞台，並在 2017 年打造萬人音樂活動品牌火球祭。",
+    "bioEn": "One of Taiwan’s most representative punk rock bands, Fire EX. have spent more than two decades performing on stages across Taiwan and internationally, including Fuji Rock. In 2017, they launched FireBall Fest., a major music festival brand that has grown into a large-scale event with audiences of more than 10,000.",
+    "photo": "/images/artists/fireex.jpg"
+  },
+  {
+    "slug": "sangpuy",
+    "nameEn": "Sangpuy",
+    "nameZh": "Sangpuy 桑布伊",
+    "services": [
+      "pr-marketing"
+    ],
+    "bioZh": "來自台東山與海交界處一個卑南族古老部落的青年，有著與生俱來、備受祖靈祝福眷顧的獨特嗓音，曾榮獲金曲獎「最佳原住民語歌手獎」及重量級的「年度專輯獎」肯定。",
+    "bioEn": "A singer from an ancient Puyuma village located between the mountains and the sea in Taitung, Taiwan. Blessed with a distinctive voice and a deep connection to his cultural heritage, Sangpuy has received the Golden Melody Award for Best Indigenous Language Singer and Album of the Year.",
+    "photo": "/images/artists/sangpuy.jpg"
+  },
+  {
+    "slug": "abao",
+    "nameEn": "ABAO",
+    "nameZh": "ABAO 阿爆",
+    "services": [
+      "pr-marketing"
+    ],
+    "bioZh": "來自臺東的排灣族音樂家，音樂融合電子、R&B、嘻哈等元素，具有未來感，又緊扣部落文化，顛覆大眾對原住民音樂的既定印象，曾以專輯《vavayan.女人》獲得金曲獎最佳原住民語專輯，2020 年憑藉《kinakaian 母親的舌頭》奪下年度專輯獎。",
+    "bioEn": "A Paiwan musician from Taitung, Taiwan. Her music blends electronic music, R&B and hip-hop with a strong connection to Indigenous culture, creating a distinctly futuristic sound while challenging conventional ideas about Indigenous music. Her album vavayan.女人 won Best Indigenous Language Album at the Golden Melody Awards, while kinakaian 母親的舌頭 won Album of the Year in 2020.",
+    "photo": "/images/artists/abao.jpg"
+  },
+  {
+    "slug": "kivi",
+    "nameEn": "Kivi",
+    "nameZh": "Kivi",
+    "services": [
+      "pr-marketing"
+    ],
+    "bioZh": "來自於屏東八瑤排灣部落的原住民歌者，歌聲包容都會的高冷及古謠的吟詠，足以讓離鄉的旅人念家，坐困迷惘的心靈流淚。",
+    "bioEn": "An Indigenous singer from the Ba-yao Paiwan community in Pingtung, Taiwan. Her voice brings together the coolness of contemporary urban life with the resonance of traditional songs, evoking a sense of longing for home and giving voice to those navigating uncertainty and displacement.",
+    "photo": "/images/artists/kivi.jpg"
+  },
+  {
+    "slug": "huang-tzu-hsuan",
+    "nameEn": "Huang Tzu-Hsuan",
+    "nameZh": "黃子軒",
+    "services": [
+      "pr-marketing"
+    ],
+    "bioZh": "黃⼦軒是新竹市眷村子弟，精通臺灣臺語及海陸腔客語，喜歡使用母語進行音樂創作，以民謠、搖滾、東西式樂器的混搭互置，且四度入圍金曲獎，曾獲金曲獎最佳客語歌手獎，三屆金曲獎最佳客語專輯得主。",
+    "bioEn": "Born in a military veterans’ village in Hsinchu, Huang Tzu-Hsuan is fluent in Taiwanese and Hailu Hakka. He creates music in his mother tongues, combining folk and rock with a mix of Eastern and Western instruments. A four-time Golden Melody Awards nominee, he has won Best Hakka Singer and three Best Hakka Album awards.",
+    "photo": "/images/artists/tzu-hsuan.jpeg"
+  },
+  {
+    "slug": "arase",
+    "nameEn": "Arase",
+    "nameZh": "Arase 阿拉斯",
+    "services": [
+      "pr-marketing"
+    ],
+    "bioZh": "來自屏東霧台與高雄茂林的魯凱族創作人，跨足主持、戲劇與音樂。2025 年推出首張魯凱族語專輯《AKA》，融合茂林與霧台魯凱語、流行、搖滾與電子音樂，探索自己的文化與生命經驗。",
+    "bioEn": "A Rukai singer-songwriter and multidisciplinary artist from Wutai and Maolin in Taiwan. His 2025 debut album AKA blends Rukai languages with pop, rock and electronic sounds, reflecting his cultural roots and life across music, performance and media.",
+    "photo": "/images/artists/arase.jpg"
+  },
+  {
+    "slug": "dj-didilong",
+    "nameEn": "DJ Didilong",
+    "nameZh": "李英宏",
+    "services": [
+      "pr-marketing"
+    ],
+    "bioZh": "台灣歌手、製作人與演員，擅長將 G-Funk、Funk、電子與台語流行音樂融合，以獨特的台北城市觀察建立鮮明風格。除音樂創作外，也活躍於電影配樂與影像作品。",
+    "bioEn": "Taiwanese singer, producer and actor known for blending G-Funk, funk, electronic music and Taiwanese pop. His work often reflects everyday life in Taipei, while his career also extends into film scoring and visual projects.",
+    "photo": "/images/artists/dj-didilong.jpg"
+  },
+  {
+    "slug": "han",
+    "nameEn": "Han",
+    "nameZh": "黃宇寒",
+    "services": [
+      "pr-marketing"
+    ],
+    "bioZh": "來自桃園龍潭的客語創作歌手，音樂以客語為核心，並融合不同語言與曲風，關注自我、生活與成長。2025 年以《Ngai》持續拓展客語音樂的當代表達，並於隔年獲得金曲獎最佳客語專輯獎。",
+    "bioEn": "A Hakka singer-songwriter from Longtan, Taiwan, Huang Yuhan creates music rooted in the Hakka language while drawing from a wide range of musical styles. Her work explores identity, everyday life and personal growth.",
+    "photo": "/images/artists/han.jpg"
+  },
+  {
+    "slug": "wendy-wander",
+    "nameEn": "Wendy Wander",
+    "nameZh": "溫蒂漫步 Wendy Wander",
+    "services": [
+      "pr-marketing"
+    ],
+    "bioZh": "台灣獨立樂團，成立於 2018 年，以雙主唱為特色，融合 Dream Pop、Synth-pop、Disco、Funk 與 Rock。作品在浪漫、孤獨與成長之間游移，營造細膩而帶有城市感的聲響。",
+    "bioEn": "A Taiwanese indie band formed in 2018, known for dual vocals and a blend of dream pop, synth-pop, disco, funk and rock. Their music moves between romance, loneliness and the complexities of growing up.",
+    "photo": "/images/artists/wendy-wander.jpg"
+  },
+  {
+    "slug": "morikilr",
+    "nameEn": "Morikilr",
+    "nameZh": "Morikilr 孔亞明",
+    "services": [
+      "pr-marketing"
+    ],
+    "bioZh": "來自台東利嘉部落的卑南族創作人，以族語創作記錄部落、土地與生活記憶。2024 年以〈tu alrak ku ni eman? 誰的孩子〉獲台灣原創流行音樂大獎原住民族語組首獎，並推出首張專輯《kamawan za kavung 像帽子一樣》。",
+    "bioEn": "A Puyuma singer-songwriter from Likavung in Taitung, Taiwan, Morikilr creates music in his Indigenous language, drawing on memories of community, land and everyday life. His debut album kamawan za kavung was released in 2024.",
+    "photo": "/images/artists/morikilr.jpg"
+  },
+  {
+    "slug": "a-lufay",
+    "nameEn": "A'lufay",
+    "nameZh": "A'lufay 葉靜宜",
+    "services": [
+      "pr-marketing"
+    ],
+    "bioZh": "來自台灣東海岸的阿美族創作歌手，以吉他與溫暖、具有穿透力的嗓音創作，描寫城市生活、家鄉與個人記憶。2024 年推出首張個人專輯《美麗灣灣》。",
+    "bioEn": "An Amis singer-songwriter from Taiwan’s east coast, known for her warm and resonant voice and guitar-led songwriting. Her work explores memory, home and personal experiences between the city and her community.",
+    "photo": "/images/artists/alufay.jpg"
+  },
+  {
+    "slug": "our-shame",
+    "nameEn": "Our Shame",
+    "nameZh": "凹與山",
+    "services": [
+      "pr-marketing"
+    ],
+    "bioZh": "由小凹與 Isan 組成的台灣雙人組合，融合合成器、吉他、鼓機與爵士鼓，探索電子與類比聲響之間的可能性。作品經常描寫科技、社群焦慮與當代生活。",
+    "bioEn": "A Taiwanese duo blending synthesizers, guitars, drum machines and live drums. Their music explores the relationship between technology and human experience, often reflecting on social anxiety and contemporary life.",
+    "photo": "/images/artists/our-shame.jpg"
+  },
+  {
+    "slug": "edison-song",
+    "nameEn": "Edison Song",
+    "nameZh": "宋柏緯",
+    "services": [
+      "pr-marketing"
+    ],
+    "bioZh": "以演員身份廣為人知的宋柏緯，同時也是創作人與音樂製作人。作品融合鋼琴、吉他、合成器、取樣與 R&B、Hip-hop 元素，擅長描寫夜晚、城市與孤獨。",
+    "bioEn": "Known primarily as an actor, Edison Song is also a songwriter and producer. His instrumental work combines piano, acoustic guitar, synthesizers, samples, R&B and hip-hop influences to create intimate soundscapes around nights, cities and solitude.",
+    "photo": "/images/artists/edison-song.jpg"
+  },
+  {
+    "slug": "lichi",
+    "nameEn": "Lichi",
+    "nameZh": "力齊",
+    "services": [
+      "pr-marketing"
+    ],
+    "bioZh": "台灣創作歌手，以溫潤細膩的聲音與浪漫的創作筆觸受到關注。2025 年推出首張全創作專輯《極樂・南方》，作品從早期華語音樂汲取靈感，融合當代編曲。",
+    "bioEn": "A Taiwanese singer-songwriter known for his warm, delicate voice and romantic songwriting. His debut album When Things Go South draws inspiration from classic Mandarin pop while bringing it into a contemporary sound.",
+    "photo": "/images/artists/lichi.jpg"
+  },
+  {
+    "slug": "jewel-chang",
+    "nameEn": "Jewel Chang",
+    "nameZh": "張仁與",
+    "services": [
+      "pr-marketing"
+    ],
+    "bioZh": "台灣創作歌手，2026 年推出首張個人專輯《新的過去舊的還在》。歷經四年製作，作品以記憶、離別與時間為核心，將個人經驗轉化為細膩的歌曲。",
+    "bioEn": "A Taiwanese singer-songwriter whose debut album New Past, Old Remains was released in 2026 after four years of work. His songs explore memory, loss and the ways personal experiences change with time.",
+    "photo": "/images/artists/jewel-chang.JPG"
+  },
+  {
+    "slug": "awkward",
+    "nameEn": "Awkward",
+    "nameZh": "阿克沃 Awkward",
+    "services": [
+      "pr-marketing"
+    ],
+    "bioZh": "2020 年成立於台北的四人創作樂團，以 Alternative Rock 與 Emo Rock 為主要風格，融合日系搖滾旋律與華語敘事。作品聚焦都市青年面對的孤獨、迷惘、焦慮與人際關係。",
+    "bioEn": "A four-piece band from Taipei, formed in 2020. Awkward combines alternative rock and emo with Japanese-influenced melodies and Mandarin songwriting, exploring loneliness, uncertainty, anxiety and relationships in contemporary urban life.",
+    "photo": "/images/artists/awkward.JPG"
+  },
+  {
+    "slug": "railway-suicide-train",
+    "nameEn": "Railway Suicide Train",
+    "nameZh": "臥軌的火車",
+    "services": [
+      "international-booking",
+      "event-production"
+    ],
+    "bioZh": "來自中國的另類樂團，2012 年成立於浙江，後以杭州為主要活動地。樂團在搖滾基礎上持續加入實驗、即興、薩克斯風與長笛等元素，形成具有流動性與層次的聲響。",
+    "bioEn": "A Chinese alternative band formed in 2012. Their music moves beyond rock into experimental and improvisational territory, incorporating instruments such as saxophone and flute to create a layered and fluid sound.",
+    "photo": "/images/artists/railway-suiside-train.jpg"
+  },
+  {
+    "slug": "room307",
+    "nameEn": "Room307",
+    "nameZh": "Room307",
+    "services": [
+      "pr-marketing"
+    ],
+    "bioZh": "香港唱作歌手 Allex Chan，以童年住址「Room 307」作為創作名字。音樂融合粵語流行、Dream Pop、電子與氛圍音樂，2025 年推出首張全創作專輯《MEMORY BOY》。",
+    "bioEn": "Hong Kong singer-songwriter Allex Chan, who takes his name from his childhood home, Room 307. His music blends Cantopop with dream pop, electronic and ambient sounds.",
+    "photo": "/images/artists/room307.jpg"
+  },
+  {
+    "slug": "sunset-rollercoaster",
+    "nameEn": "Sunset Rollercoaster",
+    "nameZh": "落日飛車",
+    "services": [
+      "pr-marketing"
+    ],
+    "bioZh": "成立於 2009 年的台北樂團，融合 Psychedelic Pop、Jazz、Funk、Disco、Synth-pop 與 Indie Rock，並長期在世界各地巡演，是台灣最具國際能見度的獨立樂團之一。",
+    "bioEn": "Formed in Taipei in 2009, Sunset Rollercoaster blends psychedelic pop, jazz, funk, disco, synth-pop and indie rock. Their extensive international touring has made them one of Taiwan’s most widely recognised independent bands overseas.",
+    "photo": "/images/artists/sunset-rollercoaster.jpg"
+  },
+  {
+    "slug": "adan",
+    "nameEn": "aDAN",
+    "nameZh": "aDAN 薛詒丹",
+    "services": [
+      "pr-marketing"
+    ],
+    "bioZh": "來自高雄的創作女聲，擁有辨識度極高的女中音聲線，音樂融合 R&B、Jazz 與 Pop。曾入圍金音獎與金曲獎，作品涵蓋個人創作、爵士演出與影視音樂。",
+    "bioEn": "A singer-songwriter from Kaohsiung with a distinctive alto voice, aDAN blends R&B, jazz and pop. Her work spans songwriting, jazz performance and screen music, with nominations at Taiwan’s Golden Indie Music Awards and Golden Melody Awards.",
+    "photo": "/images/artists/adan.jpg"
+  },
+  {
+    "slug": "control-t",
+    "nameEn": "Control T",
+    "nameZh": "Control T",
+    "services": [
+      "pr-marketing"
+    ],
+    "bioZh": "2015 年成立的台灣樂團，由桃園高中校友組成，最初因共同創作畢業歌曲〈足跡〉而成團。音樂以華語流行搖滾為主，作品也曾與公益及校園活動合作。",
+    "bioEn": "A Taiwanese band formed in 2015 by alumni of Taoyuan High School. The group began by creating a graduation song together and developed a Mandarin pop-rock sound, alongside collaborations with schools and social organisations.",
+    "photo": "/images/artists/control-t.JPG"
+  },
+  {
+    "slug": "makav",
+    "nameEn": "Makav",
+    "nameZh": "Makav 真愛",
+    "services": [
+      "pr-marketing"
+    ],
+    "bioZh": "來自南投武界部落的布農族創作歌手，17 歲開始使用母語創作。2023 年推出首張專輯《寶藏 Treasure》，融合布農語、中文、英文、Rap 與 R&B，並獲金曲獎最佳新人及最佳原住民語專輯獎。",
+    "bioEn": "A Bunun singer-songwriter from Wujie Village in Nantou, Taiwan. She began writing in her Indigenous language at 17 and blends Bunun, Mandarin and English with rap and R&B. Her debut album Treasure won two Golden Melody Awards.",
+    "photo": "/images/artists/makav.jpg"
+  },
+  {
+    "slug": "r-fu",
+    "nameEn": "R.fu",
+    "nameZh": "R.fu",
+    "services": [
+      "pr-marketing"
+    ],
+    "bioZh": "台灣原住民饒舌創作人，擁有阿美族與卑南族血統，後與花蓮撒奇萊雅族部落建立深厚連結。2026 年推出首張撒奇萊雅語饒舌專輯《扛 THE WEIGHT》，將勞動生活、成長與信仰寫進音樂。",
+    "bioEn": "A Taiwanese Indigenous rapper of Amis and Puyuma heritage who developed a strong connection with the Sakizaya community in Hualien. His debut album THE WEIGHT uses the Sakizaya language to explore work, identity, everyday life and faith.",
+    "photo": "/images/artists/r-fu.jpg"
+  },
+  {
+    "slug": "kiyu",
+    "nameEn": "kiyu",
+    "nameZh": "kiyu",
+    "services": [
+      "pr-marketing"
+    ],
+    "bioZh": "日本新生代創作歌手，2024 年開始透過網路發表作品，以鋼琴為核心的旋律描寫青春、憂鬱與孤獨。首支單曲〈傷跡〉在網路上受到關注，2026 年於台北舉辦首次演唱會。",
+    "bioEn": "A young Japanese singer-songwriter who began releasing music online in 2024. His piano-led songs explore youth, melancholy and loneliness, with his music gaining attention online before his first live show in Taipei in 2026.",
+    "photo": "/images/artists/kiyu.png"
+  },
+  {
+    "slug": "giyu-tjuljaviya",
+    "nameEn": "Giyu Tjuljaviya",
+    "nameZh": "張淦勛 Giyu Tjuljaviya",
+    "services": [
+      "pr-marketing"
+    ],
+    "bioZh": "台灣原住民創作歌手，音樂融合排灣語、阿美語、台語與華語，作品深受南台灣土地、部落文化與個人生命經驗啟發。專輯《雲就要翻過山》曾入圍多項金曲獎，並獲最佳作詞人獎。",
+    "bioEn": "A Taiwanese Indigenous singer-songwriter whose work moves between Paiwan, Amis, Taiwanese and Mandarin. Rooted in southern Taiwan, his music connects Indigenous culture, landscape and personal experience.",
+    "photo": "/images/artists/giyu-tjuljaviya.jpg"
+  },
+  {
+    "slug": "milli",
+    "nameEn": "MILLI",
+    "nameZh": "MILLI",
+    "services": [
+      "pr-marketing"
+    ],
+    "bioZh": "來自泰國的饒舌歌手與創作人，以 Hip-hop、Trap 與 Drill 為基礎，融合泰國地方語言與流行文化。她曾登上 Coachella 主舞台，並持續透過音樂建立亞洲跨國合作。",
+    "bioEn": "A Thai rapper and songwriter known for blending hip-hop, trap and drill with Thai languages and contemporary pop culture. She has performed on the Coachella main stage and continues to build an international career through cross-border collaborations.",
+    "photo": "/images/artists/milli.jpg"
+  },
+  {
+    "slug": "dremedreman",
+    "nameEn": "Dremedreman",
+    "nameZh": "Dremedreman 曾妮",
+    "services": [
+      "pr-marketing"
+    ],
+    "bioZh": "來自台東金峰鄉的排灣族創作人，從小學習族語與傳統歌謠，並以音樂延續文化記憶。2024 年推出首張專輯《全村的希望》，以排灣語唱出成長、愛情、日常與自我認同。",
+    "bioEn": "A Paiwan singer-songwriter from Jinfeng, Taitung, who uses music to carry language, cultural memory and everyday stories forward. Her work explores love, growing up and identity through contemporary Paiwan-language songs.",
+    "photo": "/images/artists/dremedreman.jpg"
+  },
+  {
+    "slug": "tokyo-chuo-line",
+    "nameEn": "Tokyo Chuo-Line",
+    "nameZh": "東京中央線",
+    "services": [
+      "pr-marketing"
+    ],
+    "bioZh": "來自日本、長期活躍於台灣的演奏組合，音樂融合 Jazz、Rock 與 Blues，並以細膩編曲與現場演奏見長。2025 年與日本歌姬 KINAKO 合作推出全日語創作專輯《cotobacarat》。",
+    "bioEn": "A Japanese instrumental group with a long-standing presence in Taiwan, blending jazz, rock and blues through detailed arrangements and expressive live performance. They have also collaborated with Japanese singer KINAKO on Japanese-language projects.",
+    "photo": "/images/artists/tokyo-chuo-line.jpg"
+  },
+  {
+    "slug": "yo-yo",
+    "nameEn": "Yō-Yō",
+    "nameZh": "憂憂 Yō-Yō",
+    "services": [
+      "pr-marketing"
+    ],
+    "bioZh": "2021 年成立的台灣年輕樂團，以台語演唱為特色，融合 Psychedelic、Rock、Folk 與電子聲響。作品帶有夢幻與迷幻氣質，也從台灣地方文化與歷史汲取創作靈感。",
+    "bioEn": "A Taiwanese band formed in 2021, known for singing in Taiwanese and blending psychedelic rock, folk and electronic sounds. Their music creates dreamlike atmospheres while drawing inspiration from Taiwanese culture and history.",
+    "photo": "/images/artists/yo-yo.jpg"
   }
 ]
