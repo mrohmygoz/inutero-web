@@ -22,7 +22,7 @@ export default function AboutHero({ locale }: { locale: Locale }) {
       {/* ---------------------------------------------------------------- */}
       <section className="relative min-h-dvh w-full overflow-hidden bg-(--color-basic-accent) lg:hidden">
         <div aria-hidden className="absolute inset-0">
-          <Image src="/images/about/about-hero.png" alt="" fill priority className="object-cover" />
+          <Image src="/images/about/about-hero.jpg" alt="" fill priority className="object-cover" />
           <div className="absolute inset-0 bg-black/30" />
         </div>
 
@@ -53,7 +53,7 @@ export default function AboutHero({ locale }: { locale: Locale }) {
       {/* ---------------------------------------------------------------- */}
       <section className="relative hidden min-h-[960px] w-full overflow-hidden bg-(--color-basic-accent) lg:block">
         <div aria-hidden className="absolute inset-0">
-          <Image src="/images/about/about-hero.png" alt="" fill priority className="object-cover" />
+          <Image src="/images/about/about-hero.jpg" alt="" fill priority className="object-cover" />
           <div className="absolute inset-0 bg-black/30" />
         </div>
 

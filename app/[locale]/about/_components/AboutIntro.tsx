@@ -57,7 +57,7 @@ export default function AboutIntro({ locale }: { locale: Locale }) {
         <div className="flex w-[363px] max-w-[calc(100%-30px)] flex-col items-start gap-[24px]">
           <div className="relative h-[314px] w-full">
             <Image
-              src="/images/about/about-intro.png"
+              src="/images/about/about-intro.jpg"
               alt=""
               fill
               sizes="(max-width: 393px) 100vw, 363px"
@@ -98,7 +98,7 @@ export default function AboutIntro({ locale }: { locale: Locale }) {
               </div>
               <div className="relative h-[380px] w-[464px] shrink-0">
                 <Image
-                  src="/images/about/about-intro.png"
+                  src="/images/about/about-intro.jpg"
                   alt=""
                   fill
                   sizes="464px"

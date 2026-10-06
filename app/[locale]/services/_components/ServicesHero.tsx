@@ -77,7 +77,7 @@ export default function ServicesHero({ locale }: { locale: Locale }) {
 
       <div className="relative h-[310px] w-full overflow-hidden lg:h-[690px]">
         <Image
-          src="/images/services/services-hero.jpg"
+          src="/images/about/about-intro.jpg"
           alt={hero.imageAlt}
           fill
           priority
