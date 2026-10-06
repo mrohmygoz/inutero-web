@@ -1528,6 +1528,15 @@ promised one thing and whose target delivered another.
 picking a destination. This supersedes D-C in `phase-08-services-part-1/design.md`, which was
 written before the labels had been fetched.
 
+**Amendment (post-Phase 16):** No longer all four. Artist Management's own case-study page is
+Artists, not Portfolio, so its CTA now reads "View artists" / 合作藝人 and links to
+`localizedHref("artists", locale)` — the other three keep "View case studies" / 相關案例 to
+Portfolio. Per user instruction, `ctaLabel` and `ctaHref` (a `RouteKey`) moved from one
+dictionary-level field to a per-item field on each `services.items[]` entry in
+`app/_lib/i18n/{locale}/services.ts`, so adding a service with a different CTA destination in
+the future is a content-only change — no component code to touch. `ServicesList.tsx` just
+reads `service.ctaLabel` / `service.ctaHref` per item instead of carrying routing logic.
+
 ## D068 — The Services TC heading is the matrix's 以真實故事, not Figma's 以創作故事
 
 **Decision:** The TC hero heading reads **以真實故事為基石，用新時代手法創造影響力。** Both TC

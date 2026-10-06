@@ -13,6 +13,8 @@
 //     of the third. Three is the real count (mobile EN draws three). See D066.
 //
 // The FAQ copy was deliberately absent in Phase 8; Phase 9 added it below.
+import type { RouteKey } from "../../routes";
+
 const services = {
   hero: {
     eyebrow: "Services", // stays English in both locales (matrix: `keep EN`)
@@ -22,13 +24,16 @@ const services = {
     body: "We provide integrated support across the full lifecycle of music projects.",
     imageAlt: "The In Utero team seated among stacked lockers and cabinets",
   },
-  // Drawn in Figma, absent from the matrix. "View case studies" / 相關案例 is
-  // why these point at Portfolio rather than Contact (D067).
-  ctaLabel: "View case studies",
   items: [
     {
       index: "01",
       title: "Artist Management",
+      // Drawn in Figma, absent from the matrix. "View case studies" / 相關案例
+      // is why these point at Portfolio by default (D067) — Artist Management
+      // is the one exception, since Artists is its own, more specific case-
+      // study page.
+      ctaLabel: "View artists",
+      ctaHref: "artists" as RouteKey,
       description:
         "Driving comprehensive career development for artists through strategic planning, music distribution, brand partnerships, and long-term vision to cultivate growth and global visibility. We bridge the gap between creative soul and market momentum, serving as a steadfast partner for artists from their foundational branding to the global stage.",
       imageAlt: "A band performing to a seated audience at a community hall",
@@ -53,6 +58,8 @@ const services = {
     {
       index: "02",
       title: "International Booking & Tour Planning",
+      ctaLabel: "View case studies",
+      ctaHref: "portfolio" as RouteKey,
       description:
         "Curating and booking cross-border tours and events—bringing international acts to Taiwan while sending Taiwanese talent abroad to foster global musical exchange. Leveraging sharp market intuition and an extensive overseas network, we act as a two-way bridge connecting Taiwan with the global music scene, flawlessly executing both domestic showcases for international talent and global tours for local acts.",
       imageAlt: "A band mid-set on a wide stage under green wash lighting",
@@ -77,6 +84,8 @@ const services = {
     {
       index: "03",
       title: "PR & Marketing",
+      ctaLabel: "View case studies",
+      ctaHref: "portfolio" as RouteKey,
       description:
         "Delivering integrated PR and marketing strategies, spanning media relations, EPKs, digital advertising, and multilingual campaigns to maximize international reach. Navigating today's fragmented markets, we tell stories in a language that honors the creator's vision, utilizing tailored global PR strategies to push exceptional music beyond traditional boundaries.",
       imageAlt: "A solo guitarist on a small stage beneath a hand-painted BAND SHOW banner",
@@ -101,6 +110,8 @@ const services = {
     {
       index: "04",
       title: "Event Production",
+      ctaLabel: "View case studies",
+      ctaHref: "portfolio" as RouteKey,
       description:
         "Providing end-to-end event production services from showcases to large-scale festivals, managing everything from budgeting and logistics to technical production and on-site execution. From intimate listening parties and livehouse showcases to massive festivals, we manifest imaginative concepts into premium live experiences.",
       imageAlt: "Zines and potted plants arranged on a table by a window at an event space",

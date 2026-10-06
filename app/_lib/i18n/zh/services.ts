@@ -14,12 +14,15 @@ const services: typeof enServices = {
     body: "除了創作，其他音樂發展路上的大小難事，讓子皿幫你通通搞定。",
     imageAlt: "子皿團隊成員坐在成排的舊櫃子前合影",
   },
-  ctaLabel: "相關案例",
   items: [
     {
       index: "01",
       // Figma draws 藝人經紀整合; the matrix says 藝人經紀 (D032).
       title: "藝人經紀",
+      // Artist Management points at Artists, not Portfolio — its own, more
+      // specific case-study page (see en/services.ts D067 note).
+      ctaLabel: "合作藝人",
+      ctaHref: "artists",
       description:
         "全方位助推藝人發展。從長期規劃、形象經營、演出接洽、到合約發行等繁瑣細節，子皿與你一路同行，成為音樂人從草創期走向國際舞台的堅實後盾。",
       imageAlt: "樂團在社區活動中心為坐著的觀眾演出",
@@ -41,6 +44,8 @@ const services: typeof enServices = {
     {
       index: "02",
       title: "巡演規劃",
+      ctaLabel: "相關案例",
+      ctaHref: "portfolio",
       description:
         "透過子皿長年累積的海外資源，統籌音樂人國內外巡迴演出與海外音樂活動，拓展亞洲、乃至歐美地區的聽眾與商業機會，同時協助海外的優秀音樂人進入台灣市場。",
       imageAlt: "樂團在綠色燈光下的寬闊舞台上演出",
@@ -63,6 +68,8 @@ const services: typeof enServices = {
     {
       index: "03",
       title: "行銷宣傳",
+      ctaLabel: "相關案例",
+      ctaHref: "portfolio",
       description:
         "為音樂人量身打造行銷與公關策略，精準瞄準分眾市場，結合時下行銷趨勢，用貼近創作者風格的手法說好故事。",
       imageAlt: "吉他手在手繪 BAND SHOW 布條下的小舞台獨奏",
@@ -87,6 +94,8 @@ const services: typeof enServices = {
     {
       index: "04",
       title: "活動製作",
+      ctaLabel: "相關案例",
+      ctaHref: "portfolio",
       description:
         "統籌各式演出企劃，從專場演出到創意音樂策展，子皿包辦企劃發想、預算規劃、統籌協調及現場執行，將各種奇思妙想變成高規格的現場體驗。",
       imageAlt: "活動場地窗邊桌上擺放的刊物與盆栽",

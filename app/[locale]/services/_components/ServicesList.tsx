@@ -19,7 +19,7 @@ const images = [
 ];
 
 export default function ServicesList({ locale }: { locale: Locale }) {
-  const { items, ctaLabel } = getDictionary(locale).services;
+  const { items } = getDictionary(locale).services;
 
   return (
     <section className="w-full bg-(--color-basic-accent) lg:pt-[64px]">
@@ -38,11 +38,8 @@ export default function ServicesList({ locale }: { locale: Locale }) {
             title={service.title}
             description={service.description}
             features={service.features}
-            ctaLabel={ctaLabel}
-            ctaHref={localizedHref(
-              serviceAnchors[i].id === "artist-management" ? "artists" : "portfolio",
-              locale
-            )}
+            ctaLabel={service.ctaLabel}
+            ctaHref={localizedHref(service.ctaHref, locale)}
             image={{ src: images[i], alt: service.imageAlt }}
           />
         </div>
