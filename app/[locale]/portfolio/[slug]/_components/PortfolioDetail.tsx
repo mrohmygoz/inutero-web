@@ -186,8 +186,10 @@ export default function PortfolioDetail({
         ) : null}
       </div>
 
-      {/* CMS body + desktop-only left share rail — 12612:8705. */}
-      <div className="border-b border-(--color-basic-border) lg:flex lg:items-start">
+      {/* CMS body + desktop-only left share rail — 12612:8705. Bottom padding here
+          mirrors ShareRow's own top gap (40px mobile / 64px desktop) so the border-b
+          doesn't sit flush against the last paragraph. */}
+      <div className="border-b border-(--color-basic-border) pb-10 lg:flex lg:items-start lg:pb-16">
         <ShareRail
           title={frontmatter.title}
           copyLinkLabel={dict.share.copyLink}

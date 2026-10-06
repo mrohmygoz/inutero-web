@@ -17,7 +17,7 @@ export default function Gallery({
   if (images.length === 0) return null;
 
   return (
-    <section className="border-b border-(--color-basic-border) px-5 pt-6 pb-6 lg:px-8 lg:pt-5 lg:pb-4">
+    <section className="border-b border-(--color-basic-border) px-5 pt-6 pb-10 lg:px-8 lg:pt-5 lg:pb-8">
       <div className="mb-[17px] flex items-center gap-2 lg:mb-[40px]">
         <div aria-hidden className="size-[7px] shrink-0 bg-(--color-brand-primary-green)" />
         <p className="font-body text-label-m text-(--color-basic-text-primary) uppercase">
