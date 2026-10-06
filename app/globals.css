@@ -494,6 +494,9 @@
 
 :is(html[lang="zh"], [data-locale="zh"]) .cms-quote {
   font-weight: 400;
+  /* 0.87 (the Latin all-caps display leading) crowds CJK glyphs, which sit
+     taller in their line box — not a Figma-derived value, zh-only bump. */
+  line-height: 1.2;
 }
 
 @media (width >= 1024px) {
