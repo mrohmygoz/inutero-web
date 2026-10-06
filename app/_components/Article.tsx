@@ -57,7 +57,7 @@ export default function Article({
           </p>
         </div>
         <div className="flex w-full flex-col items-start lg:items-center lg:justify-center lg:pb-[20px]">
-          <p className="font-display text-display-h5 lg:text-display-h4 w-full [word-break:break-word] font-bold uppercase text-(--color-basic-text-primary)">
+          <p className="font-display text-display-h5 lg:text-display-h4 w-full [word-break:break-word] uppercase text-(--color-basic-text-primary)">
             <LatinBold text={title} level="h5-h4" />
           </p>
         </div>

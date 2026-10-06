@@ -183,7 +183,7 @@
   --text-display-h4: 34px;
   --text-display-h4--line-height: 40.8px;
   --text-display-h4--letter-spacing: -0.34px;
-  /* H4 stays Bold (700) in both Chinese modes — no weight override */
+  --text-display-h4--font-weight: 400;
 
   --text-display-h5: 28px;
   --text-display-h5--line-height: 33.6px;
@@ -200,7 +200,9 @@
   --text-display-h7--letter-spacing: -0.16px;
   --text-display-h7--font-weight: 400;
 
-  /* Jumbo is identical in size across all four modes and stays Bold — no override */
+  /* Jumbo is identical in size across all four modes; weight forced to Regular
+     (400) per D008 follow-up — see note below the desktop zh block. */
+  --text-display-jumbo--font-weight: 400;
 
   --text-label-m: 11px;
   --text-label-m--line-height: 11px;
@@ -263,12 +265,16 @@
     --text-display-h2: 130px;
     --text-display-h2--line-height: 140px;
     --text-display-h2--letter-spacing: -0.87px;
-    --text-display-h2--font-weight: 700;
+    /* Weight forced to Regular (400) per D008 follow-up, 2026-10-06: Mochiy
+       Pop One ships no real Bold, and the browser-synthesized Bold the
+       design calls for merges strokes together at display sizes. Designer
+       asked for the thinner, legible Regular weight instead — see note
+       below this block. No override needed; Regular is the mobile-zh
+       default these desktop rules inherit. */
 
     --text-display-h3: 78px;
     --text-display-h3--line-height: 90px;
     --text-display-h3--letter-spacing: -0.78px;
-    --text-display-h3--font-weight: 700;
 
     --text-display-h4: 55px;
     --text-display-h4--line-height: 60px;
@@ -277,17 +283,14 @@
     --text-display-h5: 28px;
     --text-display-h5--line-height: 33.6px;
     --text-display-h5--letter-spacing: -0.28px;
-    --text-display-h5--font-weight: 700;
 
     --text-display-h6: 18px;
     --text-display-h6--line-height: 21.6px;
     --text-display-h6--letter-spacing: -0.27px;
-    --text-display-h6--font-weight: 700;
 
     --text-display-h7: 22px;
     --text-display-h7--line-height: 28px;
     --text-display-h7--letter-spacing: -0.22px;
-    --text-display-h7--font-weight: 700;
 
     /* Label/M reverts to the English 11px size at desktop */
     --text-label-m: 11px;
@@ -462,21 +465,6 @@
 }
 
 /*
- * Portfolio project titles (frontmatter `title`) are never translated — the
- * same English string renders in both locales. Same fix as the Home hero
- * headline above: pin the Latin H2 values so the Chinese display scale
- * (smaller, Regular weight) doesn't apply to text that isn't Chinese.
- * Desktop-only value: this class is only used in the desktop-only (`lg:flex`)
- * title block in PortfolioDetail.
- */
-.tokens-heading-h2-latin {
-  --text-display-h2: 180px;
-  --text-display-h2--line-height: 118px;
-  --text-display-h2--letter-spacing: -1.2px;
-  --text-display-h2--font-weight: 700;
-}
-
-/*
  * Artist names (ArtistCard) are untranslated for acts that already go by a
  * Latin name in both locales (an artist's `nameEn`/`nameZh` pair can be
  * identical). Applied conditionally by the caller via isLatinOnly() — most
@@ -488,6 +476,20 @@
   --text-display-h5--line-height: 32.8px;
   --text-display-h5--letter-spacing: -0.41px;
   --text-display-h5--font-weight: 700;
+}
+
+/*
+ * CMS blockquote (Cms.tsx). Alumni Sans SemiBold Italic in the design; Chinese
+ * quotes fall back to Mochiy Pop One, which has no real SemiBold — forcing
+ * font-weight 600 there synthesizes a bold that merges strokes together
+ * (D008 follow-up, 2026-10-06). Regular (400) is this font's only real weight.
+ */
+.cms-quote {
+  font-weight: 600;
+}
+
+:is(html[lang="zh"], [data-locale="zh"]) .cms-quote {
+  font-weight: 400;
 }
 
 @media (width >= 1024px) {
@@ -537,6 +539,15 @@
     line-height: 58px;
     letter-spacing: -0.55px;
   }
+}
+
+/* PortfolioDetail's desktop title block is lg:flex-only (no mobile instance),
+   so this is the English H2 desktop value alone — no mobile pair needed. */
+.tokens-run-h2-latin {
+  font-size: 180px;
+  line-height: 118px;
+  letter-spacing: -1.2px;
+  font-weight: 700;
 }
 
 /* font-style isn't part of Tailwind's --text-* pairing mechanism — applied via

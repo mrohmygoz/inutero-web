@@ -50,7 +50,7 @@ export default function EmailSignupSuccessModal({
       >
         <h2
           id="email-signup-success-heading"
-          className="font-display text-display-h5 font-bold text-(--color-basic-accent) uppercase"
+          className="font-display text-display-h5 text-(--color-basic-accent) uppercase"
         >
           {t.heading}
         </h2>

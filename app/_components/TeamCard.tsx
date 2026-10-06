@@ -23,7 +23,7 @@ export default function TeamCard({
         <Image src={image.src} alt={image.alt} fill className="object-cover" />
       </div>
       <div className="flex w-full flex-col items-start">
-        <p className="font-display text-display-h7 w-full [word-break:break-word] font-bold uppercase text-(--color-basic-text-primary)">
+        <p className="font-display text-display-h7 w-full [word-break:break-word] uppercase text-(--color-basic-text-primary)">
           {name}
         </p>
         <p className="font-body text-label-m w-full pt-1 font-normal uppercase text-(--color-basic-text-secondary)">

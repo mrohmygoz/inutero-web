@@ -103,7 +103,7 @@ export default function ServiceCard({
               </div>
             </div>
             <div className="flex min-w-0 flex-1 flex-col gap-4 lg:h-full lg:justify-between">
-              <p className="font-display text-display-h3 [word-break:break-word] pt-5 font-bold uppercase text-(--color-basic-background) lg:pt-0">
+              <p className="font-display text-display-h3 [word-break:break-word] pt-5 uppercase text-(--color-basic-background) lg:pt-0">
                 {title}
               </p>
               <p className="hidden font-body text-[15px] leading-[23.25px] text-(--color-basic-background) lg:block">
@@ -129,7 +129,7 @@ export default function ServiceCard({
                 key={feature.title}
                 className="flex items-start gap-3 border-t border-(--opacity-white-15) pt-[10px] lg:flex-col lg:gap-0 lg:border-(--color-basic-background) lg:py-[20px]"
               >
-                <p className="font-display text-display-h7 w-[118px] shrink-0 font-bold uppercase text-(--color-brand-primary-green) lg:w-full">
+                <p className="font-display text-display-h7 w-[118px] shrink-0 uppercase text-(--color-brand-primary-green) lg:w-full">
                   {feature.title}
                 </p>
                 <p className="font-body text-body-xs flex-1 text-(--color-basic-background) lg:w-full lg:flex-none lg:pt-[8px]">

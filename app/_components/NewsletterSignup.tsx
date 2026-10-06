@@ -27,7 +27,7 @@ export default function NewsletterSignup({ locale }: { locale: Locale }) {
       <div className="mx-auto w-full max-w-[576px] px-5 py-[26px] lg:max-w-none lg:px-8 lg:py-16">
         <div className="lg:flex lg:flex-col lg:items-end lg:gap-16">
           <div className="w-full">
-            <h2 className="font-display text-display-h3 font-bold text-(--color-basic-foreground) uppercase">
+            <h2 className="font-display text-display-h3 text-(--color-basic-foreground) uppercase">
               {t.heading}
             </h2>
             <p className="font-body text-body-m mt-4 text-(--opacity-white-50) lg:mt-6">

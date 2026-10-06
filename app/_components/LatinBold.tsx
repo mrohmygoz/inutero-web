@@ -6,6 +6,7 @@ import { splitLatinRuns } from "../_lib/latinText";
 const RUN_CLASS = {
   "h4-h3": "tokens-run-h4-h3-latin",
   "h5-h4": "tokens-run-h5-h4-latin",
+  h2: "tokens-run-h2-latin",
 } as const;
 
 // English characters must render at the English px size for their heading

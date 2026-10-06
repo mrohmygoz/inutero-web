@@ -32,7 +32,7 @@ function Paragraph({ children }: { children?: ReactNode }) {
 // heading uses -0.41px. D012: drawn per occurrence, so it is transcribed literally.
 function Heading({ children }: { children?: ReactNode }) {
   return (
-    <h2 className="font-display text-display-h5 mt-8 font-bold text-(--color-basic-text-primary) uppercase lg:text-[64px] lg:leading-[0.8] lg:tracking-[-0.41px]">
+    <h2 className="font-display text-display-h5 mt-8 text-(--color-basic-text-primary) uppercase lg:text-[64px] lg:leading-[0.8] lg:tracking-[-0.41px]">
       {children}
     </h2>
   );
@@ -61,7 +61,11 @@ function Figure({ src, alt, title }: ImgHTMLAttributes<HTMLImageElement>) {
 }
 
 // Alumni Sans SemiBold Italic in the design. fonts.ts loads Alumni Sans at 700 only
-// (D023's accepted consequence), so `font-semibold` resolves to the loaded 700 face.
+// (D023's accepted consequence), so the `.cms-quote` weight resolves to the loaded 700
+// face for Latin text. Chinese quotes fall back to Mochiy Pop One, which has no real
+// SemiBold/Bold — `.cms-quote` drops to Regular (400) under html[lang="zh"] so the
+// browser doesn't synthesize a bold that merges Mochiy Pop One's strokes together
+// (D008 follow-up, 2026-10-06).
 function Blockquote({ children }: { children?: ReactNode }) {
   // Markdown puts the quote text in a nested paragraph. Left alone, that paragraph's
   // Body/L mapping would override the quote's display type, silently rendering a 45px
@@ -75,7 +79,7 @@ function Blockquote({ children }: { children?: ReactNode }) {
   return (
     <blockquote className="my-9 flex items-stretch gap-5 lg:mt-14 lg:mb-6">
       <span aria-hidden className="w-[3px] shrink-0 bg-(--color-brand-primary-green)" />
-      <div className="font-display text-[30px] leading-[0.87] font-semibold tracking-[-0.3px] text-(--color-basic-text-primary) italic uppercase lg:text-[45px]">
+      <div className="cms-quote font-display text-[30px] leading-[0.87] tracking-[-0.3px] text-(--color-basic-text-primary) italic uppercase lg:text-[45px]">
         {unwrapped}
       </div>
     </blockquote>
@@ -91,12 +95,12 @@ const components = {
   blockquote: Blockquote,
 
   h1: ({ children }: { children?: ReactNode }) => (
-    <h1 className="font-display text-display-h4 mt-8 font-bold text-(--color-basic-text-primary) uppercase">
+    <h1 className="font-display text-display-h4 mt-8 text-(--color-basic-text-primary) uppercase">
       {children}
     </h1>
   ),
   h3: ({ children }: { children?: ReactNode }) => (
-    <h3 className="font-display text-display-h6 mt-8 font-bold text-(--color-basic-text-primary) uppercase">
+    <h3 className="font-display text-display-h6 mt-8 text-(--color-basic-text-primary) uppercase">
       {children}
     </h3>
   ),

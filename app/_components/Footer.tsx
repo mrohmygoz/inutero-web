@@ -79,7 +79,7 @@ export default function Footer({ locale }: { locale: Locale }) {
                   <a
                     key={labelKey}
                     href={serviceAnchorHref(id, locale)}
-                    className={`font-display text-display-h5 border-(--color-basic-accent) py-2 font-bold text-(--color-basic-accent) uppercase focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-brand-primary-green) ${i < serviceAnchors.length - 1 ? "border-b" : ""}`}
+                    className={`font-display text-display-h5 border-(--color-basic-accent) py-2 text-(--color-basic-accent) uppercase focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-brand-primary-green) ${i < serviceAnchors.length - 1 ? "border-b" : ""}`}
                   >
                     {f[labelKey]}
                   </a>
@@ -96,7 +96,7 @@ export default function Footer({ locale }: { locale: Locale }) {
                     <a
                       key={key}
                       href={localizedHref(key, locale)}
-                      className={`font-display text-display-h5 border-(--color-basic-accent) py-2 font-bold text-(--color-basic-accent) uppercase focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-brand-primary-green) ${i < footerPageRoutes.length - 1 ? "border-b" : ""}`}
+                      className={`font-display text-display-h5 border-(--color-basic-accent) py-2 text-(--color-basic-accent) uppercase focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-brand-primary-green) ${i < footerPageRoutes.length - 1 ? "border-b" : ""}`}
                     >
                       {route.label[locale]}
                     </a>

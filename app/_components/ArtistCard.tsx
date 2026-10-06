@@ -58,7 +58,7 @@ export default function ArtistCard({
       <div className="flex w-full flex-col items-start justify-between gap-[16px] lg:flex-1">
         <div className="flex w-full flex-col items-start gap-[4px] lg:gap-[6px]">
           <p
-            className={`font-display text-display-h5 w-full [word-break:break-word] font-bold uppercase text-(--color-basic-border) ${isLatinOnly(name) ? "tokens-heading-h5-latin" : ""}`.trim()}
+            className={`font-display text-display-h5 w-full [word-break:break-word] uppercase text-(--color-basic-border) ${isLatinOnly(name) ? "tokens-heading-h5-latin" : ""}`.trim()}
           >
             {name}
           </p>

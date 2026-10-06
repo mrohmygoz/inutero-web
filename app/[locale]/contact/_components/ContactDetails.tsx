@@ -27,7 +27,7 @@ export default function ContactDetails({ locale }: { locale: Locale }) {
               key={department.email}
               className="flex flex-col gap-[8px] border-t border-(--opacity-white-15) pt-[20px] pb-[12px] lg:border-(--color-basic-background)"
             >
-              <p className="font-display text-display-h5 font-bold text-(--color-basic-background) uppercase">
+              <p className="font-display text-display-h5 text-(--color-basic-background) uppercase">
                 {department.label}
               </p>
               <a

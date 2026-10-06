@@ -39,7 +39,7 @@ export default function NewsTopStory({
             17px chip — a ~20px gap baked into the wrapper's leftover height,
             not the flex `gap`, which is 0 for this pair at desktop (12573:7971
             metadata: tag wrapper y=20 h=38.25, heading starts at y=58.25). */}
-        <p className="font-display text-display-h4 lg:text-display-h3 w-[354px] max-w-full font-bold text-white uppercase lg:mt-[20px] lg:w-full lg:max-w-[1020px]">
+        <p className="font-display text-display-h4 lg:text-display-h3 w-[354px] max-w-full text-white uppercase lg:mt-[20px] lg:w-full lg:max-w-[1020px]">
           <LatinBold text={title} level="h4-h3" />
         </p>
         <p className="font-body text-body-s text-white lg:pt-[8px]">{dateLabel}</p>

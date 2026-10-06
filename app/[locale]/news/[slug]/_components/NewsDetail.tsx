@@ -97,7 +97,7 @@ export default function NewsDetail({
               </Tag>
             ))}
           </div>
-          <p className="font-display text-display-h4 lg:text-display-h3 w-[354px] max-w-full font-bold text-white uppercase lg:mt-5 lg:w-full lg:max-w-[1020px]">
+          <p className="font-display text-display-h4 lg:text-display-h3 w-[354px] max-w-full text-white uppercase lg:mt-5 lg:w-full lg:max-w-[1020px]">
             <LatinBold text={frontmatter.title} level="h4-h3" />
           </p>
           <p className="font-body text-body-s text-white lg:pt-2">{dateLabel}</p>
@@ -164,7 +164,7 @@ function RelatedPosts({
             </p>
           </div>
         </div>
-        <p className="font-display text-display-h2 flex-1 font-bold text-(--color-basic-accent) uppercase">
+        <p className="font-display text-display-h2 flex-1 text-(--color-basic-accent) uppercase">
           {labels.relatedHeading}
         </p>
       </div>

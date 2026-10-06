@@ -138,7 +138,7 @@ export default function Nav({ locale, theme }: { locale: Locale; theme?: NavThem
                   key={key}
                   href={localizedHref(key, locale)}
                   aria-current={isActive ? "page" : undefined}
-                  className={`font-display text-display-h6 py-[6px] font-bold whitespace-nowrap uppercase focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-brand-primary-green) ${
+                  className={`font-display text-display-h6 py-[6px] whitespace-nowrap uppercase focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-brand-primary-green) ${
                     isActive ? "text-(--color-brand-primary-green)" : tone.text
                   }`}
                 >
@@ -211,12 +211,14 @@ export default function Nav({ locale, theme }: { locale: Locale; theme?: NavThem
                   paddingBlock: MENU_LINK_PADDING_Y,
                   ...(locale === "en" ? { fontSize: MENU_HOME_FONT_SIZE_EN } : null),
                 }}
-                className={`font-display w-full border-b border-(--color-basic-background) px-[13px] text-center font-bold uppercase focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-brand-primary-green) ${
+                className={`font-display w-full border-b border-(--color-basic-background) px-[13px] text-center uppercase focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-brand-primary-green) ${
                   activeRoute === "home"
                     ? "italic text-(--color-basic-accent)"
                     : "text-(--color-basic-background)"
                 } ${
-                  locale === "en" ? "leading-[0.7] tracking-[-0.81px]" : "text-display-h3"
+                  locale === "en"
+                    ? "font-bold leading-[0.7] tracking-[-0.81px]"
+                    : "text-display-h3"
                 }`}
               >
                 {locale === "en" ? "Home" : "首頁"}
@@ -238,7 +240,7 @@ export default function Nav({ locale, theme }: { locale: Locale; theme?: NavThem
                           }
                         : null),
                     }}
-                    className={`font-display text-display-h3 w-full border-b border-(--color-basic-background) px-[13px] text-center font-bold uppercase last:border-b-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-brand-primary-green) ${
+                    className={`font-display text-display-h3 w-full border-b border-(--color-basic-background) px-[13px] text-center uppercase last:border-b-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-brand-primary-green) ${
                       isActive ? "italic text-(--color-basic-accent)" : "text-(--color-basic-background)"
                     }`}
                   >

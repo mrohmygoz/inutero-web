@@ -6,6 +6,7 @@ import Gallery from "./Gallery";
 import type { ContentEntry } from "../../../../_lib/content";
 import { getDictionary, type Locale } from "../../../../_lib/i18n";
 import { localizedHref } from "../../../../_lib/routes";
+import LatinBold from "../../../../_components/LatinBold";
 
 // Source: desktop `Portfolio Details` 12612:8706, mobile `Project Details` 12211:3371
 // (TC 12635:12927 / 12368:2481). Replaces `ContentDetail` for this route (design.md D-E).
@@ -137,8 +138,8 @@ export default function PortfolioDetail({
           aria-hidden
           className="absolute bottom-[137px] left-[30px] hidden w-[803px] flex-col items-start gap-[30px] lg:flex"
         >
-          <p className="tokens-heading-h2-latin font-display text-display-h2 w-full text-(--color-basic-background) uppercase">
-            {frontmatter.title}
+          <p className="font-display text-display-h2 w-full text-(--color-basic-background) uppercase">
+            <LatinBold text={frontmatter.title} level="h2" />
           </p>
           <p className="font-body text-body-l max-w-[570px] text-(--color-basic-background)">
             {frontmatter.excerpt}

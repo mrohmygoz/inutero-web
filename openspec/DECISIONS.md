@@ -235,6 +235,16 @@ accept platform defaults, drop `"Noto Sans TC"` from the stack; nothing else cha
 known, deliberate gap, not an implementation bug — do not "fix" it in a later phase without
 revisiting this decision.
 
+**2026-10-06 follow-up — Mochiy Pop One display weight reverted to Regular (400).** The
+designer reviewed the live site and flagged that synthesized Bold merges Mochiy Pop One's
+strokes together in-browser (illegible gaps between strokes), unlike the faux-bold rendering
+in the Figma desktop app. User decision: drop `font-weight: 700` on every Chinese
+`--text-display-*` token (Jumbo, H2–H7 desktop; H4 mobile — H1 was already Regular) so the
+browser renders Mochiy Pop One at its one real weight instead of synthesizing. `Accent/Display`
+(Noto Serif TC Bold Italic) is unaffected — that family ships real weights, so its synthesis
+is only the italic/oblique, not the stroke-merging problem. This narrows D008's "implement
+exactly as declared" rule for this one token family; the rest of D008 stands.
+
 ## D009 — Mobile→Desktop token switch at 1024px
 
 **Decision:** The Text Styles and Spacing & Sizing modes switch from Mobile to Desktop at
@@ -2752,6 +2762,31 @@ sweep of every `text-display-*`/`text-accent-display` consumer in the codebase f
 the only other live instance of the bug class `HomeHero.tsx` already solved — all other
 locale-scaled headings render genuinely translated dictionary or MDX copy (including artist
 and team names, which have real `nameEn`/`nameZh` pairs), so the scale swap is correct there.
+
+**2026-10-06 correction — titles are NOT universally untranslated, and are often mixed
+zh/en, not whole-string Latin.** The "never translated" premise above was wrong:
+`content/portfolio/zh/*.mdx` has genuinely Chinese titles for most projects (Organik
+Festival happened to be the one untranslated example in the screenshot that prompted D119),
+and several of those Chinese titles embed an untranslated Latin proper noun mid-string
+(band names, event names). Applying `.tokens-heading-h2-latin` unconditionally forced every
+Chinese portfolio title into Alumni Sans-sized metrics and a hard `font-weight: 700` — on top
+of causing the stroke-merging bold problem D008's follow-up fixed elsewhere, since the
+actual rendered glyphs still fall back to Mochiy Pop One (Alumni Sans has no CJK coverage)
+and 700 has no real face. A first attempt gated the class behind whole-string
+`isLatinOnly(frontmatter.title)`, but that regressed D120's rule for the mixed case: a title
+that is mostly Chinese with an embedded Latin run no longer pinned that run to the English
+H2 size, so it rendered at the (smaller) ambient Chinese size instead of matching the EN-mode
+rendering of the same run.
+
+**Corrected fix:** use `LatinBold` (D120's existing per-run mechanism, already used by
+`NewsDetail.tsx`/`NewsTopStory.tsx` for exactly this problem) instead of a whole-string
+toggle. Added a `level="h2"` entry to `LatinBold`'s `RUN_CLASS` map, backed by a new
+`.tokens-run-h2-latin` class in `app/globals.css` (desktop-only values — this title block has
+no mobile instance). `PortfolioDetail.tsx` now renders
+`<LatinBold text={frontmatter.title} level="h2" />` inside the ambient `text-display-h2`
+paragraph: Chinese runs inherit the correct (now-Regular-weight) Chinese token, and any Latin
+run — whether the whole title or a word embedded in an otherwise-Chinese title — is pinned to
+the English H2 desktop size/weight, matching how the same run renders in `/en`.
 
 **How to apply:** Any future heading that renders an untranslated literal (a proper noun, a
 brand name, a client name) through a bare `text-display-*`/`text-accent-display` class must
