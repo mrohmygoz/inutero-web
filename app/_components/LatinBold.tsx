@@ -6,6 +6,7 @@ import { splitLatinRuns } from "../_lib/latinText";
 const RUN_CLASS = {
   "h4-h3": "tokens-run-h4-h3-latin",
   "h5-h4": "tokens-run-h5-h4-latin",
+  h5: "tokens-run-h5-latin",
   h2: "tokens-run-h2-latin",
 } as const;
 

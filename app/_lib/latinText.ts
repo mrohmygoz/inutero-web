@@ -9,10 +9,6 @@
 const CJK_PATTERN =
   /[　-〿぀-ヿㇰ-ㇿ㐀-䶿一-鿿豈-﫿＀-￯]/;
 
-export function isLatinOnly(text: string): boolean {
-  return text.length > 0 && !CJK_PATTERN.test(text);
-}
-
 export type TextRun = { text: string; latin: boolean };
 
 export function splitLatinRuns(text: string): TextRun[] {

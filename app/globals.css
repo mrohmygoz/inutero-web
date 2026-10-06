@@ -469,20 +469,6 @@
 }
 
 /*
- * Artist names (ArtistCard) are untranslated for acts that already go by a
- * Latin name in both locales (an artist's `nameEn`/`nameZh` pair can be
- * identical). Applied conditionally by the caller via isLatinOnly() — most
- * artists DO have a genuinely different Chinese name, where the Chinese
- * scale is correct and this class must not apply.
- */
-.tokens-heading-h5-latin {
-  --text-display-h5: 41px;
-  --text-display-h5--line-height: 32.8px;
-  --text-display-h5--letter-spacing: -0.41px;
-  --text-display-h5--font-weight: 700;
-}
-
-/*
  * CMS blockquote (Cms.tsx). Alumni Sans SemiBold Italic in the design; Chinese
  * quotes fall back to Mochiy Pop One, which has no real SemiBold — forcing
  * font-weight 600 there synthesizes a bold that merges strokes together
@@ -497,14 +483,6 @@
   /* 0.87 (the Latin all-caps display leading) crowds CJK glyphs, which sit
      taller in their line box — not a Figma-derived value, zh-only bump. */
   line-height: 1.2;
-}
-
-@media (width >= 1024px) {
-  .tokens-heading-h5-latin {
-    /* H5 size/leading are identical Mobile/Desktop English — only
-       letter-spacing changes (globals.css desktop :root block). */
-    --text-display-h5--letter-spacing: -0.78px;
-  }
 }
 
 /*
@@ -545,6 +523,23 @@
     font-size: 78px;
     line-height: 58px;
     letter-spacing: -0.55px;
+  }
+}
+
+/* ArtistCard name (ArtistCard.tsx): English runs inside a mixed zh/en name
+   (e.g. "緩緩 Huan Huan") must render at the English H5 size, same as the
+   other .tokens-run-*-latin classes (D120). H5 size/leading are identical
+   Mobile/Desktop English — only letter-spacing changes. */
+.tokens-run-h5-latin {
+  font-size: 41px;
+  line-height: 32.8px;
+  letter-spacing: -0.41px;
+  font-weight: 700;
+}
+
+@media (width >= 1024px) {
+  .tokens-run-h5-latin {
+    letter-spacing: -0.78px;
   }
 }
 
