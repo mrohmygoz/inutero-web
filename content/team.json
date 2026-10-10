@@ -27,33 +27,6 @@
     "image": "/images/about/bun.jpg"
   },
   {
-    "slug": "hanying",
-    "nameEn": "HanYing",
-    "nameZh": "涵穎",
-    "roleEn": "Marketing",
-    "roleZh": "行銷企劃",
-    "description": "我的生命三要素：手搖、美食、睡覺",
-    "image": "/images/about/hanying.jpg"
-  },
-  {
-    "slug": "ray",
-    "nameEn": "Ray",
-    "nameZh": "鴻濬",
-    "roleEn": "Marketing",
-    "roleZh": "行銷企劃",
-    "description": "自由最高！",
-    "image": "/images/about/ray.jpeg"
-  },
-  {
-    "slug": "bonnie",
-    "nameEn": "Bonnie",
-    "nameZh": "寶尼",
-    "roleEn": "Marketing",
-    "roleZh": "行銷企劃",
-    "description": "宅宅 Otaku",
-    "image": "/images/about/bonnie.jpg"
-  },
-  {
     "slug": "chiumei",
     "nameEn": "ChiuMei",
     "nameZh": "邱梅",
@@ -72,19 +45,46 @@
     "image": "/images/about/sedjam.jpeg"
   },
   {
-    "slug": "si-mamrat",
-    "nameEn": "Si mamrat",
-    "nameZh": "江明展",
-    "roleZh": "冬季限定",
-    "description": "Hi我是好蒿，我不太會自我介紹。",
-    "image": "/images/about/si-mamrat.jpg"
-  },
-  {
     "slug": "anita",
     "nameEn": "Anita",
     "nameZh": "泥塔 Anita",
     "roleZh": "小幫手",
     "description": "我很I，只想發呆。",
     "image": "/images/about/anita.jpeg"
+  },
+  {
+    "slug": "bonnie",
+    "nameEn": "Bonnie",
+    "nameZh": "寶尼",
+    "roleEn": "Marketing",
+    "roleZh": "行銷企劃",
+    "description": "宅宅 Otaku",
+    "image": "/images/about/bonnie.jpg"
+  },
+  {
+    "slug": "ray",
+    "nameEn": "Ray",
+    "nameZh": "鴻濬",
+    "roleEn": "Marketing",
+    "roleZh": "行銷企劃",
+    "description": "自由最高！",
+    "image": "/images/about/ray.jpeg"
+  },
+  {
+    "slug": "hanying",
+    "nameEn": "HanYing",
+    "nameZh": "涵穎",
+    "roleEn": "Marketing",
+    "roleZh": "行銷企劃",
+    "description": "我的生命三要素：手搖、美食、睡覺",
+    "image": "/images/about/hanying.jpg"
+  },
+  {
+    "slug": "si-mamrat",
+    "nameEn": "Si mamrat",
+    "nameZh": "江明展",
+    "roleZh": "冬季限定",
+    "description": "Hi我是好蒿，我不太會自我介紹。",
+    "image": "/images/about/si-mamrat.jpg"
   }
 ]
