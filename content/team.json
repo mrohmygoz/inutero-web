@@ -45,6 +45,14 @@
     "image": "/images/about/sedjam.jpeg"
   },
   {
+    "slug": "si-mamrat",
+    "nameEn": "Si mamrat",
+    "nameZh": "江明展",
+    "roleZh": "冬季限定",
+    "description": "Hi我是好蒿，我不太會自我介紹。",
+    "image": "/images/about/si-mamrat.jpg"
+  },
+  {
     "slug": "anita",
     "nameEn": "Anita",
     "nameZh": "泥塔 Anita",
@@ -78,13 +86,5 @@
     "roleZh": "行銷企劃",
     "description": "我的生命三要素：手搖、美食、睡覺",
     "image": "/images/about/hanying.jpg"
-  },
-  {
-    "slug": "si-mamrat",
-    "nameEn": "Si mamrat",
-    "nameZh": "江明展",
-    "roleZh": "冬季限定",
-    "description": "Hi我是好蒿，我不太會自我介紹。",
-    "image": "/images/about/si-mamrat.jpg"
   }
 ]
