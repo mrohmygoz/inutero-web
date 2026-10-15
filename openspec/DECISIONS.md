@@ -2911,3 +2911,62 @@ rectangle ("image 29") and the cursor trail as the collage's visual content abov
 `lg:`. This is a deliberate divergence from the drawn Figma frame (`12405:6628`), not a gap
 the design left open — if the static photos are ever wanted back, this is a conscious removal
 to reverse, not a bug.
+
+## D123 — Phase 16h: the desktop fixed `MENU` trigger and overlay are built; D039 is superseded
+
+**Decision:** Supersedes D039. The desktop `MENU` square (`12423:8613` EN / `0:504` TC) is
+now built as a `fixed` scroll-triggered trigger, opening a new `lg:flex` desktop branch of
+`Nav.tsx`'s existing overlay (`12612:8541` EN / `12635:12923` TC), sharing `menuOpen` and its
+existing Escape-key and body-scroll-lock effects with the mobile overlay.
+
+**Why D039 is superseded, not just revisited:** D039 deferred the trigger because "the panel
+it would open has no verified design." D045 found the prototype's `ON_CLICK` → `OVERLAY`
+reaction names `12612:8541` as the real target, contradicting that premise. This phase's first
+real fetch of `12612:8541`/`12635:12923` confirms the frame is a genuine, complete overlay
+design (logo, 7 links, social row, locale bar, CLOSE button) — not a stray documentation
+duplicate. D039's objection no longer holds.
+
+**Visibility trigger — single scroll-distance threshold, not per-page sentinels:**
+`showFixedTrigger` becomes true once `window.scrollY` exceeds `window.innerHeight` (a full
+viewport, not an approximation — this exactly matches the Figma Make reference's own
+`pastHero` check, `scrollY >= innerHeight`, in `App.tsx`), via a rAF-throttled `scroll`
+listener local to `Nav.tsx`. Rejected the more accurate per-page "end of first section"
+sentinel because not every page shares a wrapper element (`portfolio/page.tsx` and
+`contact/page.tsx` return a bare fragment) and first-section heights vary from ~1 viewport
+(Contact) to 1334px (Services) — a sentinel would touch 9+ files for one phase. **Known cost,
+accepted**: the trigger fires early on short pages and late on tall ones; spot-checked
+visually across routes at apply time, not literally tuned per route.
+
+**Trigger appear/disappear is animated, mirroring the Make reference exactly — not a
+conditional mount.** `App.tsx`'s `desktopMenuBtn` stays mounted at all times and animates
+`opacity`/`transform: translateY(-12px → 0)` over `transition-all duration-300`, gated by
+`pastHero`; this build does the same (`aria-hidden`/`tabIndex` toggle for a11y instead of
+unmounting, since the Make file doesn't need to consider focus). An earlier pass of this
+phase conditionally rendered the trigger (`{showFixedTrigger && <button>...}`), which is an
+instant pop-in/out, not the reference's fade-and-lift — corrected after the user pointed at
+the Make reference's appear effect. Position is `fixed top-[30px] right-[30px]`, copied from
+the same reference rather than reusing the inline top bar's `lg:px-8`/`lg:pt-[30px]`
+convention (an earlier pass's placeholder, since removed).
+
+**No-logo divergence confirmed deliberate.** The real `12612:8541`/`12635:12923` frames do
+carry a logo (115×115 mark, top-left) and right-align their link column. This build omits the
+logo and centers the links instead, per the user's explicit instruction in proposal.md — a
+confirmed divergence, not a gap to "fix" later by matching the frame more closely.
+
+**Typography is a bespoke per-frame measurement, not the `Display/H3` token.** The overlay's
+7 links measure 100px/70px(0.7 ratio)/-0.81px tracking at EN and 54px/66px/-0.78px at TC —
+neither matches `Display/H3`'s token values (120/84/-1.2 EN, 78/90/-0.78 TC desktop). Applied
+as literal per-locale inline-style overrides on top of the `text-display-h3` class (which
+still supplies family/weight, correctly swapping Alumni Sans Bold ↔ Mochiy Pop One Regular per
+`html[lang]`), the same measurements-not-tokens precedent D063 set for the mobile overlay's
+own clamp constants.
+
+**Overlay CLOSE button position matches both references exactly.** `top-[26px] right-[15px]`,
+absolutely positioned — not centered in a flex row. This is the Make reference's own
+`NavOverlay`'s CLOSE position (`App.tsx`) and independently confirmed by the real
+`12612:8541`/`12635:12923` frames' own `left-[1329px] top-[26px]` on a 1440-wide canvas
+(1440 − 1329 − ~96px button width ≈ 15px) — the two sources agree.
+
+**How to apply:** `12423:8613`/`0:504` and `12612:8541`/`12635:12923` are no longer deferred
+nodes — do not re-flag them as unbuilt. The no-logo/centered-column divergence and the derived
+trigger position are confirmed choices, not drift to reconcile toward the real frame.

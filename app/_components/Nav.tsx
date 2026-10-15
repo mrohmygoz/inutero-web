@@ -16,10 +16,36 @@ import LogoMark from "./LogoMark";
 import { socialPlatforms } from "../_lib/socialPlatforms";
 
 // Figma: desktop NAV 12653:5366 / DARK 12653:5259, mobile NAV 12219:1100,
-// menu overlay 10270:2118 (EN) / 12368:2386 (TC). Desktop 12612:8541 is a stray
-// duplicate with no trigger — not built (design.md Derived Sources).
-// The differing desktop/mobile logo lockups are deliberate, not drift.
+// menu overlay 10270:2118 (EN) / 12368:2386 (TC). The differing desktop/mobile
+// logo lockups are deliberate, not drift.
+//
+// Desktop fixed MENU trigger 12423:8613 (EN) / 0:504 (TC), opening the desktop
+// overlay 12612:8541 (EN) / 12635:12923 (TC) — D045 confirmed the prototype
+// reaction D039 doubted is real; phase-16h builds both (D123). The overlay's
+// real Figma frame right-aligns its links and carries a logo; this build
+// centers the links and omits the logo, a deliberate divergence (D123).
 export type NavTheme = "light" | "dark";
+
+// Scroll fraction of viewport height past which the fixed desktop trigger
+// appears — a single threshold local to this file, not a per-page sentinel
+// (D123). Matches the Make reference's own `pastHero` check
+// (`scrollY >= innerHeight`, App.tsx) exactly, not an approximation.
+const FIXED_TRIGGER_SCROLL_THRESHOLD = 1;
+
+// Desktop overlay link typography is a bespoke measurement on the Figma
+// frame, not the Display/H3 token (120/84/-1.2 EN, 78/90/-0.78 TC) — see
+// D123. Literal per-locale values, matching the mobile MENU_* constants'
+// own precedent of measurements-not-tokens (D063).
+const DESKTOP_MENU_LINK_STYLE_EN = {
+  fontSize: "100px",
+  lineHeight: "70px",
+  letterSpacing: "-0.81px",
+};
+const DESKTOP_MENU_LINK_STYLE_ZH = {
+  fontSize: "54px",
+  lineHeight: "66px",
+  letterSpacing: "-0.78px",
+};
 
 const navRoutes: RouteKey[] = ["about", "services", "portfolio", "artists", "news", "contact"];
 
@@ -56,6 +82,7 @@ const themeClassName: Record<
 export default function Nav({ locale, theme }: { locale: Locale; theme?: NavTheme }) {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [showFixedTrigger, setShowFixedTrigger] = useState(false);
   // Explicit prop wins (the styleguide passes both); otherwise the route table.
   const resolvedTheme: NavTheme = theme ?? navThemeForPath(pathname);
   const activeRoute = activeRouteForPath(pathname);
@@ -93,6 +120,26 @@ export default function Nav({ locale, theme }: { locale: Locale; theme?: NavThem
       window.scrollTo(0, scrollY);
     };
   }, [menuOpen]);
+
+  // rAF-throttled, matching the pattern this codebase already uses for
+  // scroll/pointer-driven effects (HeroCursorTrail).
+  useEffect(() => {
+    let ticking = false;
+    const update = () => {
+      setShowFixedTrigger(
+        window.scrollY > window.innerHeight * FIXED_TRIGGER_SCROLL_THRESHOLD,
+      );
+      ticking = false;
+    };
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(update);
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   return (
     <>
@@ -171,6 +218,26 @@ export default function Nav({ locale, theme }: { locale: Locale; theme?: NavThem
         </div>
       </div>
 
+      {/* Always mounted, not conditionally rendered — the Make reference
+          (App.tsx's desktopMenuBtn) animates opacity/transform in on scroll
+          rather than mounting on threshold-cross (D123). */}
+      <button
+        type="button"
+        aria-expanded={menuOpen}
+        aria-controls="nav-desktop-menu"
+        aria-hidden={!showFixedTrigger}
+        tabIndex={showFixedTrigger ? 0 : -1}
+        onClick={() => setMenuOpen((open) => !open)}
+        style={{
+          opacity: showFixedTrigger ? 1 : 0,
+          pointerEvents: showFixedTrigger ? "auto" : "none",
+          transform: showFixedTrigger ? "translateY(0)" : "translateY(-12px)",
+        }}
+        className="font-body text-label-m fixed top-[30px] right-[30px] z-50 hidden size-[75px] items-center justify-center bg-(--color-brand-accent-neon) font-normal text-(--color-basic-accent) uppercase transition-all duration-300 lg:flex focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-brand-primary-green)"
+      >
+        menu
+      </button>
+
       {menuOpen && (
         <div
           id="nav-mobile-menu"
@@ -243,6 +310,96 @@ export default function Nav({ locale, theme }: { locale: Locale; theme?: NavThem
 
           {/* No mt-auto — it would split the slack three ways. */}
           <div className="shrink-0">
+            <div className="flex h-[56px] items-center justify-center gap-5">
+              {socialPlatforms.map(({ key: platform, icon, href }) => (
+                <a
+                  key={platform}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={platform}
+                  className="relative block size-[37.4px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-basic-background)"
+                >
+                  <span
+                    className="absolute inset-0 bg-(--color-basic-accent)"
+                    style={{
+                      maskImage: `url(${icon})`,
+                      WebkitMaskImage: `url(${icon})`,
+                      maskSize: "contain",
+                      WebkitMaskSize: "contain",
+                      maskRepeat: "no-repeat",
+                      WebkitMaskRepeat: "no-repeat",
+                      maskPosition: "center",
+                      WebkitMaskPosition: "center",
+                    }}
+                  />
+                </a>
+              ))}
+            </div>
+            <a
+              href={swapLocale(pathname, otherLocale)}
+              className="font-body text-body-l mt-[2px] block w-full bg-(--color-basic-accent) py-[15px] text-center text-(--color-basic-background)"
+            >
+              {locale === "en" ? "繁體中文" : "English"}
+            </a>
+          </div>
+        </div>
+      )}
+
+      {/* Sibling tree to the mobile overlay above, not a merged one — the
+          two differ enough (centered column vs. stacked full-width rows; no
+          logo vs. mobile's mark) that sharing a tree would need as much
+          branching as two trees would (D123). Reuses menuOpen and its
+          Escape/scroll-lock effects verbatim. */}
+      {menuOpen && (
+        <div
+          id="nav-desktop-menu"
+          className="fixed inset-0 z-50 hidden flex-col overflow-y-auto bg-(--color-brand-primary-green) lg:flex"
+        >
+          <button
+            type="button"
+            aria-label={closeLabel}
+            onClick={() => setMenuOpen(false)}
+            className="font-body text-label-m absolute top-[26px] right-[15px] inline-flex items-center justify-center bg-(--color-basic-background) px-5 py-[9px] text-(--color-basic-accent) uppercase focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-brand-primary-green)"
+          >
+            {closeLabel}
+          </button>
+
+          <div className="flex flex-1 flex-col items-center justify-center">
+            <nav aria-label="Primary (expanded)" className="flex w-full flex-col items-center">
+              <a
+                href={localizedHref("home", locale)}
+                aria-current={activeRoute === "home" ? "page" : undefined}
+                style={locale === "en" ? DESKTOP_MENU_LINK_STYLE_EN : DESKTOP_MENU_LINK_STYLE_ZH}
+                className={`font-display w-full border-b border-(--color-basic-background) px-8 pt-[6px] pb-[7px] text-center uppercase focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-brand-primary-green) ${
+                  activeRoute === "home"
+                    ? "italic text-(--color-basic-accent)"
+                    : "text-(--color-basic-background)"
+                }`}
+              >
+                {locale === "en" ? "Home" : "首頁"}
+              </a>
+              {navRoutes.map((key) => {
+                const route = routes.find((r) => r.key === key)!;
+                const isActive = key === activeRoute;
+                return (
+                  <a
+                    key={key}
+                    href={localizedHref(key, locale)}
+                    aria-current={isActive ? "page" : undefined}
+                    style={locale === "en" ? DESKTOP_MENU_LINK_STYLE_EN : DESKTOP_MENU_LINK_STYLE_ZH}
+                    className={`font-display w-full border-b border-(--color-basic-background) px-8 pt-[6px] pb-[7px] text-center uppercase last:border-b-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-brand-primary-green) ${
+                      isActive ? "italic text-(--color-basic-accent)" : "text-(--color-basic-background)"
+                    }`}
+                  >
+                    {route.label[locale]}
+                  </a>
+                );
+              })}
+            </nav>
+          </div>
+
+          <div className="shrink-0 pb-8">
             <div className="flex h-[56px] items-center justify-center gap-5">
               {socialPlatforms.map(({ key: platform, icon, href }) => (
                 <a
