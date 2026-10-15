@@ -138,7 +138,13 @@ export default function PortfolioDetail({
           aria-hidden
           className="absolute bottom-[137px] left-[30px] hidden w-[803px] flex-col items-start gap-[30px] lg:flex"
         >
-          <p className="font-display text-display-h2 w-full text-(--color-basic-background) uppercase">
+          <p
+            className={`w-full text-(--color-basic-background) uppercase ${
+              locale === "zh"
+                ? "font-accent text-[96px] font-bold leading-[normal] tracking-[0.37px]"
+                : "font-display text-display-h2"
+            }`}
+          >
             <LatinBold text={frontmatter.title} level="h2" />
           </p>
           <p className="font-body text-body-l max-w-[570px] text-(--color-basic-background)">

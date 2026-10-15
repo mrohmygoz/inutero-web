@@ -587,6 +587,16 @@
   font-weight: 700;
 }
 
+/* On /zh, PortfolioDetail's title switches to the Accent/Display size (96px,
+   Noto Serif TC — see the locale branch in PortfolioDetail.tsx) instead of
+   Display/H2. A Latin run embedded in a zh title (e.g. "鍋 BAND SHOW") must
+   match that size, not the English H2 value above. */
+:is(html[lang="zh"], [data-locale="zh"]) .tokens-run-h2-latin {
+  font-size: 96px;
+  line-height: normal;
+  letter-spacing: 0.37px;
+}
+
 /* font-style isn't part of Tailwind's --text-* pairing mechanism — applied via
    utility classes instead. Accent/Display always needs italic in three of the
    four modes; expose it as a one-off utility so it tracks the same cascade. */
