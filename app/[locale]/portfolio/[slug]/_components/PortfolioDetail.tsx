@@ -148,7 +148,7 @@ export default function PortfolioDetail({
 
         {/* Mobile excerpt + meta card — green panel below the hero image. */}
         <div className="flex flex-col items-center bg-(--color-brand-primary-green) px-[15px] py-[35px] lg:hidden">
-          <p className="font-body text-body-l w-full max-w-[362px] text-right text-(--color-basic-accent)">
+          <p className="pl-15 font-body text-body-l w-full max-w-[362px] text-(--color-basic-accent)">
             {frontmatter.excerpt}
           </p>
           {metaFields.length > 0 ? (

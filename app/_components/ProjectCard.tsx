@@ -103,9 +103,9 @@ export default function ProjectCard({
               </Tag>
             ))}
           </div>
-
+          {/* font-accent text-accent-display w-full text-(--color-basic-background) uppercase */}
           <div className="flex w-full flex-col items-start">
-            <p className="w-full font-['Bodoni_Moda_SC'] text-4xl leading-9 font-bold tracking-tight text-(--primitive-white) uppercase">
+            <p className="w-full font-accent text-4xl leading-9 font-bold tracking-tight text-(--primitive-white) uppercase">
               {title}
             </p>
             <p className="mt-2 line-clamp-1 w-full font-['Chivo_Mono'] text-xs leading-4 font-normal text-(--primitive-white)">

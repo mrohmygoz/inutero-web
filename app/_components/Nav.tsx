@@ -182,7 +182,7 @@ export default function Nav({ locale, theme }: { locale: Locale; theme?: NavThem
                   href={localizedHref(key, locale)}
                   aria-current={isActive ? "page" : undefined}
                   className={`font-display text-display-h6 py-[6px] whitespace-nowrap uppercase focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-brand-primary-green) ${
-                    isActive ? "text-(--color-brand-primary-green)" : tone.text
+                    isActive ? "text-(--color-brand-accent-neon)" : tone.text
                   }`}
                 >
                   {route.label[locale]}
