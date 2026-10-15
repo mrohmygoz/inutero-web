@@ -126,10 +126,13 @@ export default async function HomeFeaturedProjects({ locale }: { locale: Locale 
       </div>
 
       {/* ------------------------------------------------------------------ */}
-      {/* Desktop — 1440px design, reflowing from 1024px up (D040)            */}
+      {/* Desktop — reflowing from 1024px up (D040). No max-width cap        */}
+      {/* (phase 16i, D124) — the heading and card widths are already        */}
+      {/* percentage-based against the row, so they scale with the viewport  */}
+      {/* rather than letterboxing past 1440px.                               */}
       {/* ------------------------------------------------------------------ */}
       <div className="hidden lg:block">
-        <div className="mx-auto w-full max-w-[1440px] px-[32px] py-[68px]">
+        <div className="w-full px-[32px] py-[68px]">
           <div className="flex items-start">
             <Eyebrow
               label={featuredProjects.eyebrow}
@@ -151,9 +154,15 @@ export default async function HomeFeaturedProjects({ locale }: { locale: Locale 
               set its own height keeps the vertical offsets as the only placed
               values. */}
           <div className="mt-[84px] flex items-start">
-            <div className="mt-[5px] ml-[6.635%] w-[29.055%] rotate-[1.94deg]">{cards[0]}</div>
-            <div className="mt-[57px] ml-[3.205%] w-[25.654%] rotate-[-1.23deg]">{cards[1]}</div>
-            <div className="mt-[52px] ml-[2.413%] w-[25.654%] rotate-[0.94deg]">{cards[2]}</div>
+            <div className="mt-[5px] ml-[6.635%] w-[25.654%] rotate-[1.94deg] transition-transform duration-300 hover:z-10 hover:scale-105">
+              {cards[0]}
+            </div>
+            <div className="mt-[57px] ml-[3.205%] w-[25.654%] rotate-[-1.23deg] transition-transform duration-300 hover:z-10 hover:scale-105">
+              {cards[1]}
+            </div>
+            <div className="mt-[52px] ml-[2.413%] w-[25.654%] rotate-[0.94deg] transition-transform duration-300 hover:z-10 hover:scale-105">
+              {cards[2]}
+            </div>
           </div>
 
           {/* Green, not dark — 12358:2031 is the green-bg/dark-text occurrence

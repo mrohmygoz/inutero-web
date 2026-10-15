@@ -233,7 +233,7 @@ export default function Nav({ locale, theme }: { locale: Locale; theme?: NavThem
           pointerEvents: showFixedTrigger ? "auto" : "none",
           transform: showFixedTrigger ? "translateY(0)" : "translateY(-12px)",
         }}
-        className="font-body text-label-m fixed top-[30px] right-[30px] z-50 hidden size-[75px] items-center justify-center bg-(--color-brand-accent-neon) font-normal text-(--color-basic-accent) uppercase transition-all duration-300 lg:flex focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-brand-primary-green)"
+        className="font-body text-label-m fixed top-[30px] right-[30px] z-50 hidden size-[75px] cursor-pointer items-center justify-center bg-(--color-brand-accent-neon) font-normal text-(--color-basic-accent) uppercase transition-all duration-300 hover:scale-110 lg:flex focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-brand-primary-green)"
       >
         menu
       </button>
