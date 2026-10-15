@@ -104,7 +104,7 @@ export default function PortfolioDetail({
           />
           <div
             aria-hidden
-            className="absolute bottom-0 flex w-full flex-col items-center px-5 pb-8"
+            className="absolute bottom-0 flex w-full flex-col items-center px-2 pb-4"
           >
             <p className="font-accent text-accent-display w-full text-(--color-basic-background) uppercase">
               {frontmatter.title}

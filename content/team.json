@@ -48,6 +48,7 @@
     "slug": "si-mamrat",
     "nameEn": "Si mamrat",
     "nameZh": "江明展",
+    "roleEn": "Winter Only",
     "roleZh": "冬季限定",
     "description": "Hi我是好蒿，我不太會自我介紹。",
     "image": "/images/about/si-mamrat.jpg"
@@ -56,6 +57,7 @@
     "slug": "anita",
     "nameEn": "Anita",
     "nameZh": "泥塔 Anita",
+    "roleEn": "Little Helper",
     "roleZh": "小幫手",
     "description": "我很I，只想發呆。",
     "image": "/images/about/anita.jpeg"
@@ -86,5 +88,14 @@
     "roleZh": "行銷企劃",
     "description": "我的生命三要素：手搖、美食、睡覺",
     "image": "/images/about/hanying.jpg"
+  },
+  {
+    "slug": "yi-jen",
+    "nameEn": "Yi Jen",
+    "nameZh": "一珍",
+    "roleEn": "IT Support",
+    "roleZh": "IT支援",
+    "description": "最短的捷徑就是繞遠路（不是我說的）",
+    "image": "/images/about/yi-jen.jpg"
   }
 ]

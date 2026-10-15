@@ -47,7 +47,7 @@ function TeamScroller({
       </div>
 
       {showDots && (
-        <div className="mt-[48px] flex items-center justify-center gap-[7px]">
+        <div className="mt-[48px] flex items-center justify-start gap-[7px]">
           {teamMembers.map((member, index) => (
             <div
               key={member.slug}
