@@ -42,7 +42,7 @@ export default function AboutIntro({ locale }: { locale: Locale }) {
           <Eyebrow
             label={intro.eyebrow}
             gutterInset
-            className="flex h-[92px] w-[17px] shrink-0 items-center justify-center translate-y-6 lg:translate-y-5"
+            className="flex h-[92px] w-[17px] shrink-0 items-center justify-center translate-y-8 lg:translate-y-5"
           />
           <div className="flex w-[346px] flex-col items-center justify-center pt-[20px]">
             <h2
