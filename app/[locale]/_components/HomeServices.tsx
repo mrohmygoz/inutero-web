@@ -68,10 +68,23 @@ function AccordionIcon({ open }: { open: boolean }) {
   );
 }
 
+// Desktop-only hover reference: no canonical Figma reaction exists for this (see
+// design.md / DECISIONS.md). Same four photos as the Services page's `ServicesList`
+// (same Figma Make source images, `imgSvc1`-`imgSvc4`) — reused from
+// `public/images/services/` rather than duplicated under `public/images/home/`.
+const DESKTOP_HOVER_PHOTOS = [
+  "/images/services/service-01-artist-management.jpg",
+  "/images/services/service-02-booking-touring.png",
+  "/images/services/service-03-pr-marketing.jpg",
+  "/images/services/service-04-event-production.jpg",
+];
+
 export default function HomeServices({ locale }: { locale: Locale }) {
   const { services } = getDictionary(locale).home;
   const servicesHref = localizedHref("services", locale);
   const [openIndex, setOpenIndex] = useState(0);
+  const [hoverIndex, setHoverIndex] = useState<number | null>(null);
+  const displayIndex = hoverIndex ?? openIndex;
 
   // The photo is decorative: it carries no information the copy does not, and it
   // sits behind text at low contrast.
@@ -84,6 +97,25 @@ export default function HomeServices({ locale }: { locale: Locale }) {
         sizes="(min-width: 1024px) 620px, 327px"
         className="max-w-none object-cover"
       />
+    </div>
+  );
+
+  // Desktop-only: four images cross-fade by opacity, keyed to displayIndex
+  // (hover-if-present, else the open row) rather than the mobile branch's single
+  // static image.
+  const desktopPhoto = (
+    <div aria-hidden className="absolute inset-0 overflow-hidden">
+      {DESKTOP_HOVER_PHOTOS.map((src, index) => (
+        <Image
+          key={src}
+          src={src}
+          alt=""
+          fill
+          sizes="620px"
+          className="max-w-none object-cover transition-opacity duration-500 ease motion-reduce:transition-none"
+          style={{ opacity: displayIndex === index ? 1 : 0 }}
+        />
+      ))}
     </div>
   );
 
@@ -205,7 +237,7 @@ export default function HomeServices({ locale }: { locale: Locale }) {
                   accordion column, kept proportional so it does not slide out
                   from behind the panel as the container narrows. */}
               <div className="absolute top-0 left-[24.111%] h-[767px] w-[620px] max-w-[68.889%]">
-                {photo}
+                {desktopPhoto}
               </div>
 
               {/* Dot 12561:4180. Frame coords (747, 416) against an accordion
@@ -225,6 +257,8 @@ export default function HomeServices({ locale }: { locale: Locale }) {
                   return (
                     <div
                       key={item.title}
+                      onMouseEnter={() => setHoverIndex(index)}
+                      onMouseLeave={() => setHoverIndex(null)}
                       className={`w-full border-(--color-basic-background) ${
                         open
                           ? "border-t-2 border-b-2"

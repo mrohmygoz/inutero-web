@@ -13,7 +13,7 @@ import { localizedHref, serviceAnchors } from "../../../_lib/routes";
 // both locales and duplicating the paths across en/zh would let them drift.
 const images = [
   "/images/services/service-01-artist-management.jpg",
-  "/images/services/service-02-booking-touring.jpg",
+  "/images/services/service-02-booking-touring.png",
   "/images/services/service-03-pr-marketing.jpg",
   "/images/services/service-04-event-production.jpg",
 ];

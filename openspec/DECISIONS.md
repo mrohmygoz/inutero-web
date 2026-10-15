@@ -2835,3 +2835,39 @@ Latin proper noun in it — add a new `tokens-run-<mobile>-<desktop>-latin` pair
 title actually uses that breakpoint combo (see `RUN_CLASS` in `LatinBold.tsx`). Don't wrap
 static, page-owned dictionary strings in either — they're known at authoring time; use a
 `.tokens-*-latin` class directly instead, as `HomeHero.tsx` does.
+
+## D121 — Phase 16f: `HomeServices` desktop hover built from the user's own spec; four photos ship in their original, varied duotones
+
+**What:** The desktop Services accordion's background photo now responds to pointer hover,
+independent of which row is open (`hoverIndex` falling back to `openIndex`). No canonical
+Figma reaction exists for this — `get_metadata` on the Services photo slot (`12210:2383`)
+confirmed it's an empty frame with no `ON_HOVER` reaction anywhere in the section's node tree,
+the same gap category as D106 (NAV active-route styling). The interaction and its state model
+(`hoverIdx`/`openIdx`/`displayIdx = hoverIdx ?? openIdx`, 500ms opacity cross-fade) are built
+from two non-canonical references the user pointed at directly: a Figma prototype link
+(`node-id=12405-6998`) and a Figma Make file (`fileKey myqsxGwnrcNHEdsE2SFZXk`,
+`src/app/App.tsx`) containing a full working implementation.
+
+The four background photos (`imgSvc1`–`imgSvc4` in the Make file, one per service row) ship
+in their original, varied duotone treatments — teal/green (Artist Management, close to but
+not identical to the existing `services.jpg`), blue (Booking & Tour), purple (PR &
+Marketing), and orange (Event Production) — rather than being recolored into one consistent
+duotone. The user was asked explicitly at apply time and chose to ship as-is.
+
+These are the same four photos the Services page's `ServicesList` already uses
+(`public/images/services/service-01-artist-management.jpg` through `service-04-event-
+production.jpg`, same Figma Make source, same order) — an earlier phase had already exported
+them. This session initially re-exported its own copies under `public/images/home/` before
+the user caught the duplication; those duplicates were deleted and `HomeServices.tsx` was
+repointed at the existing `public/images/services/` files instead.
+
+**Why:** No drawn frame exists to pixel-match against, so the Make file's state model and
+asset pairing are treated as the spec rather than invented fresh — same precedent as D106.
+Recoloring four images into a consistent duotone was flagged as optional extra work, not
+required for this phase to ship; the user confirmed varied colors are acceptable.
+
+**How to apply:** Do not treat the four images' color variance as a bug to silently fix in a
+later phase — it's a confirmed, intentional choice. If the duotone inconsistency is raised
+again, it has already been decided; point back here rather than re-litigating. The hover
+state model (`hoverIndex ?? openIndex`, scoped to the desktop branch only) is the established
+pattern for any future per-row desktop-only interaction on this file.
