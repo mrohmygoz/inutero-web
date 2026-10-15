@@ -1,7 +1,7 @@
-import Image from "next/image";
 import Cta from "../../_components/Cta";
 import { getDictionary, type Locale } from "../../_lib/i18n";
 import { localizedHref } from "../../_lib/routes";
+import HeroCursorTrail from "./HeroCursorTrail";
 import MastPhotoCycle from "./MastPhotoCycle";
 
 // Source: desktop Hero 12405:6947 (TC 0:187); mobile is two nodes — Mast
@@ -118,7 +118,8 @@ export default function HomeHero({ locale }: { locale: Locale }) {
       {/* ---------------------------------------------------------------- */}
       {/* Collage — 1440px design, uniformly scaled from 1024px up (D040)   */}
       {/* ---------------------------------------------------------------- */}
-      <section className="hidden bg-(--color-basic-accent) lg:block">
+      <section className="relative hidden bg-(--color-basic-accent) lg:block">
+        <HeroCursorTrail />
         <div className="canvas-1440">
           <div className="relative">
             {/* image 29 (12405:6948). Figma stacks an OPAQUE #131417 fill over the
@@ -130,41 +131,6 @@ export default function HomeHero({ locale }: { locale: Locale }) {
               aria-hidden
               className="absolute top-[209px] left-[300px] h-[570px] w-[337px] bg-(--color-basic-accent) opacity-40"
             />
-
-            {/* image 30 (12405:6949) — zoomed/offset crop, 80% opacity, dark
-                vertical gradient. The percentages are the frame's own crop box. */}
-            <div className="absolute top-[303px] left-[550px] h-[665px] w-[393px] opacity-80">
-              <div aria-hidden className="absolute inset-0 overflow-hidden">
-                <Image
-                  src="/images/home/hero-2.jpg"
-                  alt=""
-                  width={2000}
-                  height={1333}
-                  priority
-                  className="absolute top-0 left-[-97.46%] h-[112.93%] w-[286.71%] max-w-none"
-                />
-                <div
-                  className="absolute inset-0"
-                  style={{
-                    background:
-                      "linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 50.075%)",
-                  }}
-                />
-              </div>
-            </div>
-
-            {/* image 31 (12405:6950) — overflows the 960px frame by ~8px; the
-                section clips it rather than growing to fit (a Figma artifact). */}
-            <div className="absolute top-[135px] left-[663px] h-[665px] w-[393px]">
-              <Image
-                src="/images/home/hero-3.jpg"
-                alt=""
-                fill
-                priority
-                sizes="393px"
-                className="object-cover"
-              />
-            </div>
 
             <h1 className="sr-only">
               {`${hero.headlineWord1} ${hero.headlineWord2}, ${hero.headlineWord3} ${hero.headlineWord4}`}

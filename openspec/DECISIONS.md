@@ -2871,3 +2871,43 @@ later phase — it's a confirmed, intentional choice. If the duotone inconsisten
 again, it has already been decided; point back here rather than re-litigating. The hover
 state model (`hoverIndex ?? openIndex`, scoped to the desktop branch only) is the established
 pattern for any future per-row desktop-only interaction on this file.
+
+## D122 — Phase 16g: Home Hero cursor trail has no canonical Figma reaction; ported from a Make reference, scoped outside `canvas-1440`
+
+**What:** The desktop Home Hero now spawns a cursor-following "ghost" photo trail
+(`HeroCursorTrail.tsx`), implemented as a sibling of the `canvas-1440` collage inside the
+desktop `<section>`, not nested inside it. Same gap category as D106/D121: `get_metadata` on
+the Hero's drawn frames shows a static collage with no per-frame cursor reaction, so this was
+built from two non-canonical references the user pointed at directly — the Figma Make file
+(`fileKey myqsxGwnrcNHEdsE2SFZXk`, `src/app/HomeHero.tsx`, the same file D121's Services
+hover came from), whose spawn/fade tuning (85px threshold, 0.22s fade-in, 0.65s fade-out,
+single visible ghost, scroll re-trigger) is what got implemented, and a user-supplied codepen
+(`thingbynemanja/ogjaaNE`) that confirmed the mechanic family (image trail follows cursor) but
+whose GSAP-based timing was not used. The Make file's separate `GlobalCursor.tsx` (a site-wide
+custom cursor dot) is explicitly out of scope — a different, unscoped effect.
+
+**Why:** No drawn frame exists to verify pixel fidelity against, so (as with D106/D121) the
+non-canonical reference's own behavior is treated as the spec. The ghost layer sits outside
+`canvas-1440` (D040's uniformly-scaled collage wrapper) rather than inside it: `canvas-1440`'s
+scale factor changes continuously above 1024px, and keeping the mousemove math and ghost
+positions in raw viewport/section pixels (via `getBoundingClientRect()` on the component's own
+wrapper, not any coordinate space inside the collage) avoids one more transform to get wrong,
+at the cost of ghost images not scaling with the collage — accepted, the Make reference has
+the same property.
+
+**How to apply:** Any future desktop-only pointer-reactive effect on this page should follow
+the same shape — a page-local `"use client"` component composed as a sibling to `canvas-1440`
+inside the `lg:block` section, reading its own `getBoundingClientRect()` rather than reaching
+into the collage's scale transform, with every visual layer `aria-hidden` and
+`pointer-events-none` so it can never intercept clicks on real content. `HeroCursorTrail`
+stays page-local (parallel to `MastPhotoCycle`), not promoted to `app/_components/` — single
+consumer, same precedent.
+
+**Addendum (same session):** the desktop collage's two drawn static photos — "image 30"
+(`12405:6949`, `hero-2.jpg`, zoomed/offset crop under a dark gradient) and "image 31"
+(`12405:6950`, `hero-3.jpg`) — were removed from `HomeHero.tsx` at the user's explicit,
+direct instruction after seeing the trail in the browser, leaving only the invisible 40%-tint
+rectangle ("image 29") and the cursor trail as the collage's visual content above
+`lg:`. This is a deliberate divergence from the drawn Figma frame (`12405:6628`), not a gap
+the design left open — if the static photos are ever wanted back, this is a conscious removal
+to reverse, not a bug.
