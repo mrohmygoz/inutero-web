@@ -104,20 +104,20 @@ export default async function HomeFeaturedProjects({ locale }: { locale: Locale 
               393px; +1.94/-1.23/+0.94 degrees). The vertical gaps are the frames'
               too — the cards sit 3px and 19px apart, nearly flush, which is what
               makes the next card begin covering the previous almost immediately. */}
-          <div className="flex flex-col">
-            <div className="sticky top-[132px] z-[1] ml-[17px] w-[353px] rotate-[1.94deg]">
+          <div className="flex flex-col mt-6">
+            <div className="sticky top-[180px] z-[11] ml-[17px] w-[353px] rotate-[1.94deg]">
               {cards[0]}
             </div>
-            <div className="sticky top-[132px] z-[2] mt-[3px] ml-[33px] w-[353px] rotate-[-1.23deg]">
+            <div className="sticky top-[180px] z-[12] mt-[3px] ml-[33px] w-[353px] rotate-[-1.23deg]">
               {cards[1]}
             </div>
-            <div className="sticky top-[132px] z-[3] mt-[19px] ml-[16px] w-[353px] rotate-[0.94deg]">
+            <div className="sticky top-[180px] z-[13] mt-[19px] ml-[16px] w-[353px] rotate-[0.94deg]">
               {cards[2]}
             </div>
           </div>
 
           {/* z-index above the cards so the last one stacks behind it, not over. */}
-          <div className="relative z-[4] mt-[40px] bg-(--color-basic-background) px-[15px] pt-[27px]">
+          <div className="relative z-[14] mt-[40px] bg-(--color-basic-background) px-[15px] pt-[27px]">
             <Cta href={portfolioHref} tone="green" className="w-full">
               {featuredProjects.cta}
             </Cta>
