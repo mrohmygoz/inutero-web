@@ -63,11 +63,12 @@ function AccordionIcon({ open }: { open: boolean }) {
   );
 }
 
-// Desktop-only hover reference: no canonical Figma reaction exists for this (see
-// design.md / DECISIONS.md). Same four photos as the Services page's `ServicesList`
+// No canonical Figma reaction exists for either interaction (see design.md /
+// DECISIONS.md): desktop swaps on hover, mobile swaps on the accordion's own
+// click-to-expand. Same four photos as the Services page's `ServicesList`
 // (same Figma Make source images, `imgSvc1`-`imgSvc4`) — reused from
 // `public/images/services/` rather than duplicated under `public/images/home/`.
-const DESKTOP_HOVER_PHOTOS = [
+const SERVICE_PHOTOS = [
   "/images/services/service-01-artist-management.jpg",
   "/images/services/service-02-booking-touring.png",
   "/images/services/service-03-pr-marketing.jpg",
@@ -82,31 +83,18 @@ export default function HomeServices({ locale }: { locale: Locale }) {
   const displayIndex = hoverIndex ?? openIndex;
 
   // The photo is decorative: it carries no information the copy does not, and it
-  // sits behind text at low contrast.
-  const photo = (
+  // sits behind text at low contrast. Four images cross-fade by opacity, keyed to
+  // displayIndex — the hovered row on desktop, the open row on mobile (there is no
+  // hover there; the click-to-expand accordion drives the swap instead).
+  const photoStack = (sizes: string) => (
     <div aria-hidden className="absolute inset-0 overflow-hidden">
-      <Image
-        src="/images/home/services.jpg"
-        alt=""
-        fill
-        sizes="(min-width: 1024px) 620px, 327px"
-        className="max-w-none object-cover"
-      />
-    </div>
-  );
-
-  // Desktop-only: four images cross-fade by opacity, keyed to displayIndex
-  // (hover-if-present, else the open row) rather than the mobile branch's single
-  // static image.
-  const desktopPhoto = (
-    <div aria-hidden className="absolute inset-0 overflow-hidden">
-      {DESKTOP_HOVER_PHOTOS.map((src, index) => (
+      {SERVICE_PHOTOS.map((src, index) => (
         <Image
           key={src}
           src={src}
           alt=""
           fill
-          sizes="620px"
+          sizes={sizes}
           className="max-w-none object-cover transition-opacity duration-500 ease motion-reduce:transition-none"
           style={{ opacity: displayIndex === index ? 1 : 0 }}
         />
@@ -141,7 +129,7 @@ export default function HomeServices({ locale }: { locale: Locale }) {
           {/* Accordion block — the photo is centred behind it. */}
           <div className="relative mx-auto mt-[75px] w-[369px]">
             <div className="absolute top-1/2 left-[20px] h-[468px] w-[327px] -translate-y-1/2">
-              {photo}
+              {photoStack("327px")}
             </div>
 
             <div className="relative">
@@ -261,7 +249,7 @@ export default function HomeServices({ locale }: { locale: Locale }) {
                 className="absolute top-0 h-[767px]"
                 style={{ left: "clamp(0px, 24.111%, 217px)", width: "clamp(0px, 68.889%, 620px)" }}
               >
-                {desktopPhoto}
+                {photoStack("620px")}
               </div>
 
               <div className="relative w-full">
