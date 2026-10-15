@@ -32,6 +32,11 @@ const home: typeof enHome = {
     // "wraps naturally" for this one string; `en` has no newline, so the English
     // heading still wraps on its own.
     headline: "根植台灣，\n前進世界。",
+    // Desktop-only (`lg:`) hardcoded line breaks — same mechanism as `en`'s
+    // `headlineLines` (phase 16i). No Make reference exists for zh; this is
+    // the same 2-line break the `\n` above already produces, just expressed
+    // as an array so the desktop heading never has to auto-wrap either.
+    headlineLines: ["根植台灣，", "前進世界。"],
     bodyParagraphs: [
       "在分眾市場林立、聽眾追求私人化敘事的時代，真誠的創作成為每個人播放器中最親密的語言。無論風格與人氣，子皿期望所有音樂故事能找到契合它的聽眾，創造文化共鳴，同時帶來經濟價值。",
     ],
@@ -49,6 +54,11 @@ const home: typeof enHome = {
     // `keep EN` in the matrix — the TC frame draws the English word too.
     eyebrow: "Services",
     headline: "全方位助力，成為你最堅實的音樂發展夥伴",
+    // Desktop-only (`lg:`) hardcoded line breaks — same mechanism as `en`'s
+    // `headlineLines` (phase 16i). No Make reference exists for zh; this is
+    // the same 2-line break the string already auto-wrapped to at 1440px
+    // before this phase, measured live and pinned rather than guessed.
+    headlineLines: ["全方位助力，成為你最", "堅實的音樂發展夥伴"],
     cta: "完整服務項目",
     items: [
       {

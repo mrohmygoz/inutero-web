@@ -2970,3 +2970,160 @@ absolutely positioned — not centered in a flex row. This is the Make reference
 **How to apply:** `12423:8613`/`0:504` and `12612:8541`/`12635:12923` are no longer deferred
 nodes — do not re-flag them as unbuilt. The no-logo/centered-column divergence and the derived
 trigger position are confirmed choices, not drift to reconcile toward the real frame.
+
+## D124 — Phase 16i: Figma Make is the spec for Home's sub-1440px responsive behavior; Hero and Services go fluid, Mission's overlap photo becomes a cursor-follow reveal
+
+**What:** Extends D106/D121/D122/D123's precedent — "no canonical interaction exists" — to
+"no canonical sub-1440 layout exists" for Home's Hero, Mission/Intro, and Services sections.
+The static Figma frames are drawn at 1440px and 393px only; below 1440px, these three sections
+now follow the Figma Make reference's own responsive implementation (`fileKey
+myqsxGwnrcNHEdsE2SFZXk`, `src/app/HomeHero.tsx` and `src/app/App.tsx`, read directly for this
+phase) rather than D040's "canvas scales, flow sections reflow" split, whose accepted costs
+(Hero letterboxing above 1440px, Intro's heading colliding with its overlap photo once it
+wraps past 3 lines) turned out to be visibly wrong in the browser. D040's general
+placed-canvas/flow-section split is otherwise **unchanged** and still governs every other page
+— this supersedes its accepted costs for Hero/Intro/Services only.
+
+- **Hero**: `.canvas-1440` (D040's `transform: scale()` wrapper, uniformly scaled and capped
+  at 1440px) is removed from `HomeHero.tsx`'s desktop branch and from `globals.css`. The
+  headline now uses the Make reference's own `clamp(72px, 17vw, 246px)` — ported verbatim via
+  a new `--text-display-jumbo` override on `.tokens-headline-jumbo-latin`, unitless line-height
+  (`0.65`) so it scales with the font-size instead of leaving a fixed 159.9px gap at smaller
+  sizes. Headline pairs anchor at `top:15%`/`bottom:12%` with fixed 32px/30px horizontal
+  gutters (Make's own values) instead of 1440px-frame pixel offsets. The CTA panel is
+  `width: min(558px, 42%)` (Make's own bound), with body copy and the CTA row as its children
+  (flow, padding-based) rather than separately absolutely-positioned siblings, so they stay
+  correctly placed as the panel's width changes. The section fills the viewport at every width
+  ≥1024px — no max-width cap, matching Make exactly rather than centering with gutters above
+  1440px. `HeroCursorTrail`/`MastPhotoCycle` are unaffected (D106/D122 already scope them
+  outside the collage).
+- **Mission/Intro**: the statically anchored overlap photo (`absolute bottom-[-10px]
+  left-[50.903%]`) is replaced by `MissionCursorReveal.tsx`, a new page-local client component
+  (parallel to `HeroCursorTrail.tsx`) ported from Make's `missionRef`/`updateMissionImg`
+  (`App.tsx`): hidden until the pointer enters the section, then tracks it clamped to the
+  section's own `getBoundingClientRect()` bounds (not the viewport's), fading in/out, with a
+  `scroll` listener re-checking the last known pointer position — same pattern as
+  `HeroCursorTrail`. This removes the overlap bug by construction: the photo no longer has a
+  fixed position relative to the heading block at all.
+- **Mission/Intro heading — a derived call, not copied from Make.** Make's own Mission heading
+  is a **fixed** 180px with no fluid sizing (`fontSize: 180`), and turns out to overflow to 4
+  lines even at exactly 1440px in this project's own heading column (measured live:
+  `getBoundingClientRect()` + computed line count gave 1150px column width at 1440px viewport,
+  narrower than Make's own wider column) — this is the actual bug proposal.md's "Why" describes,
+  not a below-1150px-only problem. Bounds were measured empirically rather than assumed:
+  bisecting font-size against the live column at 1024px, 1150px, 1280px, and 1440px viewports
+  found the 3-line-safe window at each width, and `clamp(112px, calc(18px + 9.14vw), 150px)`
+  (new `--intro-h2-size` custom property on `.home-intro-heading`) is the curve that stays
+  inside all four windows — capped well below both Make's 180px and the existing
+  `--text-display-h2` desktop English token (also 180px), because neither actually fits this
+  column in 3 lines. Chinese is unaffected (`--text-display-h2` desktop zh, 130px, already
+  resolves fine) — a `:is(html[lang="zh"]) .home-intro-heading` rule reverts the custom
+  property back to the real token rather than inventing a second derived curve.
+- **Services**: heading and accordion item labels get the same custom-property clamp pattern
+  (`.home-services-heading`/`.home-services-label`, `--services-h2-size`/`--services-h3-size`),
+  fluid between 1024–1440px. The heading's cap (180px) matches both the existing
+  `--text-display-h2` token and Make's own number for this component. The accordion label's
+  cap is kept at the existing `--text-display-h3` desktop value (**120px**, not Make's 78px) —
+  live Figma inspection of `12210:2346` during apply returned a `78px`/`87px` fallback for the
+  accordion label/heading, which turned out to be the file's unresolved default-mode fallback
+  (mobile English values, 78/87, not the desktop mode this frame actually uses), the exact
+  trap CLAUDE.md's "never use `get_variable_defs`" warning describes for a different tool; the
+  already-established, token-backed 120px was trusted instead. Both locales get the same
+  zh-reverts-to-token treatment as the Mission heading. The cross-fading background image's
+  `left`/`width` (`clamp(0px, 24.111%, 217px)` / `clamp(0px, 68.889%, 620px)`) are the same
+  numbers D121 already derived, expressed as `clamp()` instead of bare `%`/`max-width` — the
+  900px-capped accordion column means these are pinned at their max across the whole
+  1024–1440px range in practice, so this is a syntax change, not a behavior change. No
+  structural change to the hover/open-index interaction (D121).
+- **Outer section width caps — removed, then reverted.** The first apply pass removed
+  `.canvas-1440` from Hero but left Intro's and Services' desktop wrapper divs capped at
+  `mx-auto max-w-[1440px]`; a second pass removed those caps too, reasoning that they were the
+  same letterboxing behavior as `.canvas-1440` under a different name. **That reasoning was
+  wrong and the removal was reverted after user review.** Both sections' colored background is
+  already on the outer `<section>`, not the capped content div — it was always full-bleed, so
+  the cap was never causing letterboxing in the first place. What it *was* doing: keeping the
+  Mission/Services headings' wrapping column width pinned to its 1440px-derived size. Both
+  headings are a single translatable string that auto-wraps by available column width (unlike
+  Make's own version of each, which hardcodes exactly 3 lines as separate `<p>` elements per
+  line and therefore can never reflow regardless of width). Once the column was uncapped, its
+  width kept growing above 1440px while the heading's `clamp()` font-size topped out at its
+  max — so at wide viewports the text collapsed from 3 lines to 2, diverging from Make's
+  always-3-lines look instead of matching it. `max-w-[1440px]` is restored on both components'
+  content wrappers. Hero's own cap removal is unaffected by this and stays — its headline words
+  are `whitespace-nowrap` singles that never wrap, so there was no line-count regression to
+  cause there. Services' inner `max-w-[900px]` accordion column (D121) and Intro's
+  `pr-[16.042%]`/`pl-[32px]` gutters were untouched throughout.
+- **Third pass: hardcoded `headlineLines`, matching Make exactly, cap removed again — this
+  time correctly.** The second pass's revert (above) fixed the regression but settled for less
+  than Make: a smaller, derived font-size cap (150px, not Make's 180px) and the `max-w-[1440px]`
+  cap still in place, because the single-string-auto-wrap approach cannot be both uncapped and
+  guaranteed 3 lines. Following the same shape Make itself uses, `intro.headlineLines` and
+  `services.headlineLines` (`app/_lib/i18n/{en,zh}/home.ts`) now hold each heading's line
+  breaks as a `string[]`, rendered as one `aria-hidden` `whitespace-nowrap` `<p>` per line next
+  to a `sr-only` `<h2>` carrying the full translatable string for assistive tech — the same
+  sr-only-heading-plus-visual-lines pattern `HomeHero.tsx` already uses for its four headline
+  words. **Desktop-only**: the existing `headline` string (with zh's own `\n`) is untouched and
+  still drives the separate mobile (`lg:hidden`) branch's auto-wrap exactly as before. Because
+  each desktop line is now its own non-wrapping block instead of one reflowing string, a line
+  count change is no longer possible at any width, so the outer `max-w-[1440px]` cap goes back
+  out — both sections are uncapped again, this time without the regression. `zh`'s lines are
+  not a Make translation (no zh reference exists); `intro`'s zh array is the same 2-line break
+  the existing `\n` already encoded, and `services`' zh array is the exact break the string
+  already auto-wrapped to at 1440px pre-phase, measured live via a DOM `Range` and pinned
+  rather than re-guessed, so zh's rendered output is byte-for-byte unchanged by this pass.
+  With line-count no longer a constraint, the font-size cap was re-measured and raised to match
+  Make exactly: 180px for both headings (Intro's own `leading-[0.7]`/`tracking-[-1.8px]` also
+  now copied from Make verbatim, replacing an earlier invented `0.656`/`-1.2px` derived from
+  the `--text-display-h2` token instead of the actual reference). **Measurement-method pitfall
+  worth recording**: the first attempt to verify no line overflows its column used
+  `element.scrollWidth` against the column's `getBoundingClientRect()`, which reported a
+  constant, size-independent result and nearly produced a false "safe" conclusion —
+  `scrollWidth` does not account for content overflowing a box under the default
+  `overflow: visible` (it only differs from `clientWidth` when `overflow` is `hidden`/`scroll`/
+  `auto`). The correct technique, used throughout this phase's verification, is a DOM `Range`
+  spanning the text node's contents compared via `getBoundingClientRect()`, which measures the
+  actual rendered glyph extent regardless of the box's own overflow setting. Re-verified this
+  way at 1024/1150/1280/1440/1920px: no line overflows its column at any tested width, for
+  either heading, in English.
+- **Remaining, accepted gap: Intro's section height.** Make's Mission section is a hard
+  `minHeight: 920` box with every child absolutely positioned inside it (heading, photo, and
+  body/CTA all pinned to fixed `top`/`left` coordinates). This project's Intro section is a
+  normal flow layout instead (heading and body/CTA stack via margin/padding, no fixed anchors),
+  so its height is whatever that content naturally totals — measured at 1440px: 886.5px tall
+  vs. Make's fixed 920px, a 33.5px (~4%) difference, mostly in the heading-to-body gap (`mt-[98px]`
+  vs. Make's own ~192px gap between its fixed `top: 138` heading and `top: 708` body). Not
+  closed in this pass — flagged, not silently left — because closing it by copying Make's fixed
+  coordinates would mean abandoning the flow layout for absolute positioning throughout, which
+  is a larger structural change than "match the sub-1440 responsive curve" and was not asked
+  for; a future pass can tune `mt-[98px]` upward if exact height matching is wanted.
+- **Fourth pass: Services' green dot (`12561:4180`) removed, at the user's explicit, direct
+  instruction after seeing it in the browser.** The dot sat at a fixed `top-[-86px]` offset
+  above the accordion rule, tuned in an earlier phase against the heading's *old*, much shorter
+  rendered height; once this phase grew the heading to match Make's 180px cap (see above), the
+  dot now floats in the gap between the heading and the first accordion rule rather than
+  sitting "under 'REACH.'" as the original placement comment described. Removed outright rather
+  than re-tuned — the user did not ask for a repositioned dot, they asked for it gone. This is
+  a deliberate divergence from the drawn Figma frame, not a gap: if a dot is wanted back later,
+  it needs a position derived against the *current* heading geometry, not the pre-phase one.
+
+**Why:** Make's own responsive implementation, built by the same designer, is better evidence
+for the sub-1440 gap than re-deriving proportional math from two fixed frames (1440px/393px).
+Where a canonical answer *does* exist (Services' accordion-label size, drawn at 1440px and
+already token-backed), the static frame still outranks Make per CLAUDE.md — Make's own number
+for that one value doesn't match this component's established frame-derived token, so it was
+not used. The Mission heading's clamp bounds are empirically measured rather than copied from
+Make or extrapolated from a single data point, because Make's own fixed value demonstrably
+doesn't satisfy the actual goal ("heading and photo can never collide") in this project's
+narrower layout.
+
+**How to apply:** `.canvas-1440` no longer exists in `globals.css` — if a future placed
+composition needs a scale wrapper, it must be re-added, not assumed present. The
+`--intro-h2-size`/`--services-h2-size`/`--services-h3-size` custom-property-with-zh-override
+pattern (scoped class, not overriding the shared token directly) is the template for any
+future fluid sizing that must diverge from Make or from the existing token for one locale
+only. `MissionCursorReveal.tsx` stays page-local (single consumer), same precedent as
+`HeroCursorTrail.tsx` — no `INVENTORY.md` entry. `lint`/`tsc` both pass; visually verified via
+`agent-browser` screenshots at 1024/1150/1280/1440/1920px and 393px, both locales — Hero fills
+the viewport with no gutters above 1024px, Mission's heading holds 3 lines across the full
+range, Services scales cleanly, and mobile (`lg:hidden`) branches are pixel-unchanged in all
+three sections.

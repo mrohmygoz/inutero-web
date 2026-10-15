@@ -1,8 +1,12 @@
+"use client";
+
+import { useRef } from "react";
 import Image from "next/image";
 import Cta from "../../_components/Cta";
 import Eyebrow from "../../_components/Eyebrow";
 import { getDictionary, type Locale } from "../../_lib/i18n";
 import { localizedHref } from "../../_lib/routes";
+import MissionCursorReveal from "./MissionCursorReveal";
 
 // Source: desktop Intro 12405:6419 (TC 0:254); mobile Intro 12212:6318 (TC
 // 12368:2416). Page-local, not shared: one consumer (D-A).
@@ -27,6 +31,7 @@ const HEADING_GRADIENT_MOBILE =
 export default function HomeIntro({ locale }: { locale: Locale }) {
   const { intro } = getDictionary(locale).home;
   const aboutHref = localizedHref("about", locale);
+  const sectionRef = useRef<HTMLDivElement>(null);
 
   const body = intro.bodyParagraphs.map((paragraph) => (
     <p key={paragraph} className="font-body text-body-l text-(--color-basic-accent)">
@@ -73,47 +78,52 @@ export default function HomeIntro({ locale }: { locale: Locale }) {
       </section>
 
       {/* ---------------------------------------------------------------- */}
-      {/* Desktop — 1440px design, reflowing from 1024px up (D040)          */}
+      {/* Desktop — reflowing from 1024px up (D040); the heading is fluid    */}
+      {/* and the overlap photo is a cursor-follow reveal, not a statically  */}
+      {/* anchored overlap — phase 16i, superseding D040's accepted costs    */}
+      {/* for this section (see openspec/DECISIONS.md). Ported from the      */}
+      {/* Figma Make reference's `missionRef`/`updateMissionImg` (fileKey    */}
+      {/* myqsxGwnrcNHEdsE2SFZXk, src/app/App.tsx). No max-width cap — Make's   */}
+      {/* own Mission section is uncapped too, and it's safe here because the  */}
+      {/* heading is `intro.headlineLines`, hardcoded per-line (one `<p>` each, */}
+      {/* matching Make's own `<p>`-per-line heading) rather than one           */}
+      {/* auto-wrapping string, so it can never reflow into a different line   */}
+      {/* count at any width — the thing that made the cap load-bearing        */}
+      {/* before (see openspec/DECISIONS.md D124) no longer applies.           */}
       {/* ---------------------------------------------------------------- */}
-      <section className="hidden bg-(--color-basic-background) lg:block">
-        <div className="mx-auto w-full max-w-[1440px] pt-[138px] pb-[68px]">
-          {/* The heading block is the positioning context for the image, so a
-              shorter Chinese heading pulls the image up with it instead of
-              leaving it stranded mid-section (D-D). */}
-          {/* The right margin is width-dependent, so like the image below it
-              keeps the frame's proportion (231/1440) rather than a fixed px
-              value that would squeeze the heading column as the page narrows.
-              The left gutter stays 32px — it is the page gutter the NAV uses. */}
-          <div className="relative flex items-start pr-[16.042%] pl-[32px]">
+      <section
+        ref={sectionRef}
+        className="relative hidden bg-(--color-basic-background) lg:block"
+      >
+        <div className="w-full pt-[138px] pb-[68px]">
+          {/* The right margin is width-dependent, so like the mobile photo
+              above it keeps the frame's proportion (231/1440) rather than a
+              fixed px value that would squeeze the heading column as the page
+              narrows. The left gutter stays 32px — it is the page gutter the
+              NAV uses. */}
+          <div className="flex items-start pr-[16.042%] pl-[32px]">
             <Eyebrow
               label={intro.eyebrow}
               className="flex h-[97px] w-[27px] shrink-0 items-center justify-center py-[15px] translate-y-2 lg:translate-y-0"
             />
-            <h2
-              className="font-display text-display-h2 min-w-px flex-1 bg-clip-text whitespace-pre-line uppercase text-transparent"
-              style={{ backgroundImage: HEADING_GRADIENT_DESKTOP }}
-            >
-              {intro.headline}
-            </h2>
-
-            {/* image 21 (12405:6432) — inverted against the heading via a white
-                fill in difference mode, exactly as the frame composites it.
-                This element is *positioned*, so unlike the rest of this section
-                it cannot keep a fixed offset once the container narrows: 733px
-                is 50.9% of the 1440px frame but 71.6% of a 1024px one, which
-                would slide it off the heading. Expressed as the frame's own
-                proportion instead (D040). */}
-            <div className="absolute bottom-[-10px] left-[50.903%] h-[193px] w-[243px] mix-blend-difference">
-              <div aria-hidden className="absolute inset-0">
-                <Image
-                  src="/images/home/intro.jpg"
-                  alt=""
-                  fill
-                  sizes="243px"
-                  className="object-cover"
-                />
-                <div className="absolute inset-0 bg-white mix-blend-difference" />
-              </div>
+            <div className="min-w-px flex-1">
+              <h2 className="sr-only">{intro.headline}</h2>
+              {intro.headlineLines.map((line) => (
+                <p
+                  key={line}
+                  aria-hidden
+                  className="home-intro-heading font-display block bg-clip-text whitespace-nowrap uppercase text-transparent"
+                  style={{
+                    backgroundImage: HEADING_GRADIENT_DESKTOP,
+                    fontSize: "var(--intro-h2-size)",
+                    lineHeight: "var(--intro-h2-line-height)",
+                    letterSpacing: "var(--intro-h2-letter-spacing)",
+                    fontWeight: "var(--intro-h2-weight)",
+                  }}
+                >
+                  {line}
+                </p>
+              ))}
             </div>
           </div>
 
@@ -126,6 +136,13 @@ export default function HomeIntro({ locale }: { locale: Locale }) {
             </div>
           </div>
         </div>
+
+        {/* image 21 (12405:6432) — inverted against the heading via a white
+            fill in difference mode, exactly as the frame composites it.
+            Cursor-follow reveal (phase 16i) instead of a fixed overlap offset:
+            it tracks the pointer within the section's own bounds, so it can
+            never collide with the heading regardless of its line count. */}
+        <MissionCursorReveal sectionRef={sectionRef} />
       </section>
     </>
   );

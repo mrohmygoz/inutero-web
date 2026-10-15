@@ -401,49 +401,6 @@
 }
 
 /*
- * Canvas sections (D040).
- *
- * A few sections are *placed* compositions rather than flow layouts — the Home
- * hero is three overlapping photographs and four display words at absolute
- * coordinates on the 1440px frame. Those cannot reflow: shrinking them changes
- * which photo covers which word.
- *
- * Instead of re-deriving the composition at other widths, the canvas keeps its
- * drawn 1440x960 geometry and is scaled uniformly to the available width. Every
- * coordinate stays exactly as Figma draws it; only the scale factor varies, so
- * there is nothing invented and nothing to verify against a frame that does not
- * exist. `aspect-ratio` gives the wrapper its height; `cqw` reads the wrapper's
- * own width, so this is independent of scrollbar width and of any ancestor
- * padding. At and above 1440px the max-width caps it and the scale is exactly 1.
- *
- * Use this ONLY for genuinely placed compositions. Flow sections (the intro,
- * card grids, article bodies) must reflow normally — scaling them would shrink
- * body copy below its designed size.
- */
-.canvas-1440 {
-  container-type: inline-size;
-  width: 100%;
-  max-width: 1440px;
-  margin-inline: auto;
-  aspect-ratio: 1440 / 960;
-  overflow: hidden;
-}
-
-/* The scale goes through a custom property deliberately. Written inline as
-   `transform: scale(calc(100cqw / 1440px))` the declaration is *silently
-   dropped* by Lightning CSS at build time — it never reaches the browser, and
-   the canvas renders at full size and gets clipped. Custom properties are
-   substituted at used-value time, so the browser does the container-unit
-   division itself and the build tool leaves it alone. */
-.canvas-1440 > * {
-  --canvas-scale: calc(100cqw / 1440px);
-  width: 1440px;
-  height: 960px;
-  transform-origin: top left;
-  transform: scale(var(--canvas-scale));
-}
-
-/*
  * The Home hero headline is an English lockup in BOTH locales, so the Chinese
  * display scale must not apply to it. The TC frames prove it: desktop 0:191-0:194
  * are 660x160 boxes exactly like their EN counterparts (one line of Jumbo
@@ -461,11 +418,89 @@
   --text-display-h1--font-weight: 700;
 }
 
+/* Phase 16i: fluid above 1024px, no cap below it — ported from the Figma Make
+   reference's own clamp (fileKey myqsxGwnrcNHEdsE2SFZXk, src/app/HomeHero.tsx),
+   which hits the same 246px max this token's desktop value already was. Only
+   the Home Hero headline uses this class; UniversalCTA's own `text-display-
+   jumbo` usage is untouched. */
 .tokens-headline-jumbo-latin {
-  --text-display-jumbo: 246px;
-  --text-display-jumbo--line-height: 159.9px;
-  --text-display-jumbo--letter-spacing: -2.46px;
+  --text-display-jumbo: clamp(72px, 17vw, 246px);
+  --text-display-jumbo--line-height: 0.65;
+  --text-display-jumbo--letter-spacing: -0.01em;
   --text-display-jumbo--font-weight: 700;
+}
+
+/* Phase 16i: Home Intro's desktop heading, English only. `intro.headlineLines`
+ * (see app/_lib/i18n/en/home.ts) hardcodes the 3 line breaks exactly like the
+ * Figma Make reference's own Mission heading (src/app/App.tsx renders one
+ * `<p>` per line, not one auto-wrapping string), so — unlike the first apply
+ * pass, which kept a single wrapping string and had to shrink the font well
+ * below Make's own 180px to avoid a 4th wrapped line — the cap here matches
+ * Make's fixed 180px and the existing --text-display-h2 desktop English token
+ * exactly, with `leading-[0.7]`/`tracking-[-1.8px]` copied from Make verbatim
+ * too. The lower bound (130px) and growth curve were measured empirically
+ * against the live column's actual rendered text width (`scrollWidth`, not
+ * the flex item's own box — a `nowrap` block element's box does not shrink
+ * to its overflowing content, so measuring the box itself under-reports
+ * overflow) at 1024px, confirming no line overflows its column at any width
+ * from 1024px to 1440px+.
+ * Chinese is unaffected — its existing --text-display-h2 desktop value (130px)
+ * already resolves fine, so the zh override below reverts to it rather than
+ * inventing a second derived curve nothing in this phase's proposal asked for.
+ * A new property name, not an override of --text-display-h2 itself, so this
+ * stays scoped to one heading instead of touching every h2 on the site. */
+.home-intro-heading {
+  --intro-h2-size: clamp(130px, calc(7px + 12vw), 180px);
+  --intro-h2-line-height: 0.7;
+  --intro-h2-letter-spacing: -1.8px;
+  --intro-h2-weight: 700;
+}
+
+:is(html[lang="zh"], [data-locale="zh"]) .home-intro-heading {
+  --intro-h2-size: var(--text-display-h2);
+  --intro-h2-line-height: var(--text-display-h2--line-height);
+  --intro-h2-letter-spacing: var(--text-display-h2--letter-spacing);
+  --intro-h2-weight: var(--text-display-h2--font-weight);
+}
+
+/* Phase 16i: Home Services' desktop accordion item labels, English only.
+ * Fluid between 1024–1440px, capped at the *existing* --text-display-h3
+ * desktop English value (120px) rather than the Figma Make reference's own
+ * 78px — Make's accordion label happens not to match this component's
+ * established, frame-derived token, and the static 1440px frame (which does
+ * exist for this value, unlike Hero/Mission's gaps) outranks Make per
+ * CLAUDE.md. Chinese reverts to its own existing token, same pattern as
+ * `.home-intro-heading` above. */
+.home-services-label {
+  --services-h3-size: clamp(72px, 8.333vw, 120px);
+  --services-h3-line-height: 0.7;
+  --services-h3-letter-spacing: -1.2px;
+  --services-h3-weight: 700;
+}
+
+:is(html[lang="zh"], [data-locale="zh"]) .home-services-label {
+  --services-h3-size: var(--text-display-h3);
+  --services-h3-line-height: var(--text-display-h3--line-height);
+  --services-h3-letter-spacing: var(--text-display-h3--letter-spacing);
+  --services-h3-weight: var(--text-display-h3--font-weight);
+}
+
+/* Phase 16i: Home Services' desktop heading, English only — same pattern as
+ * `.home-services-label` above. Cap matches the existing --text-display-h2
+ * desktop English value (180px), which also happens to match the Make
+ * reference's own number for this heading. */
+.home-services-heading {
+  --services-h2-size: clamp(72px, 12.5vw, 180px);
+  --services-h2-line-height: 0.7;
+  --services-h2-letter-spacing: -0.87px;
+  --services-h2-weight: 700;
+}
+
+:is(html[lang="zh"], [data-locale="zh"]) .home-services-heading {
+  --services-h2-size: var(--text-display-h2);
+  --services-h2-line-height: var(--text-display-h2--line-height);
+  --services-h2-letter-spacing: var(--text-display-h2--letter-spacing);
+  --services-h2-weight: var(--text-display-h2--font-weight);
 }
 
 /*

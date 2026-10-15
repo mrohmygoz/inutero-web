@@ -26,7 +26,7 @@ import MastPhotoCycle from "./MastPhotoCycle";
 const HEADLINE_MOBILE =
   "tokens-headline-h1-latin font-display text-display-h1 absolute mix-blend-hard-light opacity-96 uppercase whitespace-nowrap";
 const HEADLINE_DESKTOP =
-  "tokens-headline-jumbo-latin font-display text-display-jumbo absolute mix-blend-hard-light opacity-96 uppercase whitespace-nowrap";
+  "tokens-headline-jumbo-latin font-display text-display-jumbo mix-blend-hard-light opacity-96 uppercase whitespace-nowrap";
 
 export default function HomeHero({ locale }: { locale: Locale }) {
   const { hero } = getDictionary(locale).home;
@@ -116,68 +116,71 @@ export default function HomeHero({ locale }: { locale: Locale }) {
       </section>
 
       {/* ---------------------------------------------------------------- */}
-      {/* Collage — 1440px design, uniformly scaled from 1024px up (D040)   */}
+      {/* Collage — fluid above 1024px, no max-width cap (phase 16i,        */}
+      {/* superseding D040's canvas-1440 scale for this section — see       */}
+      {/* openspec/DECISIONS.md). Ported from the Figma Make reference      */}
+      {/* (fileKey myqsxGwnrcNHEdsE2SFZXk, src/app/HomeHero.tsx): `clamp()`  */}
+      {/* headline sizing with `%`-based vertical anchors, fixed-px         */}
+      {/* horizontal gutters, and a `min(558px, 42%)`-capped CTA panel.      */}
       {/* ---------------------------------------------------------------- */}
-      <section className="relative hidden bg-(--color-basic-accent) lg:block">
+      <section className="relative hidden h-screen min-h-[640px] bg-(--color-basic-accent) lg:block">
         <HeroCursorTrail />
-        <div className="canvas-1440">
-          <div className="relative">
-            {/* image 29 (12405:6948). Figma stacks an OPAQUE #131417 fill over the
-                photo inside a 40%-opacity wrapper, so the result is 40% of the
-                section's own background colour — the photo contributes nothing
-                visible. Reproduced as that flat rectangle rather than shipping a
-                300KB download that renders invisible. */}
-            <div
-              aria-hidden
-              className="absolute top-[209px] left-[300px] h-[570px] w-[337px] bg-(--color-basic-accent) opacity-40"
-            />
 
-            <h1 className="sr-only">
-              {`${hero.headlineWord1} ${hero.headlineWord2}, ${hero.headlineWord3} ${hero.headlineWord4}`}
-            </h1>
-            <p
-              aria-hidden
-              className={`${HEADLINE_DESKTOP}  top-[166px] left-[32px] text-(--color-basic-background)`}
-            >
-              {hero.headlineWord1}
-            </p>
-            <p
-              aria-hidden
-              className={`${HEADLINE_DESKTOP}  top-[329px] left-[32px] text-(--color-brand-accent-neon)`}
-            >
-              {hero.headlineWord2}
-            </p>
-            <p
-              aria-hidden
-              className={`${HEADLINE_DESKTOP}  top-[556px] right-[30px] text-right text-(--color-basic-background)`}
-            >
-              {hero.headlineWord3}
-            </p>
-            <p
-              aria-hidden
-              className={`${HEADLINE_DESKTOP}  top-[720px] right-[28px] text-right text-(--color-brand-accent-neon)`}
-            >
-              {hero.headlineWord4}
-            </p>
+        {/* image 29 (12405:6948). Figma stacks an OPAQUE #131417 fill over the
+            photo inside a 40%-opacity wrapper, so the result is 40% of the
+            section's own background colour — the photo contributes nothing
+            visible. Reproduced as that flat rectangle rather than shipping a
+            300KB download that renders invisible. Kept at its drawn 1440px
+            coordinates: it is invisible, so fluid repositioning has no
+            visible effect either way. */}
+        <div
+          aria-hidden
+          className="absolute top-[209px] left-[300px] h-[570px] w-[337px] bg-(--color-basic-accent) opacity-40"
+        />
 
-            {/* Green panel 12405:6973 — flush to the canvas edge. Above 1440px
-                the canvas centres, so it is inset from the viewport there. */}
-            <div className="absolute top-[712px] left-0 h-[249px] w-[558px] bg-(--color-brand-primary-green)" />
+        <h1 className="sr-only">
+          {`${hero.headlineWord1} ${hero.headlineWord2}, ${hero.headlineWord3} ${hero.headlineWord4}`}
+        </h1>
 
-            <div className="absolute top-[740px] left-0 flex h-[88px] w-[18px] items-center justify-center">
-              <div className="rotate-90">{scrollLabel}</div>
-            </div>
+        <div className="absolute top-[15%] left-[32px]">
+          <p aria-hidden className={`${HEADLINE_DESKTOP} text-(--color-basic-background)`}>
+            {hero.headlineWord1}
+          </p>
+          <p aria-hidden className={`${HEADLINE_DESKTOP} text-(--color-brand-accent-neon)`}>
+            {hero.headlineWord2}
+          </p>
+        </div>
+        <div className="absolute right-[30px] bottom-[12%] text-right">
+          <p aria-hidden className={`${HEADLINE_DESKTOP} text-(--color-basic-background)`}>
+            {hero.headlineWord3}
+          </p>
+          <p aria-hidden className={`${HEADLINE_DESKTOP} text-(--color-brand-accent-neon)`}>
+            {hero.headlineWord4}
+          </p>
+        </div>
 
-            <p className="font-body text-body-l absolute top-[744px] left-[85px] w-[436px] text-(--color-basic-accent)">
-              {hero.body}
-            </p>
+        <div
+          aria-hidden
+          className="absolute bottom-0 left-0 flex items-center justify-center"
+          style={{ left: 16, bottom: "38%", height: 88, width: 18 }}
+        >
+          <div className="rotate-90">{scrollLabel}</div>
+        </div>
 
-            <div className="absolute top-[881px] left-[85px] flex items-center gap-[45px]">
-              <Cta href={workHref} tone="dark">
-                {hero.ctaPrimary}
-              </Cta>
-              {secondaryLink}
-            </div>
+        {/* Green panel 12405:6973 — `min(558px, 42%)` per the Make reference,
+            so it never grows past its drawn 558px width even on very wide
+            viewports. Body/CTA are children (flow, not absolute) so they stay
+            correctly placed as the panel's width changes. */}
+        <div
+          className="absolute bottom-0 left-0 flex flex-col gap-[40px] bg-(--color-brand-primary-green) py-[32px] pr-[37px] pl-[85px]"
+          style={{ width: "min(558px, 42%)" }}
+        >
+          <p className="font-body text-body-l text-(--color-basic-accent)">{hero.body}</p>
+          <div className="flex items-center gap-[45px]">
+            <Cta href={workHref} tone="dark">
+              {hero.ctaPrimary}
+            </Cta>
+            {secondaryLink}
           </div>
         </div>
       </section>

@@ -24,6 +24,12 @@ const home = {
   intro: {
     eyebrow: "Mission",
     headline: "Connecting Taiwan's music ecosystem to the global stage.",
+    // Desktop-only (`lg:`) hardcoded line breaks, matching the Figma Make
+    // reference's own `App.tsx` exactly — Make renders each line as a separate
+    // `<p>`, not one auto-wrapping string, so it never reflows at any width
+    // (phase 16i). Mobile keeps using `headline` above, auto-wrapping as before —
+    // not touched by this array.
+    headlineLines: ["Connecting Taiwan's", "music ecosystem to", "the global stage."],
     // Two paragraphs on the EN frames, one on the TC frames — hence an array.
     // Matrix says "real experience" (singular); the desktop frame draws
     // "experiences". Matrix wins.
@@ -46,6 +52,9 @@ const home = {
   services: {
     eyebrow: "Services",
     headline: "Your all-in-one partner for global music reach.",
+    // Desktop-only (`lg:`) hardcoded line breaks — same rationale and Make
+    // source as `intro.headlineLines` above (phase 16i).
+    headlineLines: ["Your all-in-one", "partner for global", "music reach."],
     cta: "full services list",
     items: [
       {

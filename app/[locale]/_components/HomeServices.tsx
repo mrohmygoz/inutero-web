@@ -40,11 +40,6 @@ import { localizedHref } from "../../_lib/routes";
 // Anchored to the accordion block here instead, so it stays behind the panel in both
 // locales — derived, ≤8px from either drawn frame.
 
-// The desktop dot (12561:4180). #00ea17 has no variable behind it — it is not in
-// openspec/reference/design-tokens.md — so it is written literally here rather than
-// invented as a token, same call as HomeIntro's heading gradient.
-const DOT_GREEN = "#00ea17";
-
 // Both glyphs are stacked and cross-faded, so the swap animates over the same 300ms
 // as the panel rather than popping.
 function AccordionIcon({ open }: { open: boolean }) {
@@ -214,10 +209,17 @@ export default function HomeServices({ locale }: { locale: Locale }) {
       </div>
 
       {/* ------------------------------------------------------------------ */}
-      {/* Desktop — 1440px design, reflowing from 1024px up (D040)            */}
+      {/* Desktop — reflowing from 1024px up (D040). No max-width cap — the   */}
+      {/* dark background already fills the viewport regardless (color is on  */}
+      {/* the outer <section>), and it's safe for the content to be uncapped  */}
+      {/* too because the heading is `services.headlineLines`, hardcoded per- */}
+      {/* line (one `<p>` each, matching Make's own `<p>`-per-line heading)   */}
+      {/* rather than one auto-wrapping string — it can never reflow into a   */}
+      {/* different line count at any width (phase 16i; see                  */}
+      {/* openspec/DECISIONS.md D124 for the cap-removal history).           */}
       {/* ------------------------------------------------------------------ */}
       <div className="hidden lg:block">
-        <div className="mx-auto flex w-full max-w-[1440px] items-start px-[32px] py-[68px]">
+        <div className="flex w-full items-start px-[32px] py-[68px]">
           <div className="w-[27px] shrink-0 py-[15px]">
             <Eyebrow
               label={services.eyebrow}
@@ -227,28 +229,40 @@ export default function HomeServices({ locale }: { locale: Locale }) {
           </div>
 
           <div className="flex min-w-px flex-1 flex-col items-end gap-[80px]">
-            <h2 className="font-display text-display-h2 w-full text-(--color-basic-background) uppercase">
-              {services.headline}
-            </h2>
+            <div className="w-full">
+              <h2 className="sr-only">{services.headline}</h2>
+              {services.headlineLines.map((line) => (
+                <p
+                  key={line}
+                  aria-hidden
+                  className="home-services-heading font-display block text-(--color-basic-background) uppercase whitespace-nowrap"
+                  style={{
+                    fontSize: "var(--services-h2-size)",
+                    lineHeight: "var(--services-h2-line-height)",
+                    letterSpacing: "var(--services-h2-letter-spacing)",
+                    fontWeight: "var(--services-h2-weight)",
+                  }}
+                >
+                  {line}
+                </p>
+              ))}
+            </div>
 
             <div className="relative flex w-full max-w-[900px] flex-col items-start gap-[60px]">
               {/* Photo: level with the accordion top, as the desktop EN frame
-                  draws it. 217/900 is the frame's own left offset within the
-                  accordion column, kept proportional so it does not slide out
-                  from behind the panel as the container narrows. */}
-              <div className="absolute top-0 left-[24.111%] h-[767px] w-[620px] max-w-[68.889%]">
+                  draws it. 217/900 and 620/900 are the frame's own offset and
+                  width within the accordion column (D121) — expressed as
+                  `clamp()` (phase 16i) rather than bare `%`/`max-width` so the
+                  bound reads the same way as Hero's and Mission's, though the
+                  900px-capped column means it is pinned at its max across the
+                  whole 1024–1440 range in practice. No structural change to
+                  the hover/cross-fade logic. */}
+              <div
+                className="absolute top-0 h-[767px]"
+                style={{ left: "clamp(0px, 24.111%, 217px)", width: "clamp(0px, 68.889%, 620px)" }}
+              >
                 {desktopPhoto}
               </div>
-
-              {/* Dot 12561:4180. Frame coords (747, 416) against an accordion
-                  column that starts at x=508, y=502 — so 239/900 across and 86px
-                  above the first rule, sitting in the gap under "REACH." rather
-                  than on the rule itself. */}
-              <div
-                aria-hidden
-                className="absolute top-[-86px] left-[26.556%] size-[65px] rounded-[100px] mix-blend-hard-light"
-                style={{ backgroundColor: DOT_GREEN }}
-              />
 
               <div className="relative w-full">
                 {services.items.map((item, index) => {
@@ -280,11 +294,17 @@ export default function HomeServices({ locale }: { locale: Locale }) {
                             <AccordionIcon open={open} />
                           </span>
                           <span
-                            className={`font-display text-display-h3 block min-w-px flex-1 uppercase ${
+                            className={`home-services-label font-display block min-w-px flex-1 uppercase ${
                               open
                                 ? "text-(--color-brand-accent-neon)"
                                 : "text-(--color-basic-background)"
                             }`}
+                            style={{
+                              fontSize: "var(--services-h3-size)",
+                              lineHeight: "var(--services-h3-line-height)",
+                              letterSpacing: "var(--services-h3-letter-spacing)",
+                              fontWeight: "var(--services-h3-weight)",
+                            }}
                           >
                             {item.title}
                           </span>
