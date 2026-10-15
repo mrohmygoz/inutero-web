@@ -187,7 +187,9 @@ export default function Footer({ locale }: { locale: Locale }) {
           ))}
         </div>
 
-        <p className="font-body text-body-s text-(--opacity-white-60)">{f.copyright}</p>
+        <p className="font-body text-body-s text-(--opacity-white-60)">
+          {f.copyright} Designed by <a href="https://www.gagatzan.com" target="_blank" rel="noopener noreferrer" className="underline text-(--color-brand-primary-green)">Gaga Tzan</a> with love.
+        </p>
       </div>
 
       <EmailSignupSuccessModal locale={locale} open={success} onClose={handleDismiss} />
